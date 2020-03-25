@@ -6,9 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Laratrust\Traits\LaratrustUserTrait;
 
 class User extends Authenticatable
 {
+    use LaratrustUserTrait;
     use Notifiable;
 
     /**
@@ -46,4 +48,11 @@ class User extends Authenticatable
 		$this->attributes['password'] = Hash::make($pass);
 	}
 	
+	/**
+     * Преобразуем пароль перед записью.
+     */
+	public function scopeAdmin($query)
+    {
+        return $query->whereRoleIs('admin')->first();
+    }
 }

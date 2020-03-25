@@ -3,10 +3,11 @@
 namespace App\Services\Settings;
 
 use App\Models\Settings\Settings;
+use App\User;
 
 class SettingsService
 {	
-	public $templatePath = 'crm.settings.';
+	public $templatePath = 'crm.settings.general.';
 	
 	public $templateForm = 'index';
 	
@@ -25,33 +26,43 @@ class SettingsService
 	public function outputData()
 	{
 		$settings = $this->model;
+		$routeName = $this->routeName;
+		$admin = User::select(['id', 'email'])->admin();
 		
-		return compact('settings');
+		return compact('settings', 'routeName', 'admin');
 	}
 	
 	/**
 	 * Обновление записи в БД
 	 */
-	public function updateRecording($request) 
+	public function update($request) 
 	{
-		// $requestAll = $request->all();
+		$requestAll = $request->all();
 		
-		// if($this->settings) {
-			// $this->settings->update($requestAll);
-		// } else {
-			// $this->settings = Settings::create($requestAll);
-		// }
+		if($this->settings) {
+			$this->settings->update($requestAll);
+		} else {
+			$this->settings = Settings::create($requestAll);
+		}
 		
+		if(isset($requestAll['logo_img']) and $requestAll['logo_img']) {
+			$this->settings->logo_img = $request->file('logo_img')->store('settings', 'public');
+			$this->settings->save();
+		}
 		
-		// if(isset($requestAll['logo']) and $requestAll['logo']) {
-			// $this->settings->logo = $request->file('logo')->store('settings', 'public');
-			// $this->settings->save();
-		// }
+		if(isset($requestAll['background_img']) and $requestAll['background_img']) {
+			$this->settings->background_img = $request->file('background_img')->store('settings', 'public');
+			$this->settings->save();
+		}
 		
-		// if(isset($requestAll['background_image']) and $requestAll['background_image']) {
-			// $this->settings->background_image = $request->file('background_image')->store('settings', 'public');
-			// $this->settings->save();
-		// }
+		$admin = User::admin();
+		$admin->email = $requestAll['admin']['email'];
+		
+		if($requestAll['admin']['password']) {
+			$admin->password = $requestAll['admin']['password'];
+		}
+		
+		$admin->save();
 		
 		return true;
 	}

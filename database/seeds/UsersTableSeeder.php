@@ -22,11 +22,11 @@ class UsersTableSeeder extends Seeder
 			]
 		);
 		
-		// if (!$user->hasRole('admin')) {
-			// $admin = \App\Role::where('name', 'admin')->first();
+		if (!$user->hasRole('admin')) {
+			$admin = \App\Role::where('name', 'admin')->first();
 			
-			// $user->attachRole($admin);
-			// $user->save();
-		// }
+			$user->attachRole($admin);
+			$user->save();
+		}
     }
 }

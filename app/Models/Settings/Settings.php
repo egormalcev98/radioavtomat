@@ -12,7 +12,8 @@ class Settings extends BaseModel
      * @var array
      */
     protected $fillable = [
-		'name',
+		'name_org',
+		'name_sys',
 	];
 	
 	/**
