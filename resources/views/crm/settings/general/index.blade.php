@@ -26,6 +26,9 @@
 					@include('crm.error_message', ['nameField' => 'logo_img'])
                     <label class="custom-file-label" for="logo_img">145x145 px</label>
                 </div>
+				@if($settings->logo_img)
+					<img src="{{ Storage::url($settings->logo_img) }}" style="border: 1px solid #000000; margin-top: 10px;" >
+				@endif
 			</div>
 		</div>
 		<div class="form-group row">
@@ -36,6 +39,9 @@
 					@include('crm.error_message', ['nameField' => 'background_img'])
                     <label class="custom-file-label" for="background_img">1920x1080 px</label>
                 </div>
+				@if($settings->background_img)
+					<img src="{{ Storage::url($settings->background_img) }}" style="border: 1px solid #000000; margin-top: 10px; max-width: 150px;" >
+				@endif
 			</div>
 		</div>
 		<div class="form-group row">

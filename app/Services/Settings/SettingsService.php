@@ -39,20 +39,20 @@ class SettingsService
 	{
 		$requestAll = $request->all();
 		
-		if($this->settings) {
-			$this->settings->update($requestAll);
+		if($this->model) {
+			$this->model->update($requestAll);
 		} else {
-			$this->settings = Settings::create($requestAll);
+			$this->model = Settings::create($requestAll);
 		}
 		
 		if(isset($requestAll['logo_img']) and $requestAll['logo_img']) {
-			$this->settings->logo_img = $request->file('logo_img')->store('settings', 'public');
-			$this->settings->save();
+			$this->model->logo_img = $request->file('logo_img')->store('settings', 'public');
+			$this->model->save();
 		}
 		
 		if(isset($requestAll['background_img']) and $requestAll['background_img']) {
-			$this->settings->background_img = $request->file('background_img')->store('settings', 'public');
-			$this->settings->save();
+			$this->model->background_img = $request->file('background_img')->store('settings', 'public');
+			$this->model->save();
 		}
 		
 		$admin = User::admin();

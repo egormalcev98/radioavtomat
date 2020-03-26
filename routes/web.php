@@ -27,4 +27,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('settings', 'Settings\SettingsController')->only([
 		'index', 'update'
 	]);
+	
+	//Пользователи
+	Route::resource('users', 'Settings\UserController');
 });

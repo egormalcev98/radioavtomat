@@ -15,7 +15,7 @@
 					<a class="nav-link @if($routeName == 'settings') active @endif" href="{{ route('settings.index') }}">Общие</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="#custom-tabs-three-profile">Пользователи</a>
+					<a class="nav-link @if($routeName == 'users') active @endif" href="{{ route('users.index') }}">Пользователи</a>
 				</li>
 			</ul>
 		</div>

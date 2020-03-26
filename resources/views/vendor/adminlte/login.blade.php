@@ -9,7 +9,13 @@
     @yield('css')
 	<style>
 		body {
-			background: url('/img/u13.png') no-repeat !important;
+			
+			@if($settings and $settings->background_img)
+				background: url('{{ Storage::url($settings->background_img) }}') no-repeat !important;
+			@else
+				background: url('/img/u13.png') no-repeat !important;
+			@endif
+			
 			background-size: 100% 100% !important;
 	    }
 	</style>
@@ -37,7 +43,7 @@
 @section('body')
     <div class="login-box">
         <div class="login-logo">
-            <a href="{{ $dashboard_url }}"><img src="/img/u25.png"></a>
+            <a href="{{ $dashboard_url }}"><img @if($settings and $settings->logo_img) src="{{ Storage::url($settings->logo_img) }}" @else src="/img/u25.png" @endif></a>
         </div>
         <div class="card">
             <div class="card-body login-card-body">

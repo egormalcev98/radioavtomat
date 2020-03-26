@@ -29,12 +29,10 @@ class BaseService
 			[
 				'title' => __($this->translation . 'list_columns.id'),
 				'data' => 'id',
-				'name' => 'id',
 			],
 			[
 				'title' => __($this->translation . 'list_columns.name'),
 				'data' => 'name',
-				'name' => 'name',
 			],
 			
 			$this->actionButton()
@@ -62,7 +60,8 @@ class BaseService
 	public function constructViewDT() 
 	{
 		return app(BuilderDT::class)
-				->language('//cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json')
+				->language(config('datatables.lang'))
+				->pageLength(25)
 				->columns( $this->tableColumns() );
 	}
 	
@@ -114,7 +113,7 @@ class BaseService
 	/**
 	 * Данные для работы с элементом
 	 */
-	public function getElementData($element = null) 
+	public function elementData($element = null) 
 	{
 		return compact('element');
 	}

@@ -33,4 +33,20 @@ class Controller extends BaseController
 		return view($this->service->templatePath . 'listelements')->with($with);
     }
 
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+		$with = $this->service->elementData();
+		
+		$with['title'] = __($this->service->translation . 'index.title') . ': ' . __('references.main.create_text_template');
+		$with['action'] = route($this->service->routeName . '.store');
+		$with['method'] = __FUNCTION__;
+		
+		return view($this->service->templatePath . $this->service->templateForm)->with($with);
+    }
+	
 }

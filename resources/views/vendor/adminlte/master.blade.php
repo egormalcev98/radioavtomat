@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{csrf_token()}}">
     <title>@yield('title_prefix', config('adminlte.title_prefix', ''))
+@if($settings and $settings->name_sys)
+@yield('title', config($settings->name_sys, $settings->name_sys))
+@else
 @yield('title', config('adminlte.title', 'AdminLTE 3'))
+@endif
 @yield('title_postfix', config('adminlte.title_postfix', ''))</title>
     @if(! config('adminlte.enabled_laravel_mix'))
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
@@ -59,6 +63,19 @@
 <script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
 
 @include('adminlte::plugins', ['type' => 'js'])
+
+@if(auth()->check())
+	<script>
+		// global app configuration object
+		var config = {
+			token: '{!! csrf_token() !!}'
+		};
+	</script>
+	
+	<script src="{{ asset('/js/plugins/controlmodal/control-modal.js?78') }}"></script>
+	<script src="{{ asset('/js/plugins/masked/jquery.maskedinput.min.js') }}"></script>
+	<script src="{{ asset('/js/main.js?58910') }}"></script>
+@endif
 
 @yield('adminlte_js')
 @else

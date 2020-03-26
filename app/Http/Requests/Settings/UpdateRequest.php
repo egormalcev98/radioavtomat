@@ -36,7 +36,7 @@ class UpdateRequest extends FormRequest
 			'admin.password' => 'nullable|min:5',
 			
 			'logo_img' => 'nullable|image|max:500|dimensions:width=145,height=145',
-			'background_img' => 'nullable|image|max:2000|dimensions:width=1920,height=1080',
+			'background_img' => 'nullable|image|max:3000|dimensions:width=1920,height=1080',
         ];
     }
 }
