@@ -1,5 +1,13 @@
 @extends('crm.settings.tabs')
 
+@section('css')
+	<style>
+		#dtListElements tbody tr {
+			cursor: pointer;
+		}
+	</style>
+@stop
+
 @section('tab_content')		
 		@if(isset($createLink))
 			<div class="col-12 row mb-3">
@@ -14,10 +22,17 @@
 		--}}
 		
 		<div class="p-0">
-			{!! $datatable->table(['class' => 'table table-hover dataTable no-footer'], true) !!}
+			{!! $datatable->table() !!}
 		</div>
 @stop
 
 @section('js')
 	{!! $datatable->scripts() !!}
+	<script type="text/javascript">
+		$('#dtListElements tbody').on('click', 'tr', function(){
+			let data = window.LaravelDataTables["dtListElements"].row( this ).data();
+			
+			location.href = data['showUrl'];
+		});
+	</script>
 @stop

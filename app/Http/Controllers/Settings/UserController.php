@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
 use App\Services\Settings\UserService as Service;
+use App\Http\Requests\Users\StoreRequest;
+use App\Http\Requests\Users\UpdateRequest;
 
 class UserController extends Controller
 {
@@ -19,9 +21,9 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        return $this->storeElement($request);
     }
 
     /**
@@ -32,7 +34,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return $this->showElement($user);
     }
 
     /**
@@ -43,7 +45,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return $this->editElement($user);
     }
 
     /**
@@ -53,9 +55,9 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateRequest $request, User $user)
     {
-        //
+        return $this->updateElement($request, $user);
     }
 
     /**
@@ -66,6 +68,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+		if($user->hasRole('admin')) {
+			return abort(404);
+		}
+		
+        return $this->destroyElement($user);
     }
 }

@@ -30,9 +30,13 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-
         parent::boot();
+		
+		Route::bind('user', function ($id) {
+			return \App\User::withoutGlobalScope('active')
+				->withoutAdmin()
+				->findOrFail($id);
+		});
     }
 
     /**

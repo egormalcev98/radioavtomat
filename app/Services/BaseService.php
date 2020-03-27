@@ -65,10 +65,7 @@ class BaseService
 				->columns( $this->tableColumns() );
 	}
 	
-	/**
-	 * Формирует данные для шаблона "Список элементов"
-	 */
-	public function dataTableData()
+	protected function constructDataTableQuery()
 	{
 		$query = $this->model
 					->select( $this->columnsToSelect( $this->tableColumns() ) );
@@ -78,8 +75,15 @@ class BaseService
 					$routeName = $this->routeName;
 					
 					return view('crm.action_buttons', compact('element', 'routeName'));
-				})
-				->make(true);
+				});
+	}
+	
+	/**
+	 * Формирует данные для шаблона "Список элементов"
+	 */
+	public function dataTableData()
+	{
+		return $this->constructDataTableQuery()->make(true);
 	}
 	
 	/**
@@ -92,7 +96,11 @@ class BaseService
 			
 			foreach($array as $value){
 				if(!isset($value['remove_select']) or $value['remove_select'] !== true) {
-					$resultArray[] = $value['data'];
+					if(isset($value['name'])) {
+						$resultArray[] = $value['name'];
+					} else {
+						$resultArray[] = $value['data'];
+					}
 				}
 			}
 			
@@ -116,6 +124,30 @@ class BaseService
 	public function elementData($element = null) 
 	{
 		return compact('element');
+	}
+	
+	/**
+	 * Создание записи в БД
+	 */
+	public function store($request) 
+	{
+		$requestAll = $request->all();
+		
+		$this->model->create($requestAll);
+		
+		return true;
+	}
+	
+	/**
+	 * Обновление записи в БД
+	 */
+	public function update($request) 
+	{
+		$requestAll = $request->all();
+		
+		$this->model->update($requestAll);
+		
+		return true;
 	}
 	
 }

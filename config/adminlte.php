@@ -211,6 +211,7 @@ return [
         [
             'text'      	=> 'settings',
             'route' 		=> 'settings.index',
+			'active'		=> ['settings', 'settings/*', 'users', 'users/*'],
             'icon'        	=> 'fas fa-cogs',
         ],
     ],

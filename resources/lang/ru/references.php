@@ -5,6 +5,7 @@ return [
 		'create_element' => 'Создать',
 		'create_text_template' => 'создать',
 		'edit_text_template' => 'редактировать',
+		'show_text_template' => 'просмотр',
 		'flash_success_create' => 'Элемент создан',
 		'flash_success_update' => 'Элемент отредактирован',
 		'edit_button' => 'Редактировать',

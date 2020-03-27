@@ -12,6 +12,7 @@ $(document).ready(function(){
 	if($('input').is('[data-input-mask="phone"]')) {
 		$('[data-input-mask="phone"]').mask('+7(999)999-99-99');
 	}
+	
 });
 
 var Main = {

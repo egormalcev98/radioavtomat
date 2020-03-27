@@ -202,5 +202,11 @@ return [
 		'user_status_id'		=> 'Статус пользователя',
 		'structural_unit_id'	=> 'Структурное подразделение',
 		'role'	=> 'Роль пользователя',
+		'surname'				=> 'Фамилия',
+		'middle_name'			=> 'Отчество',
+		'personal_phone_number'	=> 'Телефон мобильный',
+		'work_phone_number'		=> 'Телефон рабочий',
+		'additional'			=> 'Добавочный',
+		'birthday_at'			=> 'День рождения',
     ],
 ];
