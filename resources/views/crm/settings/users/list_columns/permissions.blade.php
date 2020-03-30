@@ -1,0 +1,1 @@
+<a href="{{ route('users.permissions', $element->id) }}" target="_blank" class="btn btn-xs btn-success" >Настроить</a>

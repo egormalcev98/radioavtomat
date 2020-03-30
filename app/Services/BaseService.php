@@ -121,8 +121,10 @@ class BaseService
 	/**
 	 * Данные для работы с элементом
 	 */
-	public function elementData($element = null) 
+	public function elementData() 
 	{
+		$element = $this->model;
+		
 		return compact('element');
 	}
 	
@@ -150,4 +152,11 @@ class BaseService
 		return true;
 	}
 	
+	/**
+     * Удаляем элемент
+     */
+	public function removeElement()
+	{
+		return $this->model->delete();
+	}
 }

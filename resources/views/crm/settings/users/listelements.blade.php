@@ -29,10 +29,12 @@
 @section('js')
 	{!! $datatable->scripts() !!}
 	<script type="text/javascript">
-		$('#dtListElements tbody').on('click', 'tr', function(){
-			let data = window.LaravelDataTables["dtListElements"].row( this ).data();
-			
-			location.href = data['showUrl'];
+		$('#dtListElements tbody').on('click', 'tr', function(event){
+			if(event.target.nodeName == 'TD') {
+				
+				let data = window.LaravelDataTables["dtListElements"].row( this ).data();
+				location.href = data['showUrl'];
+			}
 		});
 	</script>
 @stop

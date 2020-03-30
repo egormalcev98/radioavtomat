@@ -25,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::share('settings', Settings::first());
+        if(\Schema::hasTable(app(Settings::class)->getTable())){
+			View::share('settings', Settings::first());
+		}
     }
 }

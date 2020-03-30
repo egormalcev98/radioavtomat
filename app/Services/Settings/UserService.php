@@ -91,8 +91,9 @@ class UserService extends BaseService
 	/**
 	 * Данные для работы с элементом
 	 */
-	public function elementData($user = null) 
+	public function elementData() 
 	{
+		$user = $this->model;
 		$userStatuses = UserStatus::orderedGet();
 		$structuralUnits = StructuralUnit::orderedGet();
 		$roles = Role::withoutAdmin()->get();
@@ -124,6 +125,9 @@ class UserService extends BaseService
 				})
 				->addColumn('fullName', function ($element) {
 					return $element->fullName;
+				})
+				->addColumn('buttonPermissions', function ($element) {
+					return view($this->templatePath . 'list_columns.permissions', compact('element', 'routeName'));
 				})
 				->make(true);
 	}
@@ -159,6 +163,16 @@ class UserService extends BaseService
 		$this->model->update($requestAll);
 		
 		return true;
+	}
+	
+	/**
+	 * Данные по разрешениям для элемента
+	 */
+	public function elementPermissionsData() 
+	{
+		$user = $this->model;
+		
+		return compact('user');
 	}
 	
 }

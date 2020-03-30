@@ -28,7 +28,7 @@ class StoreRequest extends FormRequest
             'user_status_id' => 'required|exists:user_statuses,id',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:5',
-            'structural_unit_id' => 'required|exists:user_statuses,id',
+            'structural_unit_id' => 'required|exists:structural_units,id',
 			'role' => [
 				'required',
 				Rule::exists('roles', 'id')->where(function ($query) {

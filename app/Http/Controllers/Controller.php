@@ -70,7 +70,8 @@ class Controller extends BaseController
      */
     protected function showElement($element)
     {
-        $with = $this->service->elementData($element);
+		$this->service->model = $element;
+        $with = $this->service->elementData();
 		
 		$with['title'] = __($this->service->translation . 'index.title') . ': ' . __('references.main.show_text_template');
 		$with['method'] = 'edit';
@@ -85,7 +86,8 @@ class Controller extends BaseController
      */
     protected function editElement($element)
     {
-        $with = $this->service->elementData($element);
+		$this->service->model = $element;
+        $with = $this->service->elementData();
 		
 		$with['title'] = __($this->service->translation . 'index.title') . ': ' . __('references.main.edit_text_template');
 		$with['action'] = route($this->service->routeName . '.update', $element->id);
@@ -114,7 +116,8 @@ class Controller extends BaseController
      */
     protected function destroyElement($element)
     {
-        $this->removeElement($element);
+		$this->service->model = $element;
+        $this->service->removeElement();
 		
         return $this->serverResponseDestroy();
     }

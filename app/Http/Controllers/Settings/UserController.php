@@ -74,4 +74,19 @@ class UserController extends Controller
 		
         return $this->destroyElement($user);
     }
+	
+    /**
+     * Show the form for permissions the specified resource.
+     *
+     * @param  \App\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function permissions(User $user)
+    {
+		$this->service->model = $user;
+        $with = $this->service->elementPermissionsData();
+		
+		return view($this->service->templatePath . 'permissions')->with($with);
+    }
+
 }

@@ -8,17 +8,17 @@ ModalApp.ModalProcess = function (parameters) {
   this.body = parameters['body'] || 'Содержимое модального окна';
   this.footer = parameters['footer'] || '<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>';   
   this.content = '<div style="' + this.g_style + '" id="'+this.id+'" class="modal fade" tabindex="-1" role="dialog">'+
-    '<div class="modal-dialog" role="document" style="' + this.style + '" >'+
-      '<div class="modal-content">'+
-        '<div class="modal-header">'+
-          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-          '<h4 class="modal-title">'+this.title+'</h4>'+
-        '</div>'+
-        '<div class="modal-body">'+this.body+'</div>'+
-        '<div class="modal-footer">'+this.footer+'</div>'+
-      '</div>'+
-    '</div>'+
-  '</div>';
+					'<div class="modal-dialog" role="document" style="' + this.style + '" >'+
+						'<div class="modal-content">'+
+							'<div class="modal-header">'+
+							  '<h4 class="modal-title">'+this.title+'</h4>'+
+							  '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+							'</div>'+
+							'<div class="modal-body">'+this.body+'</div>'+
+							'<div class="modal-footer justify-content-between">'+this.footer+'</div>'+
+						'</div>'+
+					'</div>'+
+				'</div>';
   this.init = function() {
     if ($('#'+this.id).length==0) {
       $('body').prepend(this.content);

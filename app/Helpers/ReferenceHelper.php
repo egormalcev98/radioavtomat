@@ -43,16 +43,10 @@ trait ReferenceHelper
 	}
 	
 	/**
-     * Удаляем элемент
-     */
-	public function removeElement($element){
-		return $element->delete();
-	}
-	
-	/**
      * Ссылка для кнопки отмена
      */
-	public function cancelUrl($routeName){
+	public function cancelUrl($routeName)
+	{
 		return route($routeName . '.index');
 	}
 }
