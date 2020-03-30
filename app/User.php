@@ -135,4 +135,14 @@ class User extends Authenticatable
 			'name' => '',
 		]);
     }
+	
+	/**
+     * Получим статус конкретного пользователя
+     */
+    public function status()
+    {
+        return $this->belongsTo(Models\References\UserStatus::class, 'user_status_id')->withDefault([
+			'name' => '',
+		]);
+    }
 }

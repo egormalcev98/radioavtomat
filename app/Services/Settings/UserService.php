@@ -64,6 +64,24 @@ class UserService extends BaseService
 				'title' => __($this->translation . 'list_columns.role'),
 				'data' => 'roles.0.display_name',
 				'remove_select' => true,
+				'searchable' => false,
+				'orderable' => false,
+			],
+			[
+				'title' => __($this->translation . 'list_columns.email'),
+				'data' => 'email',
+			],
+			[
+				'title' => __($this->translation . 'list_columns.status'),
+				'data' => 'status.name',
+				'name' => 'user_status_id',
+			],
+			[
+				'title' => __($this->translation . 'list_columns.permissions'),
+				'data' => 'buttonPermissions',
+				'remove_select' => true,
+				'searchable' => false,
+				'orderable' => false,
 			],
 			
 			$this->actionButton()
@@ -93,7 +111,7 @@ class UserService extends BaseService
 		
 		$query = $this->model
 					->select( $select )
-					->with(['structuralUnit', 'roles']);
+					->with(['structuralUnit', 'roles', 'status']);
 		
 		return Datatables::of($query)
 				->addColumn('action', function ($element){

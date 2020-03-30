@@ -10,5 +10,8 @@ return [
 		'full_name' => 'ФИО',
 		'structural_unit' => 'Структурное подразделение',
 		'role' => 'Роль пользователя',
+		'email' => 'Email (Логин)',
+		'status' => 'Статус',
+		'permissions' => 'Настройка прав',
 	]
 ];
