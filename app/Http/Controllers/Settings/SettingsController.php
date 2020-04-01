@@ -12,6 +12,11 @@ class SettingsController extends Controller
 {
     public function __construct(Service $service) {
 		$this->service = $service;
+		
+		$this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index']]);
+        $this->middleware('permission:update_' . $this->service->permissionKey, ['only' => ['update']]);
+		
+		view()->share('permissionKey', $this->service->permissionKey);
 	}
 
     /**

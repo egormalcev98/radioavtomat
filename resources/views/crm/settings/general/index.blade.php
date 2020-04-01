@@ -58,7 +58,9 @@
 				@include('crm.error_message', ['nameField' => 'admin.password'])
 			</div>
 		</div>
-		<button type="submit" class="btn btn-primary">Сохранить</button>
+		@if(auth()->user()->can('update_' . $permissionKey))
+			<button type="submit" class="btn btn-primary">Сохранить</button>
+		@endif
 	</form>
 @stop
 

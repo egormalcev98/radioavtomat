@@ -13,6 +13,14 @@ class UserController extends Controller
 {
     public function __construct(Service $service) {
 		$this->service = $service;
+		
+		$this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index', 'show']]);
+        $this->middleware('permission:create_' . $this->service->permissionKey, ['only' => ['create', 'store']]);
+        $this->middleware('permission:update_' . $this->service->permissionKey, ['only' => ['update', 'permissionsSave']]);
+        $this->middleware('permission:read_' . $this->service->permissionKey, ['only' => ['edit', 'permissions']]);
+        $this->middleware('permission:delete_' . $this->service->permissionKey, ['only' => ['destroy']]);
+		
+		view()->share('permissionKey', $this->service->permissionKey);
 	}
 
     /**
@@ -84,9 +92,22 @@ class UserController extends Controller
     public function permissions(User $user)
     {
 		$this->service->model = $user;
-        $with = $this->service->elementPermissionsData();
+        $with = $this->service->userPermissionsData();
 		
 		return view($this->service->templatePath . 'permissions')->with($with);
     }
 
+    /**
+     * Save the permissions resource in storage.
+     *
+     * @param  \App\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function permissionsSave(Request $request, User $user)
+    {
+        $this->service->model = $user;
+        $this->service->userPermissionsSave($request);
+		
+		return $this->successfulElementUpdate($this->service->routeName, $user->id);
+    }
 }

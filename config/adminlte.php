@@ -213,6 +213,10 @@ return [
             'route' 		=> 'settings.index',
 			'active'		=> ['settings', 'settings/*', 'users', 'users/*'],
             'icon'        	=> 'fas fa-cogs',
+			'permission'	=> [
+				'view_user',
+				'view_settings'
+			]
         ],
     ],
 
@@ -234,8 +238,9 @@ return [
         JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\SubmenuFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
+        // JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
+		App\Helpers\MenuFilter::class,
     ],
 
     /*

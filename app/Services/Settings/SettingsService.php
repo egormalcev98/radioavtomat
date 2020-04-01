@@ -15,6 +15,8 @@ class SettingsService
 	
 	public $translation = 'settings.';
 	
+	public $permissionKey = 'settings';
+	
 	public function __construct()
     {
         $this->model = Settings::first();

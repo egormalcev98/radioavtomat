@@ -31,4 +31,5 @@ Route::group(['middleware' => ['auth']], function () {
 	//Пользователи
 	Route::resource('users', 'Settings\UserController');
 	Route::get('users/{user}/permissions', 'Settings\UserController@permissions')->name('users.permissions');
+	Route::patch('users/permissions_save/{user}', 'Settings\UserController@permissionsSave')->name('users.permissions_save');
 });

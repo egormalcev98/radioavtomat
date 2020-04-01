@@ -9,14 +9,10 @@ class MenuFilter implements FilterInterface
 {
     public function transform($item, Builder $builder)
     {
-        if (isset($item['visible_roles']) and is_array($item['visible_roles']) and !auth()->user()->hasRole($item['visible_roles'])) {
-            return false;
-        }
-		
 		if (isset($item['permission']) and is_array($item['permission']) and !auth()->user()->can($item['permission'])) {
             return false;
         }
-
+		
         return $item;
     }
 }

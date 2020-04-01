@@ -11,12 +11,16 @@
 	<div class="card card-primary card-outline card-outline-tabs">
 		<div class="card-header p-0 border-bottom-0">
 			<ul class="nav nav-tabs" role="tablist">
-				<li class="nav-item">
-					<a class="nav-link @if($routeName == 'settings') active @endif" href="{{ route('settings.index') }}">Общие</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link @if($routeName == 'users') active @endif" href="{{ route('users.index') }}">Пользователи</a>
-				</li>
+				@if(auth()->user()->can('view_settings'))
+					<li class="nav-item">
+						<a class="nav-link @if($routeName == 'settings') active @endif" href="{{ route('settings.index') }}">Общие</a>
+					</li>
+				@endif
+				@if(auth()->user()->can('view_user'))
+					<li class="nav-item">
+						<a class="nav-link @if($routeName == 'users') active @endif" href="{{ route('users.index') }}">Пользователи</a>
+					</li>
+				@endif
 			</ul>
 		</div>
 		<div class="card-body">

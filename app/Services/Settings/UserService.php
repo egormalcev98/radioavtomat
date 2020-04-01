@@ -5,6 +5,7 @@ namespace App\Services\Settings;
 use App\Services\BaseService;
 use App\User;
 use App\Role;
+use App\Permission;
 use DataTables;
 use App\Models\References\UserStatus;
 use App\Models\References\StructuralUnit;
@@ -19,12 +20,35 @@ class UserService extends BaseService
 	
 	public $translation = 'users.';
 	
+	public $permissionKey = 'user';
+	
 	public $model;
 	
 	public function __construct()
     {
         parent::__construct(User::withoutGlobalScope('active')->withoutAdmin());
     }
+
+	/**
+     * Варианты доступов к модулям, аккуратно со свойством map, условия по нему необходимо менять и при выводе данных и при записи (elementData, syncPermissions)
+     */
+	protected $permissionTypes = [
+		'closed' => [
+			'title' => 'permissions.types.closed',
+			'map' => [], // отсутствие доступов
+		],
+		'opened' => [
+			'title' => 'permissions.types.opened',
+			'map' => true, // в данном случае копируем карту доступов из конфига laratrust_seeder 
+		],
+		'reading' => [
+			'title' => 'permissions.types.reading',
+			'map' => [
+				'read',
+				'view',
+			], // укажем конкретно какие разрешения нужны для данного варианта
+		],
+	];
 
 	/**
 	 * Формирует данные для шаблона "Список элементов"
@@ -168,11 +192,123 @@ class UserService extends BaseService
 	/**
 	 * Данные по разрешениям для элемента
 	 */
-	public function elementPermissionsData() 
+	public function userPermissionsData() 
 	{
 		$user = $this->model;
 		
-		return compact('user');
+		$permissionModules = config('permission.modules');
+		$permissionTypes = $this->permissionTypes;
+		
+		$userPermissions = $this->model->permissions;
+		$laratrustSeeder = config('laratrust_seeder');
+		$permissionMap = array_values($laratrustSeeder['permissions_map']);
+		
+		if(!empty($permissionModules) and !empty($userPermissions)) {
+			foreach($permissionModules as $key => $module) {
+				foreach($permissionTypes as $type => $typeData) {
+					if($typeData['map'] === true) {
+						$typeData['map'] = $this->collectSpecificPermissionsMap($module['name']);
+					}
+					
+					$permissions = $userPermissions->whereIn('name', $this->collectPermissionsMap($module['name'], $permissionMap))
+													->pluck('name')
+													->toArray();
+									
+					$typeData['map'] = $this->collectPermissionsMap($module['name'], $typeData['map']);
+					
+					sort($typeData['map']);
+					sort($permissions);
+					
+					if(implode("", $typeData['map']) == implode("", $permissions)) {
+						$permissionModules[$key]['list_types'] = $type;
+						// break;
+					}
+				}
+			}
+		}
+		
+		return compact('user', 'permissionModules', 'permissionTypes');
 	}
 	
+	/**
+     * Метод создания или обновления разрешений роли
+     */
+	public function userPermissionsSave($request)
+	{
+		$requestAll = $request->all();
+		$arrSync = [];
+			
+		if(!empty($requestAll['permission_modules'])) {
+			$permissionModules = config('permission.modules');
+			$permissionTypes = $this->permissionTypes;
+			
+			foreach($permissionModules as $module) {
+				if(isset($requestAll['permission_modules'][$module['name']])) {
+					$type = $requestAll['permission_modules'][$module['name']];
+					
+					if(isset($permissionTypes[$type]) and !empty($permissionTypes[$type]['map'])) {
+						
+						if($permissionTypes[$type]['map'] === true) {
+							$arrayPermissions = $this->collectSpecificPermissionsMap($module['name']);
+						} else {
+							$arrayPermissions = $permissionTypes[$type]['map'];
+						}
+						
+						$permissions = Permission::whereIn('name', $this->collectPermissionsMap($module['name'], $arrayPermissions))
+												->get()
+												->pluck('id')
+												->toArray();
+						
+						if(!empty($permissions)) {
+							$arrSync  = array_merge($arrSync, $permissions);
+						}
+					}
+					
+				}
+			}
+		}
+		
+		$this->model
+			 ->permissions()
+			 ->sync($arrSync);
+		
+		return true;
+	}
+
+	private function collectPermissionsMap($module, $permissionsMap)
+	{
+		$array = [];
+		
+		if(!empty($permissionsMap)) {
+			foreach($permissionsMap as $key => $permission) {
+				$array[$key] = $permission . '_' . $module;
+			}
+		}
+		
+		return $array;
+	}
+
+	private function collectSpecificPermissionsMap($module)
+	{
+		$permissionStructure = config('laratrust_seeder.permission_structure');
+		$permissionsMap = config('laratrust_seeder.permissions_map');
+		$array = [];
+		
+		if(!empty($permissionStructure)) {
+			foreach($permissionStructure as $permission) {
+				if(isset($permission[$module])) {
+					
+					$arrayMap = explode(",", $permission[$module]);
+					foreach($arrayMap as $permissionKey) {
+						if(isset($permissionsMap[trim($permissionKey)])) {
+							$array[$permissionsMap[trim($permissionKey)]] = $permissionsMap[trim($permissionKey)];
+						}
+					}
+					
+				}
+			}
+		}
+		
+		return $array;
+	}
 }
