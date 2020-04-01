@@ -12,10 +12,14 @@
 				<!-- /.card-header -->
 				<div class="card-body">
 					@if(isset($filterTemplate))
-						@include('crm.' . $filterTemplate)
+						<div class="col-12 row" id="dt_filters">
+							@include('crm.' . $filterTemplate)
+						</div>
 					@endif
 					
-					{!! $datatable->table(['class' => 'table table-striped table-bordered table-hover dataTable no-footer'], true) !!}
+					<div class="p-0">
+						{!! $datatable->table() !!}
+					</div>
 				</div>
 				<!-- /.card-body -->
 			</div>

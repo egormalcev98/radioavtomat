@@ -17,5 +17,7 @@ return [
     'warning'                       => 'Внимание',
     'information'                   => 'Информация',
 	
-	'settings'						=> 'Настройки'
+	'settings'						=> 'Настройки',
+	'references'					=> 'Справочники',
+	'document_types'				=> 'Виды документов',
 ];

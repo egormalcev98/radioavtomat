@@ -218,6 +218,20 @@ return [
 				'view_settings'
 			]
         ],
+        [
+            'text'      	=> 'references',
+            'icon'        	=> 'fas fa-clipboard-list',
+			'permission'	=> [
+				'view_references',
+			],
+			'submenu' => [
+                [
+					'text'      	=> 'document_types',
+					'route' 		=> 'document_types.index',
+					// 'active'		=> ['document_types', 'document_types/*'],
+                ],
+			],
+        ],
     ],
 
     /*

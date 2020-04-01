@@ -15,11 +15,9 @@
 			</div>
 		@endif
 		
-		{{--
-		@if(isset($filterTemplate))
-			@include('crm.' . $filterTemplate)
-		@endif
-		--}}
+		<div class="col-12 row" id="dt_filters">
+			@include('crm.settings.users.filter_listelemnts')
+		</div>
 		
 		<div class="p-0">
 			{!! $datatable->table() !!}
@@ -28,6 +26,7 @@
 
 @section('js')
 	{!! $datatable->scripts() !!}
+	
 	<script type="text/javascript">
 		$('#dtListElements tbody').on('click', 'tr', function(event){
 			if(event.target.nodeName == 'TD') {

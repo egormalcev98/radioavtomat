@@ -57,11 +57,12 @@ class BaseService
 	/**
 	 * Собираем объект DataTable для фронта
 	 */
-	public function constructViewDT() 
+	public function constructViewDT($selectorForm = '#dt_filters') 
 	{
 		return app(BuilderDT::class)
 				->language(config('datatables.lang'))
 				->pageLength(25)
+				->ajaxWithForm('', $selectorForm)
 				->columns( $this->tableColumns() );
 	}
 	

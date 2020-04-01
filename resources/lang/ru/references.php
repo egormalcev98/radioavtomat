@@ -14,11 +14,21 @@ return [
 		'save_button' => 'Сохранить',
 		'cancel_button' => 'Отмена',
 		'search' => 'Поиск',
-		'action_edit_column' => '',//'Редактировать',
-		'action_delete_column' => '',//'Удалить',
+		'action_edit_column' => '', //'Редактировать',
+		'action_delete_column' => '', //'Удалить',
 		'error_repeat' => 'Произошла ошибка, попробуйте еще раз',
 		'validation' => [
 			'name_required' => 'Заполните поле "Название"',
+		]
+	],
+	
+	'document_types' => [
+		'index' => [
+			'title' => __('adminlte::menu.document_types')
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'name' => 'Название',
 		]
 	],
 ];

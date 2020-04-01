@@ -7,6 +7,7 @@ return [
         1 => [ 
             'settings' => 'c,r,u,d,v',
             'user' => 'c,r,u,d,v',
+            'references' => 'c,r,u,d,v',
         ],
     ],
     'permissions_map' => [

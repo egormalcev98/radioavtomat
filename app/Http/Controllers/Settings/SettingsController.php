@@ -13,7 +13,7 @@ class SettingsController extends Controller
     public function __construct(Service $service) {
 		$this->service = $service;
 		
-		$this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index']]);
+		// $this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index']]);
         $this->middleware('permission:update_' . $this->service->permissionKey, ['only' => ['update']]);
 		
 		view()->share('permissionKey', $this->service->permissionKey);
@@ -26,6 +26,14 @@ class SettingsController extends Controller
      */
     public function index()
     {
+		if(!auth()->user()->can('view_' . $this->service->permissionKey)){
+			if(auth()->user()->can('view_user')) {
+				return redirect()->route('users.index');
+			}
+			
+			return abort(403);
+		}
+		
         $with = $this->service->outputData();
 		
         return view($this->service->templatePath . $this->service->templateForm)->with($with);

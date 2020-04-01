@@ -56,8 +56,10 @@ class UserService extends BaseService
 	public function outputData()
 	{
 		$routeName = $this->routeName;
+		$roles = Role::withoutAdmin()->get();
+		$structuralUnits = StructuralUnit::orderedGet();
 		
-		return compact('routeName');
+		return compact('routeName', 'roles', 'structuralUnits');
 	}
 	
 	/**
@@ -137,6 +139,18 @@ class UserService extends BaseService
 		$query = $this->model
 					->select( $select )
 					->with(['structuralUnit', 'roles', 'status']);
+		
+		// Фильтры
+		
+		if (request()->has('role') and request()->role) {
+			$query->whereRoleIs(request()->role);
+		}
+		
+		if (request()->has('structural_unit') and request()->structural_unit) {
+			$query->where('structural_unit_id', request()->structural_unit);
+		}
+		
+		//////////////////
 		
 		return Datatables::of($query)
 				->addColumn('action', function ($element){
@@ -271,6 +285,8 @@ class UserService extends BaseService
 		$this->model
 			 ->permissions()
 			 ->sync($arrSync);
+		
+		$this->model->flushCache();
 		
 		return true;
 	}
