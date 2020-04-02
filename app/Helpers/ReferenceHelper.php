@@ -49,4 +49,15 @@ trait ReferenceHelper
 	{
 		return route($routeName . '.index');
 	}
+	
+	/**
+     * Успешный ответ сервера на ajax-запрос
+     */
+	public function ajaxSuccessResponse()
+	{
+		return response()->json([
+			'status' => 'success',
+		]);
+	}
+	
 }

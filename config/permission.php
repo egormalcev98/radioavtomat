@@ -31,6 +31,11 @@ return [
 			'lang_title' => 'users.index.title',
 			'dependent' => [],
 		],
+		[
+			'name' => 'references',
+			'lang_title' => 'adminlte::menu.references',
+			'dependent' => [],
+		],
     ],
 
 ];

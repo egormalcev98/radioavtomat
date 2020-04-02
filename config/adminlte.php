@@ -228,7 +228,10 @@ return [
                 [
 					'text'      	=> 'document_types',
 					'route' 		=> 'document_types.index',
-					// 'active'		=> ['document_types', 'document_types/*'],
+                ],
+                [
+					'text'      	=> 'incoming_doc_statuses',
+					'route' 		=> 'incoming_doc_statuses.index',
                 ],
 			],
         ],

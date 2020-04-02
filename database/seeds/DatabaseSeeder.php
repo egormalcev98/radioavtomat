@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UserStatusesTableSeeder::class);
         $this->call(StructuralUnitsTableSeeder::class);
         $this->call(DocumentTypeSeeder::class);
+        $this->call(IncomingDocStatusSeeder::class);
     }
 }

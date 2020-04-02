@@ -34,5 +34,10 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::patch('users/permissions_save/{user}', 'Settings\UserController@permissionsSave')->name('users.permissions_save');
 	
 	//Справочники
-	Route::resource('document_types', 'References\DocumentTypeController');
+	Route::resource('document_types', 'References\DocumentTypeController')->except([
+		'show', 'edit'
+	]);
+	Route::resource('incoming_doc_statuses', 'References\IncomingDocStatusController')->except([
+		'show', 'edit'
+	]);
 });

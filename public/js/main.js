@@ -15,15 +15,15 @@ $(document).ready(function(){
 	
 });
 
-var Main = {
+let Main = {
 	
 	autocompleteLanguageConfig: {
 		errorLoading: function () {
 			return 'Результат не может быть загружен.';
 		},
 		inputTooLong: function (args) {
-			var overChars = args.input.length - args.maximum;
-			var message = 'Пожалуйста, удалите ' + overChars + ' символ';
+			let overChars = args.input.length - args.maximum;
+			let message = 'Пожалуйста, удалите ' + overChars + ' символ';
 			if (overChars >= 2 && overChars <= 4) {
 				message += 'а';
 			} else if (overChars >= 5) {
@@ -32,9 +32,9 @@ var Main = {
 			return message;
 		},
 		inputTooShort: function (args) {
-			var remainingChars = args.minimum - args.input.length;
+			let remainingChars = args.minimum - args.input.length;
 
-			var message = 'Пожалуйста, введите ' + remainingChars + ' или более символов';
+			let message = 'Пожалуйста, введите ' + remainingChars + ' или более символов';
 
 			return message;
 		},
@@ -42,7 +42,7 @@ var Main = {
 			return 'Загружаем ещё ресурсы…';
 		},
 		maximumSelected: function (args) {
-			var message = 'Вы можете выбрать ' + args.maximum + ' элемент';
+			let message = 'Вы можете выбрать ' + args.maximum + ' элемент';
 
 			if (args.maximum  >= 2 && args.maximum <= 4) {
 				message += 'а';
@@ -63,7 +63,7 @@ var Main = {
 	
 	ajaxRequest: function(typeRequest, urlRequest, dataRequest, successFunction, errorFunction, returnFunction){
 		if(typeRequest && urlRequest && typeof dataRequest == 'object' && successFunction){
-			var request = $.ajax({
+			let request = $.ajax({
 				type   		: typeRequest,
 				url    		: urlRequest,
 				cache  		: false,
@@ -84,7 +84,7 @@ var Main = {
 	modalWithInformation: null,
 	
 	popUp: function(text, title){
-		var thisGeneral = this;
+		let thisGeneral = this;
 		
 		if(text){
 			
@@ -117,7 +117,7 @@ var Main = {
 	modalWithConfirm: null,
 	
 	modalConfirm: function(text, action){
-		var thisGeneral = this;
+		let thisGeneral = this;
 		
 		if(text && action){
 			
@@ -183,7 +183,7 @@ var Main = {
 			};
 			
 			if(elementName === undefined || elementName === null){
-				Main.destroyElement();
+				thisGeneral.destroyElement();
 			} else {
 				thisGeneral.modalConfirm('Вы действительно хотите удалить запись с наименованием "' + elementName + '"?', 'Main.destroyElement();');
 			}
@@ -201,4 +201,246 @@ var Main = {
 		table.draw();
 		e.preventDefault();
 	},
+	
+	buttonLoading: function(selectorButton){
+		if(selectorButton){
+			selectorButton.attr('data-loading-text', selectorButton.text());
+			selectorButton.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Выполняем...');
+		}
+		
+		return true;
+	},
+	
+	buttonReset: function(selectorButton){
+		if(selectorButton){
+			selectorButton.text(selectorButton.data('loading-text'));
+			selectorButton.removeAttr('data-loading-text');
+		}
+		
+		return true;
+	},
+	
+	sendFormData: function(event, selectorForm, successEvent, formData){
+		if(event && selectorForm && successEvent){
+			event.preventDefault();
+			
+			let thisGeneral = this,
+				selectorButton = selectorForm.find('button[type="submit"]');
+				
+			let errorHandle = function(jqXHR, textStatus, errorThrown ){
+				let data = jqXHR.responseJSON;
+				
+				if(data['errors'] && data['message']){
+					thisGeneral.displayAllErrors(data['errors'], selectorForm);
+				} else {
+					thisGeneral.outputValidatorError('Произошла ошибка, попробуйте еще раз', selectorForm);
+				}
+				
+				thisGeneral.buttonReset(selectorButton);
+			};
+			
+			let successHandle = function(arrayData){
+				successEvent(arrayData);
+				thisGeneral.buttonReset(selectorButton);
+			};
+			
+			if(!formData) {
+				formData = new FormData(selectorForm[0]);
+			}
+			
+			thisGeneral.buttonLoading(selectorButton);
+			
+			thisGeneral.ajaxRequest('POST', selectorForm.attr('action'), formData, successHandle, errorHandle);
+			
+			return true;
+		}
+		return false;
+	},
+	
+	outputValidatorError: function(error, selectorBlock){
+		if(selectorBlock){
+			this.collectMessageBlock(error, selectorBlock, 'danger');
+			
+			return true;
+		}
+		
+		return false;
+	},
+	
+	displayAllErrors: function(dataErrors, selectorBlock){
+		if(selectorBlock){
+			if(dataErrors) {
+				$.each(dataErrors, function(name, msgData){
+					let formElement = selectorBlock.find('[name=' + name + ']');
+					
+					if(!formElement.hasClass('is-invalid')) {
+						formElement.addClass('is-invalid');
+						formElement.after('\
+							<div class="invalid-feedback">\
+								' + msgData[0] + '\
+							</div>\
+						');
+					}
+				});
+			} else {
+				let errorElements = selectorBlock.find('.is-invalid');
+				
+				$.each(errorElements, function(key, elem){
+					let formElement = $(this);
+					
+					formElement.removeClass('is-invalid');
+					formElement.next('.invalid-feedback').remove();
+				});
+			}
+			
+			return true;
+		}
+		
+		return false;
+	},
+	
+	outputMsgSuccess: function(msg, selectorBlock){
+		if(selectorBlock){
+			this.collectMessageBlock(msg, selectorBlock, 'success');
+			
+			return true;
+		}
+		
+		return false;
+	},
+	
+	collectMessageBlock: function(msg, selectorBlock, classBlock){
+		if(selectorBlock && classBlock){
+			
+			let html = '<div class="col-12">\
+							<div class="alert alert-' + classBlock + ' alert-important row">\
+								<p>' + msg + '</p>\
+							</div>\
+						</div>';
+			
+			selectorBlock.find('.alert-' + classBlock)/*.parent('div')*/.remove();
+			
+			if(msg){
+				if(selectorBlock.find('.modal-body').html()){
+					selectorBlock.find('.modal-body').append(html);
+				} else {
+					selectorBlock.prepend(html);
+				}
+			}
+			
+			return true;
+		}
+		
+		return false;
+	},
+	
+	clearAllMessages: function(selectorBlock){
+		if(selectorBlock){
+			this.outputValidatorError(null, selectorBlock);
+			
+			this.displayAllErrors(null, selectorBlock);
+			
+			this.outputMsgSuccess(null, selectorBlock);
+			
+			return true;
+		}
+		
+		return false;
+	},
+	
+	methodFormReferences: 'POST',
+	
+	sendFormDataReferences: function(event, selectorForm, table){
+		if(event && selectorForm){
+			let thisGeneral = this;
+			
+			if(!table){
+				table = window.LaravelDataTables["dtListElements"];
+			}
+			
+			let successEvent = function(arrayData){
+				if(arrayData['status'] && arrayData['status'] == 'success'){
+					selectorForm.parents('.modal').modal('hide');
+					
+					table.ajax.reload( null, false );
+					
+					thisGeneral.clearAllMessages(selectorForm);
+				} else {
+					thisGeneral.outputValidatorError('Произошла ошибка при сохранении', selectorForm);
+				}
+			};
+			
+			formData = new FormData(selectorForm[0]);
+			
+			formData.append('_method', thisGeneral.methodFormReferences);
+			
+			thisGeneral.sendFormData(event, selectorForm, successEvent, formData);
+			
+			return true;
+		}
+		return false;
+	},
+	
+	resetModalValues: function(modalElement){
+		var thisGeneral = this,
+			formS = modalElement.find('form');
+
+		$.each(formS.find('select'), function( key, selData ) {
+			var selector = $(selData);
+
+			selector.val(selector.find('option').first().val());
+		});
+
+		formS.find('input:not([type=hidden])').val('');
+
+		return true;
+	},
+
+	createModalReferences: function(actionUrl, modalSelector){
+		if(actionUrl){
+			let thisGeneral = this,
+				modalElement = $(modalSelector);
+			
+			thisGeneral.methodFormReferences = 'POST';
+			
+			modalElement.find('form').attr('action', actionUrl);
+			
+			thisGeneral.resetModalValues(modalElement);
+			
+			modalElement.modal('show');
+			
+			return true;
+		}
+		return false;
+	},
+	
+	getDataModalReferences: function(thisSelector, actionUrl, modalSelector, table){
+		if(thisSelector && actionUrl && modalSelector){
+			let thisGeneral = this,
+				tr = thisSelector.parents('tr'),
+				modalElement = $(modalSelector);
+			
+			if(!table){
+				table = window.LaravelDataTables["dtListElements"];
+			}
+			
+			data = table.row(tr).data();
+			
+			if(data) {
+				thisGeneral.methodFormReferences = 'PATCH';
+				
+				modalElement.find('form').attr('action', actionUrl);
+				
+				$.each(data, function( key, value ) {
+					modalElement.find('[name=' + key + ']').val(value);
+				});
+				
+				modalElement.modal('show');
+			}
+			
+			return true;
+		}
+		return false;
+	},
+	
 }

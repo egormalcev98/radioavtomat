@@ -64,6 +64,24 @@ class Controller extends BaseController
     }
 	
     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    protected function ajaxStoreElement($request)
+    {
+        if ($request->ajax()) {
+			
+			$this->service->store($request);
+			
+			return $this->ajaxSuccessResponse();
+		}
+		
+		return abort(403);
+    }
+	
+    /**
      * Display the specified resource.
      *
      * @return \Illuminate\Http\Response
@@ -110,15 +128,36 @@ class Controller extends BaseController
     }
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected function ajaxUpdateElement($request, $element)
+    {
+		if ($request->ajax()) {
+			$this->service->model = $element;
+			$this->service->update($request);
+			
+			return $this->ajaxSuccessResponse();
+		}
+		
+		return abort(403);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @return \Illuminate\Http\Response
      */
     protected function destroyElement($element)
     {
-		$this->service->model = $element;
-        $this->service->removeElement();
+		if (request()->ajax()) {
+			$this->service->model = $element;
+			$this->service->removeElement();
+			
+			return $this->serverResponseDestroy();
+		}
 		
-        return $this->serverResponseDestroy();
+		return abort(403);
     }
 }

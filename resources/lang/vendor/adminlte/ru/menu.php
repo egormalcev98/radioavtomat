@@ -20,4 +20,5 @@ return [
 	'settings'						=> 'Настройки',
 	'references'					=> 'Справочники',
 	'document_types'				=> 'Виды документов',
+	'incoming_doc_statuses'			=> 'Статусы входящих док-ов',
 ];

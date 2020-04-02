@@ -12,7 +12,7 @@ class DocumentTypeSeeder extends Seeder
      */
     public function run()
     {
-		if(!DocumentType::first()){
+		if(!DocumentType::withoutGlobalScopes()->first()){
 			
 			DocumentType::create([
 				'name' => 'Письмо',

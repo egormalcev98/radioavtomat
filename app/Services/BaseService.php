@@ -8,7 +8,7 @@ use Yajra\DataTables\Html\Builder as BuilderDT;
 class BaseService
 {
 
-	protected $model;
+	public $model;
 	protected $translation;
 	
 	/**
@@ -61,22 +61,34 @@ class BaseService
 	{
 		return app(BuilderDT::class)
 				->language(config('datatables.lang'))
+				->orders([0, 'desc'])
 				->pageLength(25)
 				->ajaxWithForm('', $selectorForm)
 				->columns( $this->tableColumns() );
 	}
 	
+	/**
+	 * Сформируем колонку "Действие" для DataTable
+	 */
+	protected function actionColumnDT()
+	{
+		return function ($element){
+			$routeName = $this->routeName;
+			
+			return view('crm.action_buttons', compact('element', 'routeName'));
+		};
+	}
+	
+	/**
+	 * Собираем запрос и формируем коллекцию DT
+	 */
 	protected function constructDataTableQuery()
 	{
 		$query = $this->model
 					->select( $this->columnsToSelect( $this->tableColumns() ) );
 		
 		return Datatables::of($query)
-				->addColumn('action', function ($element){
-					$routeName = $this->routeName;
-					
-					return view('crm.action_buttons', compact('element', 'routeName'));
-				});
+				->addColumn('action', $this->actionColumnDT());
 	}
 	
 	/**
