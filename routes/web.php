@@ -40,4 +40,35 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('incoming_doc_statuses', 'References\IncomingDocStatusController')->except([
 		'show', 'edit'
 	]);
+	Route::resource('outgoing_doc_statuses', 'References\OutgoingDocStatusController')->except([
+		'show', 'edit'
+	]);
+	Route::resource('employee_tasks', 'References\EmployeeTaskController')->except([
+		'show', 'edit'
+	]);
+	Route::resource('letter_forms', 'References\LetterFormController')->except([
+		'show', 'edit'
+	]);
+	Route::resource('task_statuses', 'References\TaskStatusController')->except([
+		'show', 'edit'
+	]);
+	Route::resource('event_types', 'References\EventTypeController')->except([
+		'show', 'edit'
+	]);
+	Route::resource('category_notes', 'References\CategoryNoteController')->except([
+		'show', 'edit'
+	]);
+	Route::resource('status_notes', 'References\StatusNoteController')->except([
+		'show', 'edit'
+	]);
+	Route::resource('user_statuses', 'References\UserStatusController')->only([
+		'index', 'update'
+	]);
+	Route::resource('structural_units', 'References\StructuralUnitController')->only([
+		'index', 'update'
+	]);
+	Route::resource('roles', 'References\RoleController')->only([
+		'index', 'update'
+	]);
+	
 });

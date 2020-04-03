@@ -30,7 +30,7 @@
 	</div>
 @stop
 
-@if(isset($createLink) and auth()->user()->can('create_' . $permissionKey))
+@if(auth()->user()->can('create_' . $permissionKey))
 	@section('modal')
 		@section('modal_title', 'Данные')
 		@section('modal_id', 'modal_element')

@@ -12,64 +12,66 @@ class StructuralUnitsTableSeeder extends Seeder
      */
     public function run()
     {
-        StructuralUnit::firstOrCreate([
-            'name' => 'Руководящий состав',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Техническая служба',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Лаборатория спецпроверок',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Служба безопасности',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Отдел кадров',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Бухгалтерия',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Планово-экономический отдел',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Юридическая служба',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Служба качества',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Научно-технический центр',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Коммерческая служба',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Отдел специальных проектов',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Центр сервисного обслуживания',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'Испытательная лаборатория',
-        ]);
-		
-        StructuralUnit::firstOrCreate([
-            'name' => 'ПРЕДСТАВИТЕЛЬСТВО в г. Санкт-Петербург',
-        ]);
+		if(!StructuralUnit::withoutGlobalScopes()->first()){
+			StructuralUnit::create([
+				'name' => 'Руководящий состав',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Техническая служба',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Лаборатория спецпроверок',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Служба безопасности',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Отдел кадров',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Бухгалтерия',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Планово-экономический отдел',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Юридическая служба',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Служба качества',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Научно-технический центр',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Коммерческая служба',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Отдел специальных проектов',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Центр сервисного обслуживания',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'Испытательная лаборатория',
+			]);
+			
+			StructuralUnit::create([
+				'name' => 'ПРЕДСТАВИТЕЛЬСТВО в г. Санкт-Петербург',
+			]);
+		}
     }
 }

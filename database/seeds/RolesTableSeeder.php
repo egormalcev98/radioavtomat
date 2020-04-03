@@ -12,7 +12,7 @@ class RolesTableSeeder extends Seeder
      */
     public function run()
     {
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'admin',
         ], [
             'display_name' => 'Администратор',
@@ -20,7 +20,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'general_manager',
         ], [
             'display_name' => 'Генеральный директор',
@@ -28,7 +28,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'deputy_gen_man_quality',
         ], [
             'display_name' => 'Заместитель генерального директора по качеству',
@@ -36,7 +36,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'deputy_gen_man_adm',
         ], [
             'display_name' => 'Заместитель генерального директора по административно-хозяйственной деятельности',
@@ -44,7 +44,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'first_deputy_gen_man',
         ], [
             'display_name' => 'Первый заместитель генерального директора',
@@ -52,7 +52,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'technical_director',
         ], [
             'display_name' => 'Технический директор',
@@ -60,7 +60,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'commercial_director',
         ], [
             'display_name' => 'Коммерческий директор',
@@ -68,7 +68,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'deputy_gen_man_spec',
         ], [
             'display_name' => 'Заместитель генерального директора по специальным проектам',
@@ -76,7 +76,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'deputy_gen_man_security',
         ], [
             'display_name' => 'Заместитель генерального директора по безопасности',
@@ -84,7 +84,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'deputy_gen_man_industry',
         ], [
             'display_name' => 'Заместитель генерального директора по производству и технической деятельности',
@@ -92,7 +92,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'metrolog',
         ], [
             'display_name' => 'Метролог',
@@ -100,7 +100,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_special_laboratory',
         ], [
             'display_name' => 'Начальник лаборатории спецпроверок',
@@ -108,7 +108,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'leading_eng_special_laboratory',
         ], [
             'display_name' => 'Ведущий инженер лаборатории спецпроверок',
@@ -116,7 +116,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'junior_specialist',
         ], [
             'display_name' => 'Младший специалист',
@@ -124,7 +124,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_human_resources',
         ], [
             'display_name' => 'Руководитель отдела кадров',
@@ -132,7 +132,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'accountant',
         ], [
             'display_name' => 'Бухгалтер',
@@ -140,7 +140,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'deputy_accountant',
         ], [
             'display_name' => 'Заместитель главного бухгалтера',
@@ -148,7 +148,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'chief_accountant',
         ], [
             'display_name' => 'Главный бухгалтер',
@@ -156,7 +156,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'lead_accountant',
         ], [
             'display_name' => 'Ведущий бухгалтер',
@@ -164,7 +164,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'economist',
         ], [
             'display_name' => 'Экономист',
@@ -172,7 +172,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_economist',
         ], [
             'display_name' => 'Руководитель планово-экономического отдела',
@@ -180,7 +180,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'deputy_head_economist',
         ], [
             'display_name' => 'Заместитель руководителя планово-экономического отдела',
@@ -188,7 +188,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'lawyer',
         ], [
             'display_name' => 'Юрист',
@@ -196,7 +196,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_lawyer',
         ], [
             'display_name' => 'Руководитель юридической службы',
@@ -204,7 +204,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'lead_lawyer',
         ], [
             'display_name' => 'Ведущий юрист',
@@ -212,7 +212,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'incoming_inspection_technician',
         ], [
             'display_name' => 'Техник входного контроля',
@@ -220,7 +220,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'technical_documentation_engineer',
         ], [
             'display_name' => 'Инженер по технической документации',
@@ -228,7 +228,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'quality_manager',
         ], [
             'display_name' => 'Руководитель службы качества',
@@ -236,7 +236,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'regulatory_specialist',
         ], [
             'display_name' => 'Специалист по нормоконтролю',
@@ -244,7 +244,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'process_control_specialist',
         ], [
             'display_name' => 'Специалист по технологическому контролю',
@@ -252,7 +252,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'control',
         ], [
             'display_name' => 'Контролер',
@@ -260,7 +260,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'occupational_safety_engineer',
         ], [
             'display_name' => 'Инженер по охране труда',
@@ -268,7 +268,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'civil_defens_engineer',
         ], [
             'display_name' => 'Инженер по гражданской обороне и чрезвычайным ситуациям',
@@ -276,7 +276,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_information_technology',
         ], [
             'display_name' => 'Руководитель службы информационных технологий («Администратор» системы)',
@@ -284,7 +284,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'system_administrator_assistant',
         ], [
             'display_name' => 'Помощник системного администратора',
@@ -292,7 +292,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_technical_center',
         ], [
             'display_name' => 'Начальник научно-технического центра',
@@ -300,7 +300,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'deputy_head_technical_center',
         ], [
             'display_name' => 'Заместитель начальника научно-технического центра',
@@ -308,7 +308,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'design_engineer',
         ], [
             'display_name' => 'Инженер-конструктор',
@@ -316,7 +316,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'lead_design_engineer',
         ], [
             'display_name' => 'Ведущий инженер-конструктор',
@@ -324,7 +324,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_design_engineer',
         ], [
             'display_name' => 'Старший инженер-конструктор',
@@ -332,7 +332,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_commercial_services',
         ], [
             'display_name' => 'Руководитель коммерческой службы',
@@ -340,7 +340,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'tender_manager',
         ], [
             'display_name' => 'Менеджер по тендерам',
@@ -348,7 +348,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'contract_manager',
         ], [
             'display_name' => 'Менеджер по договорной работе',
@@ -356,7 +356,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'lead_contract_manager',
         ], [
             'display_name' => 'Ведущий менеджер по договорной работе',
@@ -364,7 +364,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_contract',
         ], [
             'display_name' => 'Руководитель договорного отдела',
@@ -372,7 +372,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'purchasing_manager',
         ], [
             'display_name' => 'Менеджер по закупкам',
@@ -380,7 +380,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_rocurement_department',
         ], [
             'display_name' => 'Руководитель отдела снабжения',
@@ -388,7 +388,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'technical_specialist',
         ], [
             'display_name' => 'Технический специалист',
@@ -396,7 +396,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'storekeeper',
         ], [
             'display_name' => 'Кладовщик',
@@ -404,7 +404,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_storekeeper',
         ], [
             'display_name' => 'Начальник склада',
@@ -412,7 +412,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_special_projects',
         ], [
             'display_name' => 'Руководитель отдела специальных проектов',
@@ -420,7 +420,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_service_center',
         ], [
             'display_name' => 'Начальник центра сервисного обслуживания',
@@ -428,7 +428,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'deputy_head_service_center',
         ], [
             'display_name' => 'Заместитель начальника центра сервисного обслуживания',
@@ -436,7 +436,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_testing_laboratory',
         ], [
             'display_name' => 'Начальник испытательной лаборатории',
@@ -444,7 +444,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'deputy_head_testing_laboratory',
         ], [
             'display_name' => 'Заместитель начальника испытательной лаборатории',
@@ -452,15 +452,15 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
-            'name' => 'technical_documentation_engineer',
-        ], [
-            'display_name' => 'Инженер по технической документации',
-            'description' => '',
-			'without_destroy' => 1,
-		]);
+        // Role::firstOrCreate([
+            // 'name' => 'technical_documentation_engineer',
+        // ], [
+            // 'display_name' => 'Инженер по технической документации',
+            // 'description' => '',
+			// 'without_destroy' => 1,
+		// ]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_technical_documentation',
         ], [
             'display_name' => 'Начальник службы технической документации',
@@ -468,7 +468,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'engineer',
         ], [
             'display_name' => 'Инженер',
@@ -476,7 +476,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_incoming_control',
         ], [
             'display_name' => 'Начальник отдела входного контроля',
@@ -484,7 +484,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'technician',
         ], [
             'display_name' => 'Техник',
@@ -492,7 +492,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_parametric_control',
         ], [
             'display_name' => 'Начальник отдела параметрического контроля',
@@ -500,7 +500,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'microwave_component_engineer',
         ], [
             'display_name' => 'Инженер-испытатель СВЧ компонентов',
@@ -508,7 +508,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_test_site',
         ], [
             'display_name' => 'Начальник испытательного участка',
@@ -516,7 +516,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_tooling_development',
         ], [
             'display_name' => 'Начальник отдела разработки технологической оснастки',
@@ -524,7 +524,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'head_branch',
         ], [
             'display_name' => 'Руководитель представительства',
@@ -532,7 +532,7 @@ class RolesTableSeeder extends Seeder
 			'without_destroy' => 1,
 		]);
 		
-        Role::updateOrCreate([
+        Role::firstOrCreate([
             'name' => 'sales_manager',
         ], [
             'display_name' => 'Менеджер по продажам',

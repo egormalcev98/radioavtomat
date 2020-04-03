@@ -233,6 +233,46 @@ return [
 					'text'      	=> 'incoming_doc_statuses',
 					'route' 		=> 'incoming_doc_statuses.index',
                 ],
+                [
+					'text'      	=> 'outgoing_doc_statuses',
+					'route' 		=> 'outgoing_doc_statuses.index',
+                ],
+                [
+					'text'      	=> 'employee_tasks',
+					'route' 		=> 'employee_tasks.index',
+                ],
+                [
+					'text'      	=> 'letter_forms',
+					'route' 		=> 'letter_forms.index',
+                ],
+                [
+					'text'      	=> 'task_statuses',
+					'route' 		=> 'task_statuses.index',
+                ],
+                [
+					'text'      	=> 'event_types',
+					'route' 		=> 'event_types.index',
+                ],
+                [
+					'text'      	=> 'category_notes',
+					'route' 		=> 'category_notes.index',
+                ],
+                [
+					'text'      	=> 'status_notes',
+					'route' 		=> 'status_notes.index',
+                ],
+                [
+					'text'      	=> 'user_statuses',
+					'route' 		=> 'user_statuses.index',
+                ],
+                [
+					'text'      	=> 'structural_units',
+					'route' 		=> 'structural_units.index',
+                ],
+                [
+					'text'      	=> 'roles',
+					'route' 		=> 'roles.index',
+                ],
 			],
         ],
     ],

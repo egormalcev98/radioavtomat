@@ -35,11 +35,112 @@ return [
 	
 	'incoming_doc_statuses' => [
 		'index' => [
-			'title' => __('adminlte::menu.incoming_doc_statuses')
+			'title' => 'Статусы входящих документов'
 		],
 		'list_columns' => [
 			'id' => 'ID', 
 			'name' => 'Название',
 		]
 	],
+	
+	'outgoing_doc_statuses' => [
+		'index' => [
+			'title' => 'Статусы исходящих документов'
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'name' => 'Название',
+		]
+	],
+	
+	'employee_tasks' => [
+		'index' => [
+			'title' => __('adminlte::menu.employee_tasks')
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'name' => 'Название',
+		]
+	],
+	
+	'letter_forms' => [
+		'index' => [
+			'title' => __('adminlte::menu.letter_forms')
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'name' => 'Название',
+		]
+	],
+	
+	'task_statuses' => [
+		'index' => [
+			'title' => __('adminlte::menu.task_statuses')
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'name' => 'Название',
+		]
+	],
+	
+	'event_types' => [
+		'index' => [
+			'title' => __('adminlte::menu.event_types')
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'name' => 'Название',
+		]
+	],
+	
+	'category_notes' => [
+		'index' => [
+			'title' => 'Категории служебных записок'
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'name' => 'Название',
+		]
+	],
+	
+	'status_notes' => [
+		'index' => [
+			'title' => 'Статусы служебных записок'
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'name' => 'Название',
+		]
+	],
+	
+	'user_statuses' => [
+		'index' => [
+			'title' => __('adminlte::menu.user_statuses')
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'name' => 'Название',
+		]
+	],
+	
+	'structural_units' => [
+		'index' => [
+			'title' => 'Структурные подразделения'
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'name' => 'Название',
+		]
+	],
+	
+	'roles' => [
+		'index' => [
+			'title' =>  __('adminlte::menu.roles')
+		],
+		'list_columns' => [
+			'id' => 'ID', 
+			'display_name' => 'Название',
+		]
+	],
+	
 ];

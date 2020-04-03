@@ -12,12 +12,14 @@ class UserStatusesTableSeeder extends Seeder
      */
     public function run()
     {
-        UserStatus::firstOrCreate([
-            'name' => 'Активен',
-        ]);
-		
-        UserStatus::firstOrCreate([
-            'name' => 'Неактивен',
-        ]);
+		if(!UserStatus::withoutGlobalScopes()->first()){
+			UserStatus::create([
+				'name' => 'Активен',
+			]);
+			
+			UserStatus::create([
+				'name' => 'Неактивен',
+			]);
+		}
     }
 }
