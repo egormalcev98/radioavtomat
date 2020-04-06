@@ -33,6 +33,9 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('users/{user}/permissions', 'Settings\UserController@permissions')->name('users.permissions');
 	Route::patch('users/permissions_save/{user}', 'Settings\UserController@permissionsSave')->name('users.permissions_save');
 	
+	//Журнал регистрации входящих документов
+	Route::resource('incoming_documents', 'IncomingDocuments\IncomingDocumentController');
+	
 	//Справочники
 	Route::resource('document_types', 'References\DocumentTypeController')->except([
 		'show', 'edit'

@@ -209,6 +209,15 @@ return [
 
     'menu' => [
         [
+            'text'      	=> 'incoming_documents',
+            'route' 		=> 'incoming_documents.index',
+			'active'		=> ['incoming_documents', 'incoming_documents/*'],
+            'icon'        	=> 'fas fa-file-download',
+			'permission'	=> [
+				'view_incoming_document'
+			]
+        ],
+        [
             'text'      	=> 'settings',
             'route' 		=> 'settings.index',
 			'active'		=> ['settings', 'settings/*', 'users', 'users/*'],

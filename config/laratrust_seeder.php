@@ -8,6 +8,7 @@ return [
             'settings' => 'c,r,u,d,v',
             'user' => 'c,r,u,d,v',
             'references' => 'c,r,u,d,v',
+            'incoming_document' => 'c,r,u,d,v',
         ],
     ],
     'permissions_map' => [
