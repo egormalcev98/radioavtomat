@@ -136,7 +136,8 @@ class BaseService
 	 */
 	public function elementData() 
 	{
-		$element = $this->model;
+		if(is_object($this->model) === false)
+			$element = $this->model;
 		
 		return compact('element');
 	}

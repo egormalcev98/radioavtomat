@@ -5,28 +5,22 @@ namespace App\Http\Controllers\IncomingDocuments;
 use App\Http\Controllers\Controller;
 use App\Models\IncomingDocuments\IncomingDocument;
 use Illuminate\Http\Request;
+use App\Services\IncomingDocuments\IncomingDocumentService as Service;
+use App\Http\Requests\IncomingDocuments\CheckNumberRequest;
 
 class IncomingDocumentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+    public function __construct(Service $service) {
+		$this->service = $service;
+		
+		// $this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index', 'show']]);
+        // $this->middleware('permission:create_' . $this->service->permissionKey, ['only' => ['create', 'store']]);
+        // $this->middleware('permission:update_' . $this->service->permissionKey, ['only' => ['update', 'permissionsSave']]);
+        // $this->middleware('permission:read_' . $this->service->permissionKey, ['only' => ['edit', 'permissions']]);
+        // $this->middleware('permission:delete_' . $this->service->permissionKey, ['only' => ['destroy']]);
+		
+		view()->share('permissionKey', $this->service->permissionKey);
+	}
 
     /**
      * Store a newly created resource in storage.
@@ -82,5 +76,18 @@ class IncomingDocumentController extends Controller
     public function destroy(IncomingDocument $incomingDocument)
     {
         //
+    }
+	
+    /**
+     * Проверка номера нового документа на существование в БД
+     */
+    public function checkNumber(CheckNumberRequest $request)
+    {
+        if ($request->ajax()) {
+			
+			return $this->ajaxSuccessResponse(__($this->service->translation . 'messages.check_number_success'));
+		}
+		
+		return abort(403);
     }
 }
