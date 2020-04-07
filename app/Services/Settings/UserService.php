@@ -11,19 +11,19 @@ use App\Models\References\UserStatus;
 use App\Models\References\StructuralUnit;
 
 class UserService extends BaseService
-{	
+{
 	public $templatePath = 'crm.settings.users.';
-	
+
 	public $templateForm = 'form';
-	
+
 	public $routeName = 'users';
-	
+
 	public $translation = 'users.';
-	
+
 	public $permissionKey = 'user';
-	
+
 	public $model;
-	
+
 	public function __construct()
     {
         parent::__construct(User::withoutGlobalScope('active')->withoutAdmin());
@@ -39,7 +39,7 @@ class UserService extends BaseService
 		],
 		'opened' => [
 			'title' => 'permissions.types.opened',
-			'map' => true, // в данном случае копируем карту доступов из конфига laratrust_seeder 
+			'map' => true, // в данном случае копируем карту доступов из конфига laratrust_seeder
 		],
 		'reading' => [
 			'title' => 'permissions.types.reading',
@@ -58,14 +58,14 @@ class UserService extends BaseService
 		$routeName = $this->routeName;
 		$roles = Role::withoutAdmin()->get();
 		$structuralUnits = StructuralUnit::orderedGet();
-		
+
 		return compact('routeName', 'roles', 'structuralUnits');
 	}
-	
+
 	/**
 	 * Возвращает список всех колонок для DataTable
 	 */
-	public function tableColumns() 
+	public function tableColumns()
 	{
 		return [
 			[
@@ -109,53 +109,53 @@ class UserService extends BaseService
 				'searchable' => false,
 				'orderable' => false,
 			],
-			
+
 			$this->actionButton()
 		];
 	}
-	
+
 	/**
 	 * Данные для работы с элементом
 	 */
-	public function elementData() 
+	public function elementData()
 	{
 		$user = $this->model;
 		$userStatuses = UserStatus::orderedGet();
 		$structuralUnits = StructuralUnit::orderedGet();
 		$roles = Role::withoutAdmin()->get();
-		
+
 		return compact('user', 'userStatuses', 'structuralUnits', 'roles');
 	}
-	
+
 	/**
 	 * Формирует данные для шаблона "Список элементов"
 	 */
 	public function dataTableData()
-	{	
+	{
 		$select = $this->columnsToSelect( $this->tableColumns() );
 		$select[] = 'name';
 		$select[] = 'middle_name';
-		
+
 		$query = $this->model
 					->select( $select )
 					->with(['structuralUnit', 'roles', 'status']);
-		
+
 		// Фильтры
-		
+
 		if (request()->has('role') and request()->role) {
 			$query->whereRoleIs(request()->role);
 		}
-		
+
 		if (request()->has('structural_unit') and request()->structural_unit) {
 			$query->where('structural_unit_id', request()->structural_unit);
 		}
-		
+
 		//////////////////
-		
+
 		return Datatables::of($query)
 				->addColumn('action', function ($element){
 					$routeName = $this->routeName;
-					
+
 					return view('crm.action_buttons', compact('element', 'routeName'));
 				})
 				->addColumn('showUrl', function ($element) {
@@ -169,70 +169,70 @@ class UserService extends BaseService
 				})
 				->make(true);
 	}
-	
+
 	/**
 	 * Создание записи в БД
 	 */
-	public function store($request) 
+	public function store($request)
 	{
 		$requestAll = $request->all();
-		
+
 		$this->model = $this->model->create($requestAll);
-		
+
 		$this->model->attachRole($requestAll['role']);
 		$this->model->save();
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Обновление записи в БД
 	 */
-	public function update($request) 
+	public function update($request)
 	{
 		$requestAll = $request->all();
-		
+
 		if(!$requestAll['password']){
 			unset($requestAll['password']);
 		}
-		
+
 		$this->model->roles()->sync([ $requestAll['role'] ]);
-		
+
 		$this->model->update($requestAll);
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Данные по разрешениям для элемента
 	 */
-	public function userPermissionsData() 
+	public function userPermissionsData()
 	{
 		$user = $this->model;
-		
+
 		$permissionModules = config('permission.modules');
 		$permissionTypes = $this->permissionTypes;
-		
+
 		$userPermissions = $this->model->permissions;
 		$laratrustSeeder = config('laratrust_seeder');
 		$permissionMap = array_values($laratrustSeeder['permissions_map']);
-		
+
 		if(!empty($permissionModules) and !empty($userPermissions)) {
 			foreach($permissionModules as $key => $module) {
 				foreach($permissionTypes as $type => $typeData) {
 					if($typeData['map'] === true) {
 						$typeData['map'] = $this->collectSpecificPermissionsMap($module['name']);
 					}
-					
+
 					$permissions = $userPermissions->whereIn('name', $this->collectPermissionsMap($module['name'], $permissionMap))
 													->pluck('name')
 													->toArray();
-									
+
 					$typeData['map'] = $this->collectPermissionsMap($module['name'], $typeData['map']);
-					
+
 					sort($typeData['map']);
 					sort($permissions);
-					
+
 					if(implode("", $typeData['map']) == implode("", $permissions)) {
 						$permissionModules[$key]['list_types'] = $type;
 						// break;
@@ -240,10 +240,10 @@ class UserService extends BaseService
 				}
 			}
 		}
-		
+
 		return compact('user', 'permissionModules', 'permissionTypes');
 	}
-	
+
 	/**
      * Метод создания или обновления разрешений роли
      */
@@ -251,56 +251,56 @@ class UserService extends BaseService
 	{
 		$requestAll = $request->all();
 		$arrSync = [];
-			
+
 		if(!empty($requestAll['permission_modules'])) {
 			$permissionModules = config('permission.modules');
 			$permissionTypes = $this->permissionTypes;
-			
+
 			foreach($permissionModules as $module) {
 				if(isset($requestAll['permission_modules'][$module['name']])) {
 					$type = $requestAll['permission_modules'][$module['name']];
-					
+
 					if(isset($permissionTypes[$type]) and !empty($permissionTypes[$type]['map'])) {
-						
+
 						if($permissionTypes[$type]['map'] === true) {
 							$arrayPermissions = $this->collectSpecificPermissionsMap($module['name']);
 						} else {
 							$arrayPermissions = $permissionTypes[$type]['map'];
 						}
-						
+
 						$permissions = Permission::whereIn('name', $this->collectPermissionsMap($module['name'], $arrayPermissions))
 												->get()
 												->pluck('id')
 												->toArray();
-						
+
 						if(!empty($permissions)) {
 							$arrSync  = array_merge($arrSync, $permissions);
 						}
 					}
-					
+
 				}
 			}
 		}
-		
+
 		$this->model
 			 ->permissions()
 			 ->sync($arrSync);
-		
+
 		$this->model->flushCache();
-		
+
 		return true;
 	}
 
 	private function collectPermissionsMap($module, $permissionsMap)
 	{
 		$array = [];
-		
+
 		if(!empty($permissionsMap)) {
 			foreach($permissionsMap as $key => $permission) {
 				$array[$key] = $permission . '_' . $module;
 			}
 		}
-		
+
 		return $array;
 	}
 
@@ -309,22 +309,22 @@ class UserService extends BaseService
 		$permissionStructure = config('laratrust_seeder.permission_structure');
 		$permissionsMap = config('laratrust_seeder.permissions_map');
 		$array = [];
-		
+
 		if(!empty($permissionStructure)) {
 			foreach($permissionStructure as $permission) {
 				if(isset($permission[$module])) {
-					
+
 					$arrayMap = explode(",", $permission[$module]);
 					foreach($arrayMap as $permissionKey) {
 						if(isset($permissionsMap[trim($permissionKey)])) {
 							$array[$permissionsMap[trim($permissionKey)]] = $permissionsMap[trim($permissionKey)];
 						}
 					}
-					
+
 				}
 			}
 		}
-		
+
 		return $array;
 	}
 }

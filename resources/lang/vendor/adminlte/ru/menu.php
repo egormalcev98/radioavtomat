@@ -16,7 +16,7 @@ return [
     'important'                     => 'Важно',
     'warning'                       => 'Внимание',
     'information'                   => 'Информация',
-	
+
 	'settings'						=> 'Настройки',
 	'references'					=> 'Справочники',
 	'document_types'				=> 'Виды документов',
@@ -31,4 +31,8 @@ return [
 	'user_statuses'					=> 'Статусы пользователей',
 	'structural_units'				=> 'Структурные подразд-ия',
 	'roles'							=> 'Роли пользователей',
+
+    'documents'						=> 'Документы',
+    'incoming_documents'			=> 'Входящие',
+    'outgoing_documents'			=> 'Исходящие',
 ];

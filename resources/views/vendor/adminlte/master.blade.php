@@ -21,6 +21,8 @@
 	<!-- bootstrap datetimepicker -->
 	<link rel="stylesheet" href="{{ asset('/css/plugins/datetimepicker/bootstrap-datetimepicker.css') }}">
 --}}
+        <link rel="stylesheet" href="{{ asset('vendor/daterangepicker/daterangepicker.css') }}">
+
     @yield('adminlte_css_pre')
 
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
@@ -31,7 +33,7 @@
     @else
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
     @endif
-	
+
     @yield('meta_tags')
 
     @if(config('adminlte.use_ico_only'))
@@ -75,6 +77,10 @@
 <script src="{{ asset('/js/plugins/datetimepicker/bootstrap-datetimepicker.js') }}"></script>
 --}}
 
+<!-- DateRangePicker -->
+<script src="{{ asset('vendor\moment\moment-with-locales.js') }}"></script>
+<script src="{{ asset('vendor\daterangepicker\daterangepicker.js') }}"></script>
+
 @if(auth()->check())
 	<script>
 		// global app configuration object
@@ -82,10 +88,11 @@
 			token: '{!! csrf_token() !!}'
 		};
 	</script>
-	
+
 	<script src="{{ asset('/js/plugins/controlmodal/control-modal.js?78') }}"></script>
 	<script src="{{ asset('/js/plugins/masked/jquery.maskedinput.min.js') }}"></script>
 	<script src="{{ asset('/js/main.js?58910') }}"></script>
+	<script src="{{ asset('/js/date_range_picker.js') }}"></script>
 @endif
 
 @yield('adminlte_js')

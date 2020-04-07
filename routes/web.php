@@ -22,17 +22,17 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
 	Route::get('/home', 'HomeController@index')->name('home');
-	
+
 	//Настройки
 	Route::resource('settings', 'Settings\SettingsController')->only([
 		'index', 'update'
 	]);
-	
+
 	//Пользователи
 	Route::resource('users', 'Settings\UserController');
 	Route::get('users/{user}/permissions', 'Settings\UserController@permissions')->name('users.permissions');
 	Route::patch('users/permissions_save/{user}', 'Settings\UserController@permissionsSave')->name('users.permissions_save');
-	
+
 	//Справочники
 	Route::resource('document_types', 'References\DocumentTypeController')->except([
 		'show', 'edit'
@@ -70,5 +70,8 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('roles', 'References\RoleController')->only([
 		'index', 'update'
 	]);
-	
+
+    //Исходящие документы
+    Route::resource('outgoing_documents', 'OutgoingDocuments\OutgoingDocumentController');
+
 });
