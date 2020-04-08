@@ -8,6 +8,20 @@ use Carbon\Carbon;
 class OutgoingDocument extends BaseModel
 {
 
+    protected $fillable = [
+        'number',
+        'date',
+        'counterparty',
+        'document_type_id',
+        'from_user_id',
+        'note',
+        'outgoing_doc_status_id',
+        'letter_form_id',
+        'title',
+        'number_pages',
+        'incoming_letter_number',
+    ];
+
     public function getDateAttribute($data)
     {
         if($data) {
@@ -15,6 +29,11 @@ class OutgoingDocument extends BaseModel
         } else {
             return $data;
         }
+    }
+
+    public function setDateAttribute($date)
+    {
+        $this->attributes['date'] = Carbon::parse($date);
     }
 
     public function documentType()

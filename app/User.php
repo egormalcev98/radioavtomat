@@ -168,4 +168,10 @@ class User extends Authenticatable
             'name' => '',
         ]);
     }
+
+    public function scopeWithRoles($query, $name) {
+        return $query->whereHas('roles', function ($q) use($name) {
+            return $q->where('name', $name);
+        });
+    }
 }

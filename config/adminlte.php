@@ -209,6 +209,25 @@ return [
 
     'menu' => [
         [
+            'text'      	=> 'documents',
+            'icon'        	=> 'fas fa-envelope',
+            'submenu' => [
+                [
+                    'text'      	=> 'incoming_documents',
+                    'icon'        	=> 'fas fa-file-download',
+                ],
+                [
+                    'text'      	=> 'outgoing_documents',
+                    'icon'        	=> 'fas fa-file-upload',
+                    'route' 		=> 'outgoing_documents.index',
+                ],
+                [
+                    'text'      	=> 'history',
+                    'icon'        	=> 'fas fa-history',
+                ],
+            ],
+        ],
+        [
             'text'      	=> 'settings',
             'route' 		=> 'settings.index',
 			'active'		=> ['settings', 'settings/*', 'users', 'users/*'],

@@ -182,7 +182,7 @@ return [
         'hour'                  => 'Час',
         'minute'                => 'Минута',
         'second'                => 'Секунда',
-        'title'                 => 'Наименование',
+        'title'                 => 'Заголовок',
         'content'               => 'Контент',
         'description'           => 'Описание',
         'excerpt'               => 'Выдержка',
@@ -190,7 +190,7 @@ return [
         'time'                  => 'Время',
         'available'             => 'Доступно',
         'size'                  => 'Размер',
-		
+
 		'name_org'				=> 'Название организации',
 		'name_sys'				=> 'Название системы',
 		'logo_img'				=> 'Логотип при авторизации',
@@ -208,5 +208,7 @@ return [
 		'work_phone_number'		=> 'Телефон рабочий',
 		'additional'			=> 'Добавочный',
 		'birthday_at'			=> 'День рождения',
+		'letter_form_id'		=> 'Бланк письма',
+        'outgoing_doc_status_id'=> 'Статус документа',
     ],
 ];

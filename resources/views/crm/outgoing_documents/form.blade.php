@@ -12,20 +12,25 @@
         <div class="col-12">
             <!-- general form elements -->
             <div class="card card-primary">
-                <fieldset disabled="true">
+                <!-- form start -->
+                <form role="form" method="POST" action="{{ $action }}" >
+                    @csrf
+                    @if($method == 'edit')
+                        {{ method_field('PATCH') }}
+                    @endif
+
                     @include('crm.outgoing_documents.form_elements')
-                </fieldset>
+
+                    @include('crm.box_footer')
+
+                </form>
             </div>
             <!-- /.card -->
         </div>
     </div>
 @stop
 
-
 @section('js')
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('.select2').attr('disabled', true);
-        });
-    </script>
+    <script src="{{ asset('/js/outgoing_document.js') }}"></script>
 @stop
+

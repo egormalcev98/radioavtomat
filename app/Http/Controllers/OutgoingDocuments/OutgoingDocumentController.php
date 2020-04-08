@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\OutgoingDocuments;
 
 use App\Http\Controllers\Controller;
-//use App\Models\OutgoingDocuments\OutgoingDocument;
+use App\Http\Requests\OutgoingDocuments\StoreRequest;
+use App\Http\Requests\OutgoingDocuments\UpdateRequest;
 use App\Models\OutgoingDocuments\OutgoingDocument;
 use App\User;
 use Illuminate\Http\Request;
 use App\Services\OutgoingDocuments\OutgoingDocumentService as Service;
-
-//use App\Http\Requests\Settings\UpdateRequest;
 
 class OutgoingDocumentController extends Controller
 {
@@ -27,15 +26,29 @@ class OutgoingDocumentController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param OutgoingDocument $outgoingDocument
-     * @return \Illuminate\Http\Response
-     */
     public function show(OutgoingDocument $outgoingDocument)
     {
         return $this->showElement($outgoingDocument);
+    }
+
+    public function store(StoreRequest $request)
+    {
+        return $this->storeElement($request);
+    }
+
+    public function edit(OutgoingDocument $outgoingDocument)
+    {
+        return $this->editElement($outgoingDocument);
+    }
+
+    public function update(UpdateRequest $request, OutgoingDocument $outgoingDocument)
+    {
+        return $this->updateElement($request, $outgoingDocument);
+    }
+
+    public function destroy(OutgoingDocument $outgoingDocument)
+    {
+        return $this->destroyElement($outgoingDocument);
     }
 
 }

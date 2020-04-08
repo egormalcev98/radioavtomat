@@ -4,7 +4,12 @@ namespace App\Services\OutgoingDocuments;
 
 use App\Models\OutgoingDocuments\OutgoingDocument;
 use App\Models\References\DocumentType;
+use App\Models\References\LetterForm;
+use App\Models\References\OutgoingDocStatus;
+use App\Models\References\StructuralUnit;
+use App\Role;
 use App\Services\BaseService;
+use App\User;
 use Carbon\Carbon;
 use DataTables;
 
@@ -119,6 +124,7 @@ class OutgoingDocumentService extends BaseService
         return Datatables::of($query)
             ->addColumn('action', function ($element){
                 $routeName = $this->routeName;
+                $element->name = $element->number; // так как в кнопках подставляется поле name
 
                 return view('crm.action_buttons', compact('element', 'routeName'));
             })
@@ -139,16 +145,66 @@ class OutgoingDocumentService extends BaseService
     }
 
     /**
+     * Создание записи в БД
+     */
+    public function store($request)
+    {
+        $requestAll = $request->all();
+        $requestAll['date'] = $requestAll['date_letter_at'];
+        $this->model = $this->model->create($requestAll);
+
+        $this->model->save();
+
+        return true;
+    }
+
+    /**
+     * Обновление записи в БД
+     */
+    public function update($request)
+    {
+        $requestAll = $request->all();
+
+        $requestAll['date'] = $requestAll['date_letter_at'];
+
+        $this->model->update($requestAll);
+
+        return true;
+    }
+
+    /**
      * Данные для работы с элементом
      */
     public function elementData()
     {
-        $outgoingDocument = $this->model;
-//        $userStatuses = UserStatus::orderedGet();
-//        $structuralUnits = StructuralUnit::orderedGet();
-//        $roles = Role::withoutAdmin()->get();
+        if($this->model instanceof OutgoingDocument) {
+            $outgoingDocument = $this->model;
+        } else {
+            $outgoingDocument = new OutgoingDocument;
+        }
 
-        return compact('outgoingDocument');
+        $letterForms = LetterForm::orderedGet();
+        $outgoingDocStatuses = OutgoingDocStatus::orderedGet();
+        $documentTypes = DocumentType::orderedGet();
+        $roles = Role::withoutAdmin()->with('users.structuralUnit')->get();
+        foreach ($roles as $key => $role) {
+            if($role->users->isEmpty()){
+                unset($roles[$key]);
+            }
+        }
+        // тут будем считать что роли пользователям всегда назначаются верно и роль типа привязана к структурному подразделению
+        // поэтому ниже соберём структурные подразделения с ролями и пользователями
+        $structuralUnits = [];
+        foreach ($roles as $key => $role) {
+            if(!isset($structuralUnits[$role->users[0]->StructuralUnit->id])){
+                $structuralUnits[$role->users[0]->StructuralUnit->id]['name'] = '[' . $role->users[0]->StructuralUnit->name . ']';
+                $structuralUnits[$role->users[0]->StructuralUnit->id]['roles'] = [$role];
+            } else {
+                $structuralUnits[$role->users[0]->StructuralUnit->id]['roles'][] = $role;
+            }
+        }
+
+        return compact('outgoingDocument', 'letterForms', 'outgoingDocStatuses', 'documentTypes', 'structuralUnits');
     }
 
 }
