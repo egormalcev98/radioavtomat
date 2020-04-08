@@ -209,23 +209,19 @@ return [
 
     'menu' => [
         [
-            'text'      	=> 'documents',
-            'icon'        	=> 'fas fa-envelope',
-            'submenu' => [
-                [
-                    'text'      	=> 'incoming_documents',
-                    'icon'        	=> 'fas fa-file-download',
-                ],
-                [
-                    'text'      	=> 'outgoing_documents',
-                    'icon'        	=> 'fas fa-file-upload',
-                    'route' 		=> 'outgoing_documents.index',
-                ],
-                [
-                    'text'      	=> 'history',
-                    'icon'        	=> 'fas fa-history',
-                ],
-            ],
+            'text'      	=> 'incoming_documents',
+            'route' 		=> 'incoming_documents.index',
+			'active'		=> ['incoming_documents', 'incoming_documents/*'],
+            'icon'        	=> 'fas fa-file-download',
+			'permission'	=> [
+				'view_incoming_document'
+			]
+        ],
+        [
+           'text'       	=> 'outgoing_documents',
+           'icon'           => 'fas fa-file-upload',
+           'active'		=> ['outgoing_documents', 'outgoing_documents/*'],
+           'route' 		    => 'outgoing_documents.index',
         ],
         [
             'text'      	=> 'settings',

@@ -92,7 +92,7 @@ let Main = {
 				title = 'Информация';
 			}
 			
-			text = '<h3>' + text + '</h3>';
+			text = '<p>' + text + '</p>';
 			
 			if(thisGeneral.modalWithInformation){
 				thisGeneral.modalWithInformation.changeTitle(title);
@@ -382,11 +382,11 @@ let Main = {
 	},
 	
 	resetModalValues: function(modalElement){
-		var thisGeneral = this,
+		let thisGeneral = this,
 			formS = modalElement.find('form');
 
 		$.each(formS.find('select'), function( key, selData ) {
-			var selector = $(selData);
+			let selector = $(selData);
 
 			selector.val(selector.find('option').first().val());
 		});

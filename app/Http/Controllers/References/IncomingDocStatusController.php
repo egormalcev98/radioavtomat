@@ -32,6 +32,10 @@ class IncomingDocStatusController extends ReferenceController
      */
     public function destroy(IncomingDocStatus $incomingDocStatus)
     {
+		if($incomingDocStatus->without_destroy) {
+			return $this->serverErrorResponseDestroy(__('references.main.error_repeat'));
+		}
+		
         return $this->destroyElement($incomingDocStatus);
     }
 }

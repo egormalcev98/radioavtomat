@@ -17,7 +17,7 @@ return [
 		'search' => 'Поиск',
 		'action_edit_column' => '', //'Редактировать',
 		'action_delete_column' => '', //'Удалить',
-		'error_repeat' => 'Произошла ошибка, попробуйте еще раз',
+		'error_repeat' => 'Произошла ошибка',
 		'validation' => [
 			'name_required' => 'Поле Название обязательно для заполнения.',
 		]

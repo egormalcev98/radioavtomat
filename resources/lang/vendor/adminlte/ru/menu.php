@@ -32,8 +32,7 @@ return [
 	'structural_units'				=> 'Структурные подразд-ия',
 	'roles'							=> 'Роли пользователей',
 
-    'documents'						=> 'Документы',
-    'incoming_documents'			=> 'Входящие',
-    'outgoing_documents'			=> 'Исходящие',
+    'outgoing_documents'			=> 'Исходящие документы',
+	'incoming_documents'			=> 'Входящие документы',
     'history'			            => 'История',
 ];
