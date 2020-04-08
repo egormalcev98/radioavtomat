@@ -7,10 +7,13 @@
 @stop
 
 @section('content')
+
+	@include('crm.box_errors')
+	
 	<div class="row">
         <!-- left column -->
         <div class="col-12">
-			<form role="form" method="POST" action="{{ $action }}" >
+			<form role="form" method="POST" action="{{ $action }}" enctype="multipart/form-data" >
 				@csrf
 				@if($method == 'edit')
 					{{ method_field('PATCH') }}
@@ -18,7 +21,7 @@
 						
 				<!-- general form elements -->
 				<div class="col-12 row">
-					<div class="col-9">
+					<div class="col-8">
 						<div class="card card-primary">
 						  <!-- form start -->
 								<div class="card-body row">
@@ -72,8 +75,8 @@
 														<div class="input-group-append">
 															<button type="button" class="input-group-text" @if($method == 'create')) data-toggle="tooltip" data-placement="top" title="Проверить на повторную регистарцию" onclick="IncomingDocument.checkNumber($(this), '{{ route('incoming_documents.check_number') }}');" @endif>Проверить</button>
 														</div>
+														@include('crm.error_message', ['nameField' => 'number'])
 													</div>
-													@include('crm.error_message', ['nameField' => 'number'])
 												</div>
 												<div class="form-group">
 													<label>{{ __('validation.attributes.date_letter_at') }}</label>
@@ -97,20 +100,22 @@
 																<input id="original_received_checkbox" type="checkbox" name="original_received" value="1" @if((@old('original_received') ?? $incomingDocument->original_received ?? 0) == 1) checked="true" @endif  data-toggle="tooltip" data-placement="top" title="{{ __('validation.attributes.original_received') }}" >
 															</span>
 														</div>
+														@include('crm.error_message', ['nameField' => 'date_delivery_at'])
 													</div>
-													@include('crm.error_message', ['nameField' => 'date_delivery_at'])
 												</div>
 												<div class="form-group">
 													<label>{{ __('validation.attributes.register') }}</label>
 													<div class="input-group">
-														<input type="number" required="true" class="form-control {{ $errors->has('register') ? 'is-invalid' : '' }}" name="register" value="{{ old('register') ?? $incomingDocument->register ?? '' }}" >
-														<div class="input-group-append">
-															<span class="input-group-text">
-																<input type="checkbox" value="1" data-toggle="tooltip" data-placement="top" title="Автоматически присвоить номер" >
-															</span>
-														</div>
+														<input type="number" class="form-control {{ $errors->has('register') ? 'is-invalid' : '' }}" name="register" value="{{ old('register') ?? $incomingDocument->register ?? '' }}" >
+														@if($method == 'create')
+															<div class="input-group-append">
+																<span class="input-group-text">
+																	<input name="register_automatic" type="checkbox" value="1" data-toggle="tooltip" data-placement="top" title="Автоматически присвоить номер" @if(@old('register_automatic') == 1) checked="true" @endif >
+																</span>
+															</div>
+														@endif
+														@include('crm.error_message', ['nameField' => 'register'])
 													</div>
-													@include('crm.error_message', ['nameField' => 'register'])
 												</div>
 												<div class="form-group">
 													<label>{{ __('validation.attributes.number_pages') }}</label>
@@ -119,7 +124,8 @@
 												</div>
 												<div class="form-group">
 													<label>{{ __('validation.attributes.recipient_id') }}</label>
-													<select class="form-control select2 {{ $errors->has('recipient_id') ? 'is-invalid' : '' }}" name="recipient_id" required="required" >
+													<select class="form-control select2 {{ $errors->has('recipient_id') ? 'is-invalid' : '' }}" name="recipient_id">
+														<option value="">Ничего не выбрано</option>
 														@if($recipients->isNotEmpty())
 															@foreach($recipients as $recipient)
 																<option value="{{ $recipient->id }}" @if((@old('recipient_id') ?? $incomingDocument->recipient_id ?? 0) == $recipient->id) selected @endif >{{ $recipient->fullName }}</option>
@@ -143,9 +149,30 @@
 								
 						</div>
 					</div>
-					<div class="col-3">
-						<div class="card card-primary">
+					<div class="col-4">
+						<div class="card">
+							<div class="card-header">
+								<button type="button" class="btn btn-info" onclick="IncomingDocument.addTrScan($(this));" >Добавить скан (pdf,doc,docx,xlsx,bmp,jpeg)</button>
+							</div>
 							<div class="card-body row">
+								<table class="table table-bordered table-sm">
+									<thead>                  
+										<tr>
+											<th>Название</th>
+											<th>Действие</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr style="display: none;" id="clone_file_tr">
+											@include('crm.incoming_documents.file_template')
+										</tr>
+										@if(isset($incomingDocumentFiles) and $incomingDocumentFiles->isNotEmpty())
+											@foreach($incomingDocumentFiles as $incomingDocumentFile)
+												<tr>@include('crm.incoming_documents.file_template', ['dataFile' => $incomingDocumentFile])</tr>
+											@endforeach
+										@endif
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>
@@ -155,6 +182,23 @@
 		</div>
 	</div>
 @stop
+
+@if($method == 'edit')
+	@section('modal')
+		@section('modal_title', 'Файл')
+		@section('modal_id', 'modal_file')
+		<div class="modal-body">
+			<div class="form-group">
+				<label>Название</label>
+				<input type="text" class="form-control" id="new_file_name">
+			</div>
+		</div>
+		<div class="modal-footer justify-content-between">
+			<button type="button" class="btn btn-default" data-dismiss="modal">{{ __('references.main.close_button') }}</button>
+			<button type="button" class="btn btn-primary" data-file-id="" onclick="IncomingDocument.saveFileNameModal($(this));" >{{ __('references.main.save_button') }}</button>
+		</div>
+	@stop
+@endif
 
 @section('js')
 	<script src="{{ asset('/js/incoming_document.js') }}"></script>

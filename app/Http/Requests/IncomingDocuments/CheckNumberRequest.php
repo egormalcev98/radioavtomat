@@ -24,7 +24,7 @@ class CheckNumberRequest extends FormRequest
     public function rules()
     {
         return [
-            'number' => 'required|unique:incoming_documents,number',
+            'number' => 'required|integer|unique:incoming_documents,number',
         ];
     }
 	

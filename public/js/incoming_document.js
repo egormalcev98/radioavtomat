@@ -38,4 +38,70 @@ let IncomingDocument = {
 		return false;
 	},
 	
+	destroyTrScan: function(selectorButton){
+		if(selectorButton){
+			selectorButton.parents('tr').remove();
+			
+			return true;
+		}
+		return false;
+	},
+	
+	addTrScan: function(){
+		let cloneTR = $('#clone_file_tr');
+		
+		cloneTR.after('<tr>' + cloneTR.html() + '</tr>');
+		
+		let newTR = cloneTR.next('tr'),
+			fileInput = newTR.find('input[type=file]'),
+			timestamp = Date.now();
+			
+		fileInput.attr('id', timestamp);
+		fileInput.next('label').attr('for', timestamp);
+		
+		return true;
+	},
+	
+	getFileName: function(thisInput){
+		if(thisInput){
+			if (thisInput.files[0]) { // если выбрали файл
+				$(thisInput).parents('td').prev('td').text(thisInput.files[0].name);
+			}
+			
+			return true;
+		}
+		return false;
+	},
+	
+	showFileNameModal: function(name, id){
+		if(name && id){
+			let modal = $('#modal_file');
+			
+			modal.find('#new_file_name').val(name);
+			modal.find('[data-file-id]').attr('data-file-id', id);
+			modal.modal('show');
+			
+			return true;
+		}
+		return false;
+	},
+	
+	saveFileNameModal: function(selectorButton){
+		if(selectorButton){
+			
+			$('#scan_input' + selectorButton.data('file-id'))
+				.next('input[type=hidden]')
+				.val($('#new_file_name').val())
+				.parents('td')
+				.prev('td')
+				.children('a')
+				.text($('#new_file_name').val());
+				
+			$('#modal_file').modal('hide');
+			
+			return true;
+		}
+		return false;
+	},
+	
 }

@@ -7,6 +7,8 @@ use App\Models\IncomingDocuments\IncomingDocument;
 use Illuminate\Http\Request;
 use App\Services\IncomingDocuments\IncomingDocumentService as Service;
 use App\Http\Requests\IncomingDocuments\CheckNumberRequest;
+use App\Http\Requests\IncomingDocuments\StoreRequest;
+use App\Http\Requests\IncomingDocuments\UpdateRequest;
 
 class IncomingDocumentController extends Controller
 {
@@ -28,9 +30,9 @@ class IncomingDocumentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        return $this->storeElement($request);
     }
 
     /**
@@ -52,7 +54,7 @@ class IncomingDocumentController extends Controller
      */
     public function edit(IncomingDocument $incomingDocument)
     {
-        //
+        return $this->editElement($incomingDocument);
     }
 
     /**
@@ -62,9 +64,9 @@ class IncomingDocumentController extends Controller
      * @param  \App\Models\IncomingDocuments\IncomingDocument  $incomingDocument
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, IncomingDocument $incomingDocument)
+    public function update(UpdateRequest $request, IncomingDocument $incomingDocument)
     {
-        //
+        return $this->updateElement($request, $incomingDocument);
     }
 
     /**

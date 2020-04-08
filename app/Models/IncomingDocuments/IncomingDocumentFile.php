@@ -13,5 +13,6 @@ class IncomingDocumentFile extends BaseModel
      */
     protected $fillable = [
 		'name',
+		'file_path',
 	];
 }

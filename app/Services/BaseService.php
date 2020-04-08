@@ -136,7 +136,7 @@ class BaseService
 	 */
 	public function elementData() 
 	{
-		if(is_object($this->model) === false)
+		if(class_basename($this->model) != 'Builder')
 			$element = $this->model;
 		
 		return compact('element');
