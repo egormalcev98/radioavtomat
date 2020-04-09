@@ -18,9 +18,4 @@
             </select>
         </div>
     </div>
-    <div class="col-3">
-        <div class="form-group">
-             <i class="fas fa-print" style="font-size: 38px; margin-top: 31px"></i>
-        </div>
-    </div>
 </div>

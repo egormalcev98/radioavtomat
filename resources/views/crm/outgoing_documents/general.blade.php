@@ -7,9 +7,10 @@
 @stop
 
 @section('content')
-    <div class="card card-primary card-outline">
+    <div class="card">
         <div class="card-body">
             @yield('content_content')
         </div>
     </div>
 @stop
+

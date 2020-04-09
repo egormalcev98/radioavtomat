@@ -1,12 +1,12 @@
 <!-- left column -->
 <!-- general form elements -->
 <div class="col-12 row">
-    <div class="col-9">
+    <div class="col-8">
         <div class="card card-primary">
             <!-- form start -->
             <div class="card-body row">
                 <div class="col-12">
-                    <div class="col-12 row">
+                    <div class="row">
                         <div class="col-6">
                             <h4 class="text-center">&nbsp;</h4>
                             <div class="form-group">
@@ -93,10 +93,10 @@
                                                    name="number"
                                                    value="{{ old('number') ?? $outgoingDocument->number ?? '' }}">
                                             <div class="input-group-append">
-                                                <button type="button" class="input-group-text" @if($method == 'create'))
+                                                <button type="button" class="input-group-text"
                                                         data-toggle="tooltip" data-placement="top"
                                                         title="Проверить на повторную регистарцию"
-                                                         @endif>
+                                                        onclick="OutgoingDocument.checkNumber($(this), '{{ route('outgoing_documents.check_number') }}');">
                                                     Проверить
                                                 </button>
                                             </div>
@@ -163,12 +163,36 @@
                     </div>
                 </div>
             </div>
-            <!-- /.card-body -->
+        @if($method == 'edit')
+            @include('crm.box_footer')
+        @endif
+        <!-- /.card-body -->
         </div>
     </div>
-    <div class="col-3">
-        <div class="card card-primary">
+    <div class="col-4">
+        <div class="card">
+            <div class="card-header">
+                <button type="button" class="btn btn-info" onclick="OutgoingDocument.addTrScan($(this));" >Добавить скан (pdf,doc,docx,xlsx,bmp,jpeg)</button>
+            </div>
             <div class="card-body row">
+                <table class="table table-bordered table-sm">
+                    <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Действие</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr style="display: none;" id="clone_file_tr">
+                        @include('crm.outgoing_documents.file_template')
+                    </tr>
+                    @if(isset($outgoingDocumentFiles) and $outgoingDocumentFiles->isNotEmpty())
+                        @foreach($outgoingDocumentFiles as $outgoingDocumentFile)
+                            <tr>@include('crm.outgoing_documents.file_template', ['dataFile' => $outgoingDocumentFile])</tr>
+                        @endforeach
+                    @endif
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

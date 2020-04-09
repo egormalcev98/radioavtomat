@@ -33,4 +33,6 @@
 			}
 		});
 	</script>
+
+    <script src="{{ asset('/js/datatable_export_excel.js') }}"></script>
 @stop

@@ -9,7 +9,7 @@
 @section('content')
 
 	@include('crm.box_errors')
-	
+
 	<div class="row">
         <!-- left column -->
         <div class="col-12">
@@ -18,7 +18,7 @@
 				@if($method == 'edit')
 					{{ method_field('PATCH') }}
 				@endif
-						
+
 				<!-- general form elements -->
 				<div class="col-12 row">
 					<div class="col-8">
@@ -59,7 +59,7 @@
 												<label for="urgent_checkbox" class="form-check-label">{{ __('validation.attributes.urgent') }}</label>
 											</div>
 										</div>
-										
+
 										<div class="col-12 row">
 											<div class="col-6">
 												<h4 class="text-center">Отправитель</h4>
@@ -144,9 +144,9 @@
 									</div>
 								</div>
 								<!-- /.card-body -->
-								
+
 								@include('crm.box_footer')
-								
+
 						</div>
 					</div>
 					<div class="col-4">
@@ -156,7 +156,7 @@
 							</div>
 							<div class="card-body row">
 								<table class="table table-bordered table-sm">
-									<thead>                  
+									<thead>
 										<tr>
 											<th>Название</th>
 											<th>Действие</th>

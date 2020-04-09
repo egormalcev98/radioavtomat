@@ -51,5 +51,11 @@ class OutgoingDocument extends BaseModel
         return $this->belongsTo(\App\User::class);
     }
 
-
+    /**
+     * Получить сканы файлов
+     */
+    public function files()
+    {
+        return $this->hasMany(OutgoingDocumentFile::class);
+    }
 }

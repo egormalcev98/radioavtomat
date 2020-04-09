@@ -7,6 +7,7 @@ use App\Models\References\DocumentType;
 use App\Models\References\LetterForm;
 use App\Models\References\OutgoingDocStatus;
 use App\Models\References\StructuralUnit;
+use Yajra\DataTables\Html\Builder as BuilderDT;
 use App\Role;
 use App\Services\BaseService;
 use App\User;
@@ -23,7 +24,7 @@ class OutgoingDocumentService extends BaseService
 
 	public $translation = 'outgoing_documents.';
 
-	public $permissionKey = 'user'; // потом заменить на outgoing_documents
+	public $permissionKey = 'outgoing_document'; // потом заменить на outgoing_document
 
     public $model;
 
@@ -153,7 +154,7 @@ class OutgoingDocumentService extends BaseService
         $requestAll['date'] = $requestAll['date_letter_at'];
         $this->model = $this->model->create($requestAll);
 
-        $this->model->save();
+        $this->furtherPreparation($requestAll);
 
         return true;
     }
@@ -169,6 +170,88 @@ class OutgoingDocumentService extends BaseService
 
         $this->model->update($requestAll);
 
+        $this->furtherPreparation($requestAll);
+
+        return true;
+    }
+
+    public function constructViewDT($selectorForm = '#dt_filters')
+    {
+        return app(BuilderDT::class)
+            ->language(config('datatables.lang'))
+            ->orders([0, 'desc'])
+            ->pageLength(25)
+            ->dom('<"row"<"col-2"l><"col-8"B><"col-2"f>>rt<"row"<"col-10"i><"col-2"p>>')
+            ->buttons('csv', 'excel')
+            ->ajaxWithForm('', $selectorForm)
+            ->columns( $this->tableColumns() );
+    }
+
+    private function furtherPreparation($requestAll)
+    {
+        $notDestroyFiles = [];
+
+        if(isset($requestAll['new_scan_files']) and !empty($requestAll['new_scan_files'])) {
+            foreach($requestAll['new_scan_files'] as $newFile) {
+                $fileSave = $newFile->store('outgoing_documents', 'public');
+
+                $notDestroyFiles[] = $this->model->files()->create([
+                    'name' => $newFile->getClientOriginalName(),
+                    'file_path' => $fileSave,
+                ])->id;
+            }
+        }
+
+        // if(isset($requestAll['scan_files']) and !empty($requestAll['scan_files'])) {
+        // foreach($requestAll['scan_files'] as $fileId => $replaceFile) {
+        // $replaceFileSave = $replaceFile->store('incoming_documents', 'public');
+
+        // $this->model->files()->where('id', $fileId)->update([
+        // 'name' => $replaceFile->getClientOriginalName(),
+        // 'file_path' => $fileSave,
+        // ]);
+        // }
+        // }
+
+        if(isset($requestAll['isset_sf']) and !empty($requestAll['isset_sf'])) {
+            $getFiles = $this->model
+                ->files()
+                ->whereIn('id', array_flip($requestAll['isset_sf']))
+                ->get();
+
+            foreach($getFiles as $file) {
+                $notDestroyFiles[] = $file->id;
+
+                if(isset($requestAll['scan_files']) and isset($requestAll['scan_files'][$file->id])) {
+                    $replaceFile = $requestAll['scan_files'][$file->id];
+                    $replaceFileSave = $replaceFile->store('outgoing_documents', 'public');
+
+                    $file->update([
+                        'name' => $replaceFile->getClientOriginalName(),
+                        'file_path' => $replaceFileSave,
+                    ]);
+                } else {
+
+                    if($file->name != $requestAll['isset_sf'][$file->id]) {
+                        $file->update([
+                            'name' => $requestAll['isset_sf'][$file->id]
+                        ]);
+                    }
+                }
+            }
+        }
+
+        if(empty($notDestroyFiles)) {
+            $this->model
+                ->files()
+                ->delete();
+        } else {
+            $this->model
+                ->files()
+                ->whereNotIn('id', $notDestroyFiles)
+                ->delete();
+        }
+
         return true;
     }
 
@@ -179,6 +262,7 @@ class OutgoingDocumentService extends BaseService
     {
         if($this->model instanceof OutgoingDocument) {
             $outgoingDocument = $this->model;
+            $outgoingDocumentFiles = $outgoingDocument->files()->orderedGet();
         } else {
             $outgoingDocument = new OutgoingDocument;
         }
@@ -196,15 +280,15 @@ class OutgoingDocumentService extends BaseService
         // поэтому ниже соберём структурные подразделения с ролями и пользователями
         $structuralUnits = [];
         foreach ($roles as $key => $role) {
-            if(!isset($structuralUnits[$role->users[0]->StructuralUnit->id])){
-                $structuralUnits[$role->users[0]->StructuralUnit->id]['name'] = '[' . $role->users[0]->StructuralUnit->name . ']';
-                $structuralUnits[$role->users[0]->StructuralUnit->id]['roles'] = [$role];
+            if(!isset($structuralUnits[$role->users[0]->structuralUnit->id])){
+                $structuralUnits[$role->users[0]->structuralUnit->id]['name'] = '[' . $role->users[0]->structuralUnit->name . ']';
+                $structuralUnits[$role->users[0]->structuralUnit->id]['roles'] = [$role];
             } else {
-                $structuralUnits[$role->users[0]->StructuralUnit->id]['roles'][] = $role;
+                $structuralUnits[$role->users[0]->structuralUnit->id]['roles'][] = $role;
             }
         }
 
-        return compact('outgoingDocument', 'letterForms', 'outgoingDocStatuses', 'documentTypes', 'structuralUnits');
+        return compact('outgoingDocument', 'letterForms', 'outgoingDocStatuses', 'documentTypes', 'structuralUnits', 'outgoingDocumentFiles');
     }
 
 }

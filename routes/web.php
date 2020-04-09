@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     //Журнал регистрации исходящих документов
     Route::resource('outgoing_documents', 'OutgoingDocuments\OutgoingDocumentController');
+    Route::post('outgoing_documents/check_number', 'OutgoingDocuments\OutgoingDocumentController@checkNumber')->name('outgoing_documents.check_number');
 
 	//Справочники
 	Route::resource('document_types', 'References\DocumentTypeController')->except([

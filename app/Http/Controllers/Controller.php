@@ -11,9 +11,9 @@ use App\Helpers\ReferenceHelper;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests, ReferenceHelper;
-	
+
 	protected $service;
-	
+
     /**
      * Display a listing of the resource.
      *
@@ -24,13 +24,13 @@ class Controller extends BaseController
 		if (request()->ajax()) {
 			return $this->service->dataTableData();
 		}
-		
+
 		$with = $this->service->outputData();
-		
+
 		$with['title'] = __($this->service->translation . 'index.title');
 		$with['datatable'] = $this->service->constructViewDT();
 		$with['createLink'] = route($this->service->routeName . '.create');
-		
+
 		return view($this->service->templatePath . 'listelements')->with($with);
     }
 
@@ -42,14 +42,14 @@ class Controller extends BaseController
     public function create()
     {
 		$with = $this->service->elementData();
-		
+
 		$with['title'] = __($this->service->translation . 'index.title') . ': ' . __('references.main.create_text_template');
 		$with['action'] = route($this->service->routeName . '.store');
 		$with['method'] = __FUNCTION__;
-		
+
 		return view($this->service->templatePath . $this->service->templateForm)->with($with);
     }
-	
+
     /**
      * Store a newly created resource in storage.
      *
@@ -59,10 +59,10 @@ class Controller extends BaseController
     protected function storeElement($request)
     {
         $this->service->store($request);
-		
+
 		return $this->successfulElementCreation($this->service->routeName);
     }
-	
+
     /**
      * Store a newly created resource in storage.
      *
@@ -72,15 +72,15 @@ class Controller extends BaseController
     protected function ajaxStoreElement($request)
     {
         if ($request->ajax()) {
-			
+
 			$this->service->store($request);
-			
+
 			return $this->ajaxSuccessResponse();
 		}
-		
+
 		return abort(403);
     }
-	
+
     /**
      * Display the specified resource.
      *
@@ -90,13 +90,13 @@ class Controller extends BaseController
     {
 		$this->service->model = $element;
         $with = $this->service->elementData();
-		
+
 		$with['title'] = __($this->service->translation . 'index.title') . ': ' . __('references.main.show_text_template');
 		$with['method'] = 'edit';
-		
+
 		return view($this->service->templatePath . 'show')->with($with);
     }
-	
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -106,14 +106,14 @@ class Controller extends BaseController
     {
 		$this->service->model = $element;
         $with = $this->service->elementData();
-		
+
 		$with['title'] = __($this->service->translation . 'index.title') . ': ' . __('references.main.edit_text_template');
 		$with['action'] = route($this->service->routeName . '.update', $element->id);
 		$with['method'] = 'edit';
-		
+
 		return view($this->service->templatePath . $this->service->templateForm)->with($with);
     }
-	
+
     /**
      * Update the specified resource in storage.
      *
@@ -123,7 +123,7 @@ class Controller extends BaseController
     {
 		$this->service->model = $element;
         $this->service->update($request);
-		
+
 		return $this->successfulElementUpdate($this->service->routeName, $element->id);
     }
 
@@ -137,10 +137,10 @@ class Controller extends BaseController
 		if ($request->ajax()) {
 			$this->service->model = $element;
 			$this->service->update($request);
-			
+
 			return $this->ajaxSuccessResponse();
 		}
-		
+
 		return abort(403);
     }
 
@@ -154,10 +154,10 @@ class Controller extends BaseController
 		if (request()->ajax()) {
 			$this->service->model = $element;
 			$this->service->removeElement();
-			
+
 			return $this->serverResponseDestroy();
 		}
-		
+
 		return abort(403);
     }
 }

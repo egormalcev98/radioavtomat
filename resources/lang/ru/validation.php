@@ -223,6 +223,6 @@ return [
 		'number_pages'			=> 'Число страниц',
 		'recipient_id'			=> 'Кому',
 		'note'					=> 'Примечание',
-		'incoming_letter_number'=> 'Ответ на входящее письмо',
+		'incoming_letter_number'=> 'Ответ на вх. письмо №',
     ],
 ];

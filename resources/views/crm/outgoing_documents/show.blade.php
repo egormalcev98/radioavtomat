@@ -3,6 +3,9 @@
 @section('title', $title)
 
 @section('content_header')
+    @permission('read_'.$permissionKey)
+        <a class="btn btn-outline-primary float-right" href="{{ $action }}">{{ __('references.main.edit_button') }}</a>
+    @endpermission
     <h1>{{ $title }}</h1>
 @stop
 
@@ -11,11 +14,9 @@
         <!-- left column -->
         <div class="col-12">
             <!-- general form elements -->
-            <div class="card card-primary">
                 <fieldset disabled="true">
                     @include('crm.outgoing_documents.form_elements')
                 </fieldset>
-            </div>
             <!-- /.card -->
         </div>
     </div>

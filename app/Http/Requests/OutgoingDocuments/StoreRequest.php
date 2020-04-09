@@ -35,6 +35,7 @@ class StoreRequest extends FormRequest
             'date_letter_at' => 'required|date',
             'from_user_id' => 'required|exists:users,id',
             'note' => 'nullable|max:400',
+            'new_scan_files.*' => 'nullable|file|mimes:pdf,doc,docx,xlsx,bmp,jpeg',
         ];
     }
 }

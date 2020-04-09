@@ -14,6 +14,7 @@ class UpdateRequest extends StoreRequest
         $arrayRules = parent::rules();
 
         $arrayRules['number'] = 'required|unique:outgoing_documents,number,' . $this->number . ',number|numeric';
+        $arrayRules['scan_files.*'] = $arrayRules['new_scan_files.*'];
 
 		return $arrayRules;
     }

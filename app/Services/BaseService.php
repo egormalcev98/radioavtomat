@@ -10,7 +10,7 @@ class BaseService
 
 	public $model;
 	protected $translation;
-	
+
 	/**
      * Service constructor.
      * @param Builder $model
@@ -23,7 +23,7 @@ class BaseService
 	/**
 	 * Возвращает список всех колонок для DataTable
 	 */
-	public function tableColumns() 
+	public function tableColumns()
 	{
 		return [
 			[
@@ -34,11 +34,11 @@ class BaseService
 				'title' => __($this->translation . 'list_columns.name'),
 				'data' => 'name',
 			],
-			
+
 			$this->actionButton()
 		];
 	}
-	
+
 	/**
 	 * Стандартная кнопка действия для DataTable
 	 */
@@ -53,11 +53,11 @@ class BaseService
 			'orderable' => false,
 		];
 	}
-	
+
 	/**
 	 * Собираем объект DataTable для фронта
 	 */
-	public function constructViewDT($selectorForm = '#dt_filters') 
+	public function constructViewDT($selectorForm = '#dt_filters')
 	{
 		return app(BuilderDT::class)
 				->language(config('datatables.lang'))
@@ -66,7 +66,7 @@ class BaseService
 				->ajaxWithForm('', $selectorForm)
 				->columns( $this->tableColumns() );
 	}
-	
+
 	/**
 	 * Сформируем колонку "Действие" для DataTable
 	 */
@@ -74,11 +74,11 @@ class BaseService
 	{
 		return function ($element){
 			$routeName = $this->routeName;
-			
+
 			return view('crm.action_buttons', compact('element', 'routeName'));
 		};
 	}
-	
+
 	/**
 	 * Собираем запрос и формируем коллекцию DT
 	 */
@@ -86,11 +86,11 @@ class BaseService
 	{
 		$query = $this->model
 					->select( $this->columnsToSelect( $this->tableColumns() ) );
-		
+
 		return Datatables::of($query)
 				->addColumn('action', $this->actionColumnDT());
 	}
-	
+
 	/**
 	 * Формирует данные для шаблона "Список элементов"
 	 */
@@ -98,7 +98,7 @@ class BaseService
 	{
 		return $this->constructDataTableQuery()->make(true);
 	}
-	
+
 	/**
      * Получаем только заголовки колонок для DT
      */
@@ -106,7 +106,7 @@ class BaseService
 	{
 		if(!empty($array)){
 			$resultArray = [];
-			
+
 			foreach($array as $value){
 				if(!isset($value['remove_select']) or $value['remove_select'] !== true) {
 					if(isset($value['name'])) {
@@ -116,13 +116,13 @@ class BaseService
 					}
 				}
 			}
-			
+
 			return $resultArray;
 		}
-		
+
 		return $array;
 	}
-	
+
 	/**
 	 * Формирует данные для шаблона "Список элементов"
 	 */
@@ -130,42 +130,42 @@ class BaseService
 	{
 		return [];
 	}
-	
+
 	/**
 	 * Данные для работы с элементом
 	 */
-	public function elementData() 
+	public function elementData()
 	{
 		if(class_basename($this->model) != 'Builder')
 			$element = $this->model;
-		
+
 		return compact('element');
 	}
-	
+
 	/**
 	 * Создание записи в БД
 	 */
-	public function store($request) 
+	public function store($request)
 	{
 		$requestAll = $request->all();
-		
+
 		$this->model->create($requestAll);
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Обновление записи в БД
 	 */
-	public function update($request) 
+	public function update($request)
 	{
 		$requestAll = $request->all();
-		
+
 		$this->model->update($requestAll);
-		
+
 		return true;
 	}
-	
+
 	/**
      * Удаляем элемент
      */
