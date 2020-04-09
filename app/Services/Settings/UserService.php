@@ -153,11 +153,7 @@ class UserService extends BaseService
 		//////////////////
 		
 		return Datatables::of($query)
-				->addColumn('action', function ($element){
-					$routeName = $this->routeName;
-					
-					return view('crm.action_buttons', compact('element', 'routeName'));
-				})
+				->addColumn('action', $this->actionColumnDT())
 				->addColumn('showUrl', function ($element) {
 					return route($this->routeName . '.show', $element->id);
 				})

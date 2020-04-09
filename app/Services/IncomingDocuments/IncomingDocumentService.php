@@ -8,6 +8,7 @@ use App\Models\References\IncomingDocStatus;
 use App\Models\References\DocumentType;
 use App\User;
 use DataTables;
+use App\Services\IncomingDocuments\IncomingUserService;
 
 class IncomingDocumentService extends BaseService
 {	
@@ -21,9 +22,13 @@ class IncomingDocumentService extends BaseService
 	
 	public $permissionKey = 'incoming_document';
 	
-	public function __construct()
+	protected $incomingUserService;
+	
+	public function __construct(IncomingUserService $incomingUserService)
     {
         parent::__construct(IncomingDocument::query());
+		
+		$this->incomingUserService = $incomingUserService;
     }
 
 	/**
@@ -57,6 +62,11 @@ class IncomingDocumentService extends BaseService
 		];
 	}
 	
+	public function checkViewResponse()
+	{
+		return auth()->user()->hasRole(['secretary', 'admin']);
+	}
+	
 	/**
 	 * Данные для работы с элементом
 	 */
@@ -65,57 +75,48 @@ class IncomingDocumentService extends BaseService
 		if(class_basename($this->model) != 'Builder') {
 			$incomingDocument = $this->model;
 			$incomingDocumentFiles = $incomingDocument->files()->orderedGet();
+			$viewResponse = $this->checkViewResponse();
+			
+			$datatableDistributed = $this->incomingUserService->constructViewDTDistributed($this->model->id);
 		}
 		
 		$incomingDocStatuses = IncomingDocStatus::orderedGet();
 		$documentTypes = DocumentType::orderedGet();
 		$recipients = User::withoutAdmin()->get();
 		
-		return compact('incomingDocument', 'incomingDocStatuses', 'documentTypes', 'recipients', 'incomingDocumentFiles');
+		return compact('incomingDocument', 'incomingDocStatuses', 'documentTypes', 'recipients', 'incomingDocumentFiles', 'viewResponse', 'datatableDistributed');
 	}
 	
 	/**
 	 * Формирует данные для шаблона "Список элементов"
 	 */
-	/*public function dataTableData()
+	public function dataTableData()
 	{	
 		$select = $this->columnsToSelect( $this->tableColumns() );
-		$select[] = 'name';
-		$select[] = 'middle_name';
 		
 		$query = $this->model
-					->select( $select )
-					->with(['structuralUnit', 'roles', 'status']);
+					->select( $select );
+					// ->with(['structuralUnit', 'roles', 'status']);
 		
 		// Фильтры
 		
-		if (request()->has('role') and request()->role) {
-			$query->whereRoleIs(request()->role);
-		}
+		// if (request()->has('role') and request()->role) {
+			// $query->whereRoleIs(request()->role);
+		// }
 		
-		if (request()->has('structural_unit') and request()->structural_unit) {
-			$query->where('structural_unit_id', request()->structural_unit);
-		}
+		// if (request()->has('structural_unit') and request()->structural_unit) {
+			// $query->where('structural_unit_id', request()->structural_unit);
+		// }
 		
 		//////////////////
 		
 		return Datatables::of($query)
-				->addColumn('action', function ($element){
-					$routeName = $this->routeName;
-					
-					return view('crm.action_buttons', compact('element', 'routeName'));
-				})
+				->addColumn('action', $this->actionColumnDT())
 				->addColumn('showUrl', function ($element) {
 					return route($this->routeName . '.show', $element->id);
 				})
-				->addColumn('fullName', function ($element) {
-					return $element->fullName;
-				})
-				->addColumn('buttonPermissions', function ($element) {
-					return view($this->templatePath . 'list_columns.permissions', compact('element', 'routeName'));
-				})
 				->make(true);
-	}*/
+	}
 	
 	/**
 	 * Создание записи в БД
@@ -170,17 +171,6 @@ class IncomingDocumentService extends BaseService
 			}
 		}
 		
-		// if(isset($requestAll['scan_files']) and !empty($requestAll['scan_files'])) {
-			// foreach($requestAll['scan_files'] as $fileId => $replaceFile) {
-				// $replaceFileSave = $replaceFile->store('incoming_documents', 'public');
-				
-				// $this->model->files()->where('id', $fileId)->update([
-					// 'name' => $replaceFile->getClientOriginalName(),
-					// 'file_path' => $fileSave,
-				// ]);
-			// }
-		// }
-		
 		if(isset($requestAll['isset_sf']) and !empty($requestAll['isset_sf'])) {
 			$getFiles = $this->model
 				->files()
@@ -216,7 +206,7 @@ class IncomingDocumentService extends BaseService
 		} else {
 			$this->model
 				->files()
-				->whereNotIn($notDestroyFiles)
+				->whereNotIn('id', $notDestroyFiles)
 				->delete();
 		}
 		

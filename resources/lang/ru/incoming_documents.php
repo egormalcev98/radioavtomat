@@ -8,8 +8,13 @@ return [
 		'id' => 'ID',
 		'title' => 'Заголовок',
 	],
-	'messages' =>[
+	'messages' => [
 		'check_number_success' => 'Номер свободен',
 		'check_number_fail' => 'Такой номер уже существует',
-	]
+	],
+	'users' => [
+		'list_columns' => [
+			'id' => 'ID',
+		],
+	],
 ];

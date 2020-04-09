@@ -221,5 +221,7 @@ return [
 		'number_pages'			=> 'Число страниц',
 		'recipient_id'			=> 'Кому',
 		'note'					=> 'Примечание',
+		'signed_at'				=> 'Подписать',
+		'reject_at'				=> 'Отклонить',
     ],
 ];

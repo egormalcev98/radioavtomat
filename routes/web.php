@@ -36,6 +36,7 @@ Route::group(['middleware' => ['auth']], function () {
 	//Журнал регистрации входящих документов
 	Route::resource('incoming_documents', 'IncomingDocuments\IncomingDocumentController');
 	Route::post('incoming_documents/check_number', 'IncomingDocuments\IncomingDocumentController@checkNumber')->name('incoming_documents.check_number');
+	Route::get('incoming_document_users/list_distributed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@listDistributed')->name('incoming_document_users.list_distributed');
 	
 	//Справочники
 	Route::resource('document_types', 'References\DocumentTypeController')->except([
