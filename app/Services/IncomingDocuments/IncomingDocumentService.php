@@ -6,6 +6,7 @@ use App\Services\BaseService;
 use App\Models\IncomingDocuments\IncomingDocument;
 use App\Models\References\IncomingDocStatus;
 use App\Models\References\DocumentType;
+use App\Models\References\EmployeeTask;
 use App\User;
 use DataTables;
 use App\Services\IncomingDocuments\IncomingUserService;
@@ -72,19 +73,32 @@ class IncomingDocumentService extends BaseService
 	 */
 	public function elementData() 
 	{
+		$incomingDocStatuses = IncomingDocStatus::orderedGet();
+		$documentTypes = DocumentType::orderedGet();
+		$recipients = User::withoutAdmin()->get();
+		
 		if(class_basename($this->model) != 'Builder') {
 			$incomingDocument = $this->model;
 			$incomingDocumentFiles = $incomingDocument->files()->orderedGet();
 			$viewResponse = $this->checkViewResponse();
 			
 			$datatableDistributed = $this->incomingUserService->constructViewDTDistributed($this->model->id);
+			
+			$employees = $recipients;
+			$employeeTasks = EmployeeTask::orderedGet();
 		}
 		
-		$incomingDocStatuses = IncomingDocStatus::orderedGet();
-		$documentTypes = DocumentType::orderedGet();
-		$recipients = User::withoutAdmin()->get();
-		
-		return compact('incomingDocument', 'incomingDocStatuses', 'documentTypes', 'recipients', 'incomingDocumentFiles', 'viewResponse', 'datatableDistributed');
+		return compact(
+			'incomingDocument', 
+			'incomingDocStatuses', 
+			'documentTypes', 
+			'recipients', 
+			'incomingDocumentFiles', 
+			'viewResponse', 
+			'datatableDistributed', 
+			'employees',
+			'employeeTasks'
+		);
 	}
 	
 	/**

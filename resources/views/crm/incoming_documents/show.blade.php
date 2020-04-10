@@ -48,54 +48,56 @@
 					</div>
 					<div class="card-body row">
 						@if(auth()->user()->hasRole('Подпись или чего там'))
-						<div class="col-12 row">
-							<div class="col-4">
-								<div class="form-group">
-									<label>{{ __('validation.attributes.signed_at') }}</label>
-									<div class="input-group">
-										<input type="date" class="form-control" name="signed_at" value="" >
-										<div class="input-group-append">
-											<span class="input-group-text">
-												<input type="checkbox" value="1" data-toggle="tooltip" data-placement="top" title="Отправить на подпись документ" >
-											</span>
+							<div class="col-12 row">
+								<div class="col-4">
+									<div class="form-group">
+										<label>{{ __('validation.attributes.signed_at') }}</label>
+										<div class="input-group">
+											<input type="date" class="form-control" name="signed_at" value="" >
+											<div class="input-group-append">
+												<span class="input-group-text">
+													<input type="checkbox" value="1" data-toggle="tooltip" data-placement="top" title="Отправить на подпись документ" >
+												</span>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<div class="col-4">
-								<div class="form-group">
-									<label>{{ __('validation.attributes.reject_at') }}</label>
-									<div class="input-group">
-										<input type="date" class="form-control" name="reject_at" value="" >
-										<div class="input-group-append">
-											<span class="input-group-text">
-												<input type="checkbox" value="1" data-toggle="tooltip" data-placement="top" title="Отклонить документ" >
-											</span>
+								<div class="col-4">
+									<div class="form-group">
+										<label>{{ __('validation.attributes.reject_at') }}</label>
+										<div class="input-group">
+											<input type="date" class="form-control" name="reject_at" value="" >
+											<div class="input-group-append">
+												<span class="input-group-text">
+													<input type="checkbox" value="1" data-toggle="tooltip" data-placement="top" title="Отклонить документ" >
+												</span>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<div class="col-4">
-								<div class="info-box" style="min-height: 70px;">
-									<div class="info-box-content">
-										<h5>Процент рассмотрения</h5>
+								<div class="col-4">
+									<div class="info-box" style="min-height: 70px;">
+										<div class="info-box-content">
+											<h5>Процент рассмотрения</h5>
+										</div>
+										<span class="info-box-icon bg-info">75</span>
 									</div>
-									<span class="info-box-icon bg-info">75</span>
 								</div>
 							</div>
-						</div>
 						@endif
-						<div class="col-12 row">
-							<div class="col-6">
-								<div class="mb-5">
-									<h4 class="float-left">Кому распределено</h4>
-									<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#modal_distributed" >Добавить</button>
-								</div>
-								
-								{!! $datatableDistributed->table(['id' => 'dtListDistributed']) !!}
+						@if($viewResponse)
+							<div class="col-12 row">
+								<div class="col-6">
+									<div class="mb-5">
+										<h4 class="float-left">Кому распределено</h4>
+										<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#modal_distributed" >Добавить</button>
+									</div>
 									
+									{!! $datatableDistributed->table(['id' => 'dtListDistributed']) !!}
+										
+								</div>
 							</div>
-						</div>
+						@endif
 					</div>
 				</div>
 			</div>
@@ -105,7 +107,9 @@
 
 @section('js')
 	
-	@include('crm.incoming_documents.modal_distributed')
+	@if($viewResponse)
+		@include('crm.incoming_documents.modal_distributed')
+	@endif
 
 	<script src="{{ asset('/js/incoming_document.js') }}"></script>
 	
@@ -113,7 +117,7 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function () {
-			$('.select2').attr('disabled', true);
+			$('fieldset .select2').attr('disabled', true);
 		});
 	</script>
 @stop

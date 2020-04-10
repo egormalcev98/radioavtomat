@@ -269,17 +269,24 @@ let Main = {
 	
 	displayAllErrors: function(dataErrors, selectorBlock){
 		if(selectorBlock){
+			let thisGeneral = this;
+			
 			if(dataErrors) {
 				$.each(dataErrors, function(name, msgData){
-					let formElement = selectorBlock.find('[name=' + name + ']');
+					let formElement = selectorBlock.find('[name="' + name + '"]');
 					
-					if(!formElement.hasClass('is-invalid')) {
-						formElement.addClass('is-invalid');
-						formElement.after('\
-							<div class="invalid-feedback">\
-								' + msgData[0] + '\
-							</div>\
-						');
+					if(formElement.html()) {
+						if(!formElement.hasClass('is-invalid')) {
+							formElement.addClass('is-invalid');
+							formElement.after('\
+								<div class="invalid-feedback">\
+									' + msgData[0] + '\
+								</div>\
+							');
+						}
+					} else {
+						// console.log(Object.values(dataErrors)[0]);
+						thisGeneral.outputValidatorError(msgData[0], selectorBlock);
 					}
 				});
 			} else {

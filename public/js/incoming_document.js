@@ -104,4 +104,32 @@ let IncomingDocument = {
 		return false;
 	},
 	
+	selectEmployeeDistributed: function(thisSelect){
+		if(thisSelect){
+			
+			let formSelector = thisSelect.parents('form'),
+				clone = formSelector.find('[data-type="hidden_clone"]');
+			
+			if(formSelector.find('[data-type="user_id"][value=' + thisSelect.val() + ']').length == 0) {
+			
+				clone.after('<tr>' + clone.html() + '</tr>');
+				
+				let newTR = clone.next('tr');
+			
+				newTR.find('[data-type="user_id"]').val(thisSelect.val());
+					
+				newTR.find('td:first').text(thisSelect.find('option:selected').text());
+					
+				newTR.find('[name]').each(function(key, value){
+					let elementName = $(this);
+					
+					elementName.attr('name', elementName.attr('name').replace('[*]', '[' + thisSelect.val() + ']'));
+				});
+			}
+			
+			return true;
+		}
+		return false;
+	},
+	
 }

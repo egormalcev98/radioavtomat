@@ -66,4 +66,12 @@ class IncomingDocument extends BaseModel
 		return $this->hasMany(IncomingDocumentFile::class);
     }
 	
+	/**
+     * Получить распределенных пользователей
+     */
+    public function distributed()
+    {
+		return $this->hasMany(IncomingDocumentDistributed::class);
+    }
+	
 }
