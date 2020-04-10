@@ -8,234 +8,224 @@ use App\Models\References\IncomingDocStatus;
 use App\Models\References\DocumentType;
 use App\User;
 use DataTables;
+use App\Services\IncomingDocuments\IncomingUserService;
 
 class IncomingDocumentService extends BaseService
 {
-	public $templatePath = 'crm.incoming_documents.';
+    public $templatePath = 'crm.incoming_documents.';
 
-	public $templateForm = 'form';
+    public $templateForm = 'form';
 
-	public $routeName = 'incoming_documents';
+    public $routeName = 'incoming_documents';
 
-	public $translation = 'incoming_documents.';
+    public $translation = 'incoming_documents.';
 
-	public $permissionKey = 'incoming_document';
+    public $permissionKey = 'incoming_document';
 
-	public function __construct()
+    protected $incomingUserService;
+
+    public function __construct(IncomingUserService $incomingUserService)
     {
         parent::__construct(IncomingDocument::query());
+
+        $this->incomingUserService = $incomingUserService;
     }
 
-	/**
-	 * Формирует данные для шаблона "Список элементов"
-	 */
-	public function outputData()
-	{
-		// $routeName = $this->routeName;
-		// $roles = Role::withoutAdmin()->get();
-		// $structuralUnits = StructuralUnit::orderedGet();
+    /**
+     * Формирует данные для шаблона "Список элементов"
+     */
+    public function outputData()
+    {
+        // $routeName = $this->routeName;
+        // $roles = Role::withoutAdmin()->get();
+        // $structuralUnits = StructuralUnit::orderedGet();
 
-		// return compact('routeName', 'roles', 'structuralUnits');
-	}
+        // return compact('routeName', 'roles', 'structuralUnits');
+    }
 
-	/**
-	 * Возвращает список всех колонок для DataTable
-	 */
-	public function tableColumns()
-	{
-		return [
-			[
-				'title' => __($this->translation . 'list_columns.id'),
-				'data' => 'id',
-			],
-			[
-				'title' => __($this->translation . 'list_columns.title'),
-				'data' => 'title',
-			],
+    /**
+     * Возвращает список всех колонок для DataTable
+     */
+    public function tableColumns()
+    {
+        return [
+            [
+                'title' => __($this->translation . 'list_columns.id'),
+                'data' => 'id',
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.title'),
+                'data' => 'title',
+            ],
 
-			$this->actionButton()
-		];
-	}
+            $this->actionButton()
+        ];
+    }
 
-	/**
-	 * Данные для работы с элементом
-	 */
-	public function elementData()
-	{
-		if(class_basename($this->model) != 'Builder') {
-			$incomingDocument = $this->model;
-			$incomingDocumentFiles = $incomingDocument->files()->orderedGet();
-		}
+    public function checkViewResponse()
+    {
+        return auth()->user()->hasRole(['secretary', 'admin']);
+    }
 
-		$incomingDocStatuses = IncomingDocStatus::orderedGet();
-		$documentTypes = DocumentType::orderedGet();
-		$recipients = User::withoutAdmin()->get();
+    /**
+     * Данные для работы с элементом
+     */
+    public function elementData()
+    {
+        if(class_basename($this->model) != 'Builder') {
+            $incomingDocument = $this->model;
+            $incomingDocumentFiles = $incomingDocument->files()->orderedGet();
+            $viewResponse = $this->checkViewResponse();
 
-		return compact('incomingDocument', 'incomingDocStatuses', 'documentTypes', 'recipients', 'incomingDocumentFiles');
-	}
+            $datatableDistributed = $this->incomingUserService->constructViewDTDistributed($this->model->id);
+        }
 
-	/**
-	 * Формирует данные для шаблона "Список элементов"
-	 */
-	/*public function dataTableData()
-	{
-		$select = $this->columnsToSelect( $this->tableColumns() );
-		$select[] = 'name';
-		$select[] = 'middle_name';
+        $incomingDocStatuses = IncomingDocStatus::orderedGet();
+        $documentTypes = DocumentType::orderedGet();
+        $recipients = User::withoutAdmin()->get();
 
-		$query = $this->model
-					->select( $select )
-					->with(['structuralUnit', 'roles', 'status']);
+        return compact('incomingDocument', 'incomingDocStatuses', 'documentTypes', 'recipients', 'incomingDocumentFiles', 'viewResponse', 'datatableDistributed');
+    }
 
-		// Фильтры
+    /**
+     * Формирует данные для шаблона "Список элементов"
+     */
+    public function dataTableData()
+    {
+        $select = $this->columnsToSelect( $this->tableColumns() );
 
-		if (request()->has('role') and request()->role) {
-			$query->whereRoleIs(request()->role);
-		}
+        $query = $this->model
+            ->select( $select );
+        // ->with(['structuralUnit', 'roles', 'status']);
 
-		if (request()->has('structural_unit') and request()->structural_unit) {
-			$query->where('structural_unit_id', request()->structural_unit);
-		}
+        // Фильтры
 
-		//////////////////
+        // if (request()->has('role') and request()->role) {
+        // $query->whereRoleIs(request()->role);
+        // }
 
-		return Datatables::of($query)
-				->addColumn('action', function ($element){
-					$routeName = $this->routeName;
+        // if (request()->has('structural_unit') and request()->structural_unit) {
+        // $query->where('structural_unit_id', request()->structural_unit);
+        // }
 
-					return view('crm.action_buttons', compact('element', 'routeName'));
-				})
-				->addColumn('showUrl', function ($element) {
-					return route($this->routeName . '.show', $element->id);
-				})
-				->addColumn('fullName', function ($element) {
-					return $element->fullName;
-				})
-				->addColumn('buttonPermissions', function ($element) {
-					return view($this->templatePath . 'list_columns.permissions', compact('element', 'routeName'));
-				})
-				->make(true);
-	}*/
+        //////////////////
 
-	/**
-	 * Создание записи в БД
-	 */
-	public function store($request)
-	{
-		$requestAll = $request->all();
+        return Datatables::of($query)
+            ->addColumn('action', $this->actionColumnDT())
+            ->addColumn('showUrl', function ($element) {
+                return route($this->routeName . '.show', $element->id);
+            })
+            ->make(true);
+    }
 
-		$requestAll = $this->preliminaryPreparation($requestAll);
+    /**
+     * Создание записи в БД
+     */
+    public function store($request)
+    {
+        $requestAll = $request->all();
 
-		if(isset($requestAll['register_automatic'])) {
-			$lastDoc = IncomingDocument::latest()->first();
-			$requestAll['register'] = $lastDoc ? ($lastDoc->register + 1) : 1;
-		}
+        $requestAll = $this->preliminaryPreparation($requestAll);
 
-		$this->model = $this->model->create($requestAll);
+        if(isset($requestAll['register_automatic'])) {
+            $lastDoc = IncomingDocument::latest()->first();
+            $requestAll['register'] = $lastDoc ? ($lastDoc->register + 1) : 1;
+        }
 
-		$this->furtherPreparation($requestAll);
+        $this->model = $this->model->create($requestAll);
 
-		return true;
-	}
+        $this->furtherPreparation($requestAll);
 
-	private function preliminaryPreparation($requestAll)
-	{
-		if(isset($requestAll['urgent'])) {
-			$requestAll['urgent'] = 1;
-		} else {
-			$requestAll['urgent'] = null;
-		}
+        return true;
+    }
 
-		if(isset($requestAll['original_received'])) {
-			$requestAll['original_received'] = 1;
-		} else {
-			$requestAll['original_received'] = null;
-		}
+    private function preliminaryPreparation($requestAll)
+    {
+        if(isset($requestAll['urgent'])) {
+            $requestAll['urgent'] = 1;
+        } else {
+            $requestAll['urgent'] = null;
+        }
 
-		return $requestAll;
-	}
+        if(isset($requestAll['original_received'])) {
+            $requestAll['original_received'] = 1;
+        } else {
+            $requestAll['original_received'] = null;
+        }
 
-	private function furtherPreparation($requestAll)
-	{
-		$notDestroyFiles = [];
+        return $requestAll;
+    }
 
-		if(isset($requestAll['new_scan_files']) and !empty($requestAll['new_scan_files'])) {
-			foreach($requestAll['new_scan_files'] as $newFile) {
-				$fileSave = $newFile->store('incoming_documents', 'public');
+    private function furtherPreparation($requestAll)
+    {
+        $notDestroyFiles = [];
 
-				$notDestroyFiles[] = $this->model->files()->create([
-					'name' => $newFile->getClientOriginalName(),
-					'file_path' => $fileSave,
-				])->id;
-			}
-		}
+        if(isset($requestAll['new_scan_files']) and !empty($requestAll['new_scan_files'])) {
+            foreach($requestAll['new_scan_files'] as $newFile) {
+                $fileSave = $newFile->store('incoming_documents', 'public');
 
-		// if(isset($requestAll['scan_files']) and !empty($requestAll['scan_files'])) {
-			// foreach($requestAll['scan_files'] as $fileId => $replaceFile) {
-				// $replaceFileSave = $replaceFile->store('incoming_documents', 'public');
+                $notDestroyFiles[] = $this->model->files()->create([
+                    'name' => $newFile->getClientOriginalName(),
+                    'file_path' => $fileSave,
+                ])->id;
+            }
+        }
 
-				// $this->model->files()->where('id', $fileId)->update([
-					// 'name' => $replaceFile->getClientOriginalName(),
-					// 'file_path' => $fileSave,
-				// ]);
-			// }
-		// }
+        if(isset($requestAll['isset_sf']) and !empty($requestAll['isset_sf'])) {
+            $getFiles = $this->model
+                ->files()
+                ->whereIn('id', array_flip($requestAll['isset_sf']))
+                ->get();
 
-		if(isset($requestAll['isset_sf']) and !empty($requestAll['isset_sf'])) {
-			$getFiles = $this->model
-				->files()
-				->whereIn('id', array_flip($requestAll['isset_sf']))
-				->get();
+            foreach($getFiles as $file) {
+                $notDestroyFiles[] = $file->id;
 
-			foreach($getFiles as $file) {
-				$notDestroyFiles[] = $file->id;
+                if(isset($requestAll['scan_files']) and isset($requestAll['scan_files'][$file->id])) {
+                    $replaceFile = $requestAll['scan_files'][$file->id];
+                    $replaceFileSave = $replaceFile->store('incoming_documents', 'public');
 
-				if(isset($requestAll['scan_files']) and isset($requestAll['scan_files'][$file->id])) {
-					$replaceFile = $requestAll['scan_files'][$file->id];
-					$replaceFileSave = $replaceFile->store('incoming_documents', 'public');
+                    $file->update([
+                        'name' => $replaceFile->getClientOriginalName(),
+                        'file_path' => $replaceFileSave,
+                    ]);
+                } else {
 
-					$file->update([
-						'name' => $replaceFile->getClientOriginalName(),
-						'file_path' => $replaceFileSave,
-					]);
-				} else {
+                    if($file->name != $requestAll['isset_sf'][$file->id]) {
+                        $file->update([
+                            'name' => $requestAll['isset_sf'][$file->id]
+                        ]);
+                    }
+                }
+            }
+        }
 
-					if($file->name != $requestAll['isset_sf'][$file->id]) {
-						$file->update([
-							'name' => $requestAll['isset_sf'][$file->id]
-						]);
-					}
-				}
-			}
-		}
+        if(empty($notDestroyFiles)) {
+            $this->model
+                ->files()
+                ->delete();
+        } else {
+            $this->model
+                ->files()
+                ->whereNotIn('id', $notDestroyFiles)
+                ->delete();
+        }
 
-		if(empty($notDestroyFiles)) {
-			$this->model
-				->files()
-				->delete();
-		} else {
-			$this->model
-				->files()
-				->whereNotIn($notDestroyFiles)
-				->delete();
-		}
+        return true;
+    }
 
-		return true;
-	}
+    /**
+     * Обновление записи в БД
+     */
+    public function update($request)
+    {
+        $requestAll = $request->all();
 
-	/**
-	 * Обновление записи в БД
-	 */
-	public function update($request)
-	{
-		$requestAll = $request->all();
+        $requestAll = $this->preliminaryPreparation($requestAll);
 
-		$requestAll = $this->preliminaryPreparation($requestAll);
+        $this->model->update($requestAll);
 
-		$this->model->update($requestAll);
+        $this->furtherPreparation($requestAll);
 
-		$this->furtherPreparation($requestAll);
-
-		return true;
-	}
+        return true;
+    }
 }

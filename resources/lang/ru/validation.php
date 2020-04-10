@@ -224,5 +224,7 @@ return [
 		'recipient_id'			=> 'Кому',
 		'note'					=> 'Примечание',
 		'incoming_letter_number'=> 'Ответ на вх. письмо №',
+		'signed_at'				=> 'Подписать',
+		'reject_at'				=> 'Отклонить',
     ],
 ];

@@ -5,6 +5,11 @@
 		#dtListElements tbody tr {
 			cursor: pointer;
 		}
+        .buttons-excel, .buttons-csv {
+            height: 30px;
+            padding: 2px 10px 2px 10px;
+            margin-right: 10px;
+        }
 	</style>
 @stop
 

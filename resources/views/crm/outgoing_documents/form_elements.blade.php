@@ -171,17 +171,16 @@
     </div>
     <div class="col-4">
         <div class="card">
-            <div class="card-header">
-                <button type="button" class="btn btn-info" onclick="OutgoingDocument.addTrScan($(this));" >Добавить скан (pdf,doc,docx,xlsx,bmp,jpeg)</button>
-            </div>
+            @if($method != 'show')
+                <div class="card-header">
+                    <button type="button" class="btn btn-info" onclick="OutgoingDocument.addTrScan($(this));">Добавить
+                        скан (pdf,doc,docx,xlsx,bmp,jpeg)
+                    </button>
+                </div>
+            @endif
             <div class="card-body row">
                 <table class="table table-bordered table-sm">
-                    <thead>
-                    <tr>
-                        <th>Название</th>
-                        <th>Действие</th>
-                    </tr>
-                    </thead>
+                    @include('crm.outgoing_documents.file_table_head')
                     <tbody>
                     <tr style="display: none;" id="clone_file_tr">
                         @include('crm.outgoing_documents.file_template')

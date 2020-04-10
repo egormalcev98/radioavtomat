@@ -43,7 +43,7 @@ class IncomingDocumentController extends Controller
      */
     public function show(IncomingDocument $incomingDocument)
     {
-        //
+        return $this->showElement($incomingDocument);
     }
 
     /**
@@ -77,7 +77,7 @@ class IncomingDocumentController extends Controller
      */
     public function destroy(IncomingDocument $incomingDocument)
     {
-        //
+        return $this->destroyElement($incomingDocument);
     }
 	
     /**

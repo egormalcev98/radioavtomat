@@ -202,17 +202,6 @@ class OutgoingDocumentService extends BaseService
             }
         }
 
-        // if(isset($requestAll['scan_files']) and !empty($requestAll['scan_files'])) {
-        // foreach($requestAll['scan_files'] as $fileId => $replaceFile) {
-        // $replaceFileSave = $replaceFile->store('incoming_documents', 'public');
-
-        // $this->model->files()->where('id', $fileId)->update([
-        // 'name' => $replaceFile->getClientOriginalName(),
-        // 'file_path' => $fileSave,
-        // ]);
-        // }
-        // }
-
         if(isset($requestAll['isset_sf']) and !empty($requestAll['isset_sf'])) {
             $getFiles = $this->model
                 ->files()

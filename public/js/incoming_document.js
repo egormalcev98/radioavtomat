@@ -78,7 +78,7 @@ let IncomingDocument = {
 			let modal = $('#modal_file');
 			
 			modal.find('#new_file_name').val(name);
-			modal.find('[data-file-id]').attr('data-file-id', id);
+			modal.find('[data-file-id]').data('file-id', id);
 			modal.modal('show');
 			
 			return true;
