@@ -2,11 +2,12 @@
 
 namespace App\Models\OutgoingDocuments;
 
-use App\Models\BaseModel;
+use App\Models\Activity\Activity;
 use Carbon\Carbon;
 
-class OutgoingDocument extends BaseModel
+class OutgoingDocument extends Activity
 {
+    protected static $logName = __CLASS__;
 
     protected $fillable = [
         'number',

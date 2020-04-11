@@ -31,7 +31,7 @@ class StoreRequest extends FormRequest
             'number_pages' => 'required|numeric',
             'counterparty' => 'required|max:255',
             'number' => 'required|unique:outgoing_documents,number|numeric',
-            'incoming_letter_number' => 'required|numeric',
+            'incoming_letter_number' => 'numeric|nullable',
             'date_letter_at' => 'required|date',
             'from_user_id' => 'required|exists:users,id',
             'note' => 'nullable|max:400',

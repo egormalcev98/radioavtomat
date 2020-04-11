@@ -17,6 +17,7 @@ return [
     'filters' => [
         'period' => 'Период',
         'document_type' => 'Вид документа',
+        'outgoing_doc_status' => 'Статус документа',
     ],
     'messages' =>[
         'check_number_success' => 'Номер свободен',

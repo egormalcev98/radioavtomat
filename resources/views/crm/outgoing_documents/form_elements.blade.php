@@ -163,7 +163,7 @@
                     </div>
                 </div>
             </div>
-        @if($method == 'edit')
+        @if($method == 'edit' or $method == 'create')
             @include('crm.box_footer')
         @endif
         <!-- /.card-body -->

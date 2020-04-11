@@ -9,14 +9,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class BaseModel extends Model
 {
     use SoftDeletes;
-	
+
 	/**
      * Атрибуты, которые должны быть преобразованы в даты.
      *
      * @var array
      */
     protected $dates = ['deleted_at'];
-	
+
 	/**
      * Получим список элементов отсортированных по умолчанию.
      */

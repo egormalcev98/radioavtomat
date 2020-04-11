@@ -27,7 +27,7 @@ class CreateOutgoingDocumentsTable extends Migration
             $table->integer('letter_form_id')->comment('бланк письма'); // бланк письма
             $table->string('title'); // заголовок
             $table->unsignedBigInteger('number_pages')->comment(' число страниц'); // число страниц
-            $table->unsignedBigInteger('incoming_letter_number')->comment('ответ на входящее письмо номер');; // Ответ на входящее письмо номер
+            $table->unsignedBigInteger('incoming_letter_number')->nullable()->comment('ответ на входящее письмо номер'); // Ответ на входящее письмо номер
             $table->timestamps();
             $table->softDeletes();
         });

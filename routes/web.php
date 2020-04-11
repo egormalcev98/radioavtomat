@@ -43,6 +43,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('outgoing_documents', 'OutgoingDocuments\OutgoingDocumentController');
     Route::post('outgoing_documents/check_number', 'OutgoingDocuments\OutgoingDocumentController@checkNumber')->name('outgoing_documents.check_number');
 
+    //История
+    Route::resource('activity', 'Activity\ActivityController')->only([
+        'index'
+    ]);;
+
 	//Справочники
 	Route::resource('document_types', 'References\DocumentTypeController')->except([
 		'show', 'edit'
