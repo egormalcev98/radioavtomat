@@ -74,4 +74,12 @@ class IncomingDocument extends BaseModel
 		return $this->hasMany(IncomingDocumentDistributed::class);
     }
 	
+	/**
+     * Получить ответственных пользователей
+     */
+    public function responsibles()
+    {
+		return $this->hasMany(IncomingDocumentResponsible::class);
+    }
+	
 }

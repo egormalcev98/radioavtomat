@@ -63,9 +63,14 @@ class IncomingDocumentService extends BaseService
 		];
 	}
 	
-	public function checkViewResponse()
+	public function checkEditDistributed()
 	{
 		return auth()->user()->hasRole(['secretary', 'admin']);
+	}
+	
+	public function checkEditResponsibles($incomingDocument)
+	{
+		return auth()->user()->can('read_incoming_doc_' . $incomingDocument->id) or auth()->user()->hasRole(['admin']);
 	}
 	
 	/**
@@ -80,9 +85,12 @@ class IncomingDocumentService extends BaseService
 		if(class_basename($this->model) != 'Builder') {
 			$incomingDocument = $this->model;
 			$incomingDocumentFiles = $incomingDocument->files()->orderedGet();
-			$viewResponse = $this->checkViewResponse();
+			
+			$editDistributed = $this->checkEditDistributed();
+			$editResponsibles = $this->checkEditResponsibles($incomingDocument);
 			
 			$datatableDistributed = $this->incomingUserService->constructViewDTDistributed($this->model->id);
+			$datatableResponsibles = $this->incomingUserService->constructViewDTResponsibles($this->model->id);
 			
 			$employees = $recipients;
 			$employeeTasks = EmployeeTask::orderedGet();
@@ -94,8 +102,10 @@ class IncomingDocumentService extends BaseService
 			'documentTypes', 
 			'recipients', 
 			'incomingDocumentFiles', 
-			'viewResponse', 
+			'editDistributed', 
+			'editResponsibles', 
 			'datatableDistributed', 
+			'datatableResponsibles', 
 			'employees',
 			'employeeTasks'
 		);

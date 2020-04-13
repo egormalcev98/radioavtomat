@@ -5,6 +5,8 @@ namespace App\Http\Controllers\IncomingDocuments;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\IncomingDocuments\IncomingDocument;
+use App\Models\IncomingDocuments\IncomingDocumentDistributed;
+use App\Models\IncomingDocuments\IncomingDocumentResponsible;
 use App\Services\IncomingDocuments\IncomingUserService as Service;
 use App\Http\Requests\IncomingDocuments\SaveUserRequest;
 
@@ -44,4 +46,36 @@ class IncomingUserController extends Controller
 		
 		return abort(403);
     }
+	
+    public function destroyDistributed(IncomingDocumentDistributed $incomingDocumentDistributed)
+    {
+		return $this->destroyElement($incomingDocumentDistributed);
+    }
+	
+	public function listResponsibles()
+    {
+		if (request()->ajax()) {
+			return $this->service->dataTableDataResponsibles();
+		}
+		
+		return abort(404);
+    }
+	
+    public function saveResponsible(SaveUserRequest $request, IncomingDocument $incomingDocument)
+    {
+		if ($request->ajax()) {
+			
+			$this->service->saveResponsible($request, $incomingDocument);
+			
+			return $this->ajaxSuccessResponse();
+		}
+		
+		return abort(403);
+    }
+	
+    public function destroyResponsible(IncomingDocumentResponsible $incomingDocumentResponsible)
+    {
+		return $this->destroyElement($incomingDocumentResponsible);
+    }
+	
 }

@@ -14,7 +14,11 @@ return [
 	],
 	'users' => [
 		'list_columns' => [
-			'id' => 'ID',
+			'full_name' => 'ФИО',
+			'employee_task_name' => 'Задача',
+			'comment' => 'Комментарий',
+			'sign_up' => 'Подписать до',
+			'signed' => 'Подписан',
 		],
 		'validation' => [
 			'error' => 'Произошла ошибка на этапе валидации',

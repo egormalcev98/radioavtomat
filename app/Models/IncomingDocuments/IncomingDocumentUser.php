@@ -41,4 +41,39 @@ class IncomingDocumentUser extends BaseModel
 		'employee_task_id',
 		'user_id',
 	];
+	
+	public function getSomeSignUpAttribute()
+	{
+		return $this->sign_up->format('d.m.Y H:i');
+	}
+	
+	public function getDateSignUpAttribute()
+	{
+		return $this->sign_up->format('Y-m-d');
+	}
+	
+	public function getTimeSignUpAttribute()
+	{
+		return $this->sign_up->format('H:i');
+	}
+	
+	/**
+     * Получим конкретного пользователя
+     */
+    public function user()
+    {
+        return $this->belongsTo(\App\User::class)->withDefault([
+			'name' => '',
+		]);
+    }
+	
+	/**
+     * Получим задачу
+     */
+    public function employeeTask()
+    {
+        return $this->belongsTo(\App\Models\References\EmployeeTask::class)->withDefault([
+			'name' => '',
+		]);
+    }
 }

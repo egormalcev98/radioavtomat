@@ -1,11 +1,11 @@
 
-<div class="modal fade" id="modal_distributed">
+<div class="modal fade" id="modal_responsibles">
 	<div class="modal-dialog" style="min-width: 1000px;">
 		<div class="modal-content">
-			<form role="form" method="POST" onsubmit="Main.sendFormDataReferences(event, $(this), window.LaravelDataTables['dtListDistributed']);" action="{{ route('incoming_document_users.save_distributed', $incomingDocument->id) }}" >
+			<form role="form" method="POST" onsubmit="Main.sendFormDataReferences(event, $(this), window.LaravelDataTables['dtListResponsibles']);" action="{{ route('incoming_document_users.save_responsible', $incomingDocument->id) }}" >
 				@csrf
 				<div class="modal-header">
-					<h4 class="modal-title">Кому распределено</h4>
+					<h4 class="modal-title">Ответственные</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>

@@ -104,27 +104,63 @@ let IncomingDocument = {
 		return false;
 	},
 	
-	selectEmployeeDistributed: function(thisSelect){
+	selectEmployee: function(thisSelect){
 		if(thisSelect){
 			
-			let formSelector = thisSelect.parents('form'),
-				clone = formSelector.find('[data-type="hidden_clone"]');
+			return this.selectEmployeeConstruct(thisSelect.parents('form'), thisSelect.val(), thisSelect.find('option:selected').text());
+		}
+		return false;
+	},
+	
+	selectEmployeeConstruct: function(formSelector, employeeId, employeeName){
+		if(formSelector && employeeId && employeeName){
 			
-			if(formSelector.find('[data-type="user_id"][value=' + thisSelect.val() + ']').length == 0) {
+			let clone = formSelector.find('[data-type="hidden_clone"]');
+			
+			if(formSelector.find('[data-type="user_id"][value=' + employeeId + ']').length == 0) {
 			
 				clone.after('<tr>' + clone.html() + '</tr>');
 				
 				let newTR = clone.next('tr');
 			
-				newTR.find('[data-type="user_id"]').val(thisSelect.val());
+				newTR.find('[data-type="user_id"]').val(employeeId);
 					
-				newTR.find('td:first').text(thisSelect.find('option:selected').text());
+				newTR.find('td:first').text(employeeName);
 					
 				newTR.find('[name]').each(function(key, value){
 					let elementName = $(this);
 					
-					elementName.attr('name', elementName.attr('name').replace('[*]', '[' + thisSelect.val() + ']'));
+					elementName.attr('name', elementName.attr('name').replace('[*]', '[' + employeeId + ']'));
 				});
+			}
+			
+			return true;
+		}
+		return false;
+	},
+	
+	getDataModalUser: function(thisSelector, modalSelector){
+		if(thisSelector && modalSelector){
+			let thisGeneral = this,
+				tr = thisSelector.parents('tr'),
+				modalElement = $(modalSelector),
+				table = window.LaravelDataTables[thisSelector.parents('table').attr('id')];
+			
+			data = table.row(tr).data();
+			
+			if(data) {
+				
+				modalElement.find('tbody').find('tr:not([data-type="hidden_clone"])').remove();
+				
+				thisGeneral.selectEmployeeConstruct(modalElement.find('form'), data['user_id'], data['user_full_name']);
+				
+				$.each(data, function( key, value ) {
+					modalElement.find('tr:last').find('[name="users[' + data['user_id'] + '][' + key + ']"]').val(value);
+				});
+				
+				modalElement.find('tr:last').find('[data-type="user_id"]').prop('checked', true);
+				
+				modalElement.modal('show');
 			}
 			
 			return true;
