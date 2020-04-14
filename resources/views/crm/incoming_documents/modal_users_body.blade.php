@@ -41,7 +41,7 @@
 											<div class="col-7">
 												<input type="date" class="form-control" name="users[*][sign_up_date]" >
 											</div>
-											<div class="col-4 row">
+											<div class="col-5 row">
 												<input type="time" class="form-control" name="users[*][sign_up_time]" >
 											</div>
 										</div>

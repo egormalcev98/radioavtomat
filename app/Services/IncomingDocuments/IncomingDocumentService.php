@@ -63,16 +63,6 @@ class IncomingDocumentService extends BaseService
 		];
 	}
 	
-	public function checkEditDistributed()
-	{
-		return auth()->user()->hasRole(['secretary', 'admin']);
-	}
-	
-	public function checkEditResponsibles($incomingDocument)
-	{
-		return auth()->user()->can('read_incoming_doc_' . $incomingDocument->id) or auth()->user()->hasRole(['admin']);
-	}
-	
 	/**
 	 * Данные для работы с элементом
 	 */
@@ -84,16 +74,22 @@ class IncomingDocumentService extends BaseService
 		
 		if(class_basename($this->model) != 'Builder') {
 			$incomingDocument = $this->model;
-			$incomingDocumentFiles = $incomingDocument->files()->orderedGet();
+			$incomingDocumentFiles = $this->model->files()->orderedGet();
 			
-			$editDistributed = $this->checkEditDistributed();
-			$editResponsibles = $this->checkEditResponsibles($incomingDocument);
+			$editDistributed = $this->incomingUserService->checkEditDistributed($this->model->id);
+			$editResponsibles = $this->incomingUserService->checkEditResponsibles($this->model->id);
 			
 			$datatableDistributed = $this->incomingUserService->constructViewDTDistributed($this->model->id);
 			$datatableResponsibles = $this->incomingUserService->constructViewDTResponsibles($this->model->id);
 			
 			$employees = $recipients;
 			$employeeTasks = EmployeeTask::orderedGet();
+			
+			$signatureUser = $this->incomingUserService->checkSignatureUsers($incomingDocument);
+			
+			$signedUser = $this->model->users()->whereNotNull('signed_at')->authElements()->first() ?? 
+						  $this->model->users()->whereNotNull('reject_at')->authElements()->first() ??
+						  null;
 		}
 		
 		return compact(
@@ -107,7 +103,9 @@ class IncomingDocumentService extends BaseService
 			'datatableDistributed', 
 			'datatableResponsibles', 
 			'employees',
-			'employeeTasks'
+			'employeeTasks',
+			'signatureUser',
+			'signedUser'
 		);
 	}
 	

@@ -7,7 +7,7 @@
 			</div>
 			<div class="form-group">
 				<label>{{ __('validation.attributes.incoming_doc_status_id') }}</label>
-				<select class="form-control select2 {{ $errors->has('incoming_doc_status_id') ? 'is-invalid' : '' }}" name="incoming_doc_status_id" required="required" >
+				<select class="form-control select2 {{ $errors->has('incoming_doc_status_id') ? 'is-invalid' : '' }}" name="incoming_doc_status_id" required="required" style="width: 100%;">
 					@if($incomingDocStatuses->isNotEmpty())
 						@foreach($incomingDocStatuses as $incomingDocStatus)
 							<option value="{{ $incomingDocStatus->id }}" @if((@old('incoming_doc_status_id') ?? $incomingDocument->incoming_doc_status_id ?? 0) == $incomingDocStatus->id) selected @endif >{{ $incomingDocStatus->name }}</option>
@@ -18,7 +18,7 @@
 			</div>
 			<div class="form-group">
 				<label>{{ __('validation.attributes.document_type_id') }}</label>
-				<select class="form-control select2 {{ $errors->has('document_type_id') ? 'is-invalid' : '' }}" name="document_type_id" required="required" >
+				<select class="form-control select2 {{ $errors->has('document_type_id') ? 'is-invalid' : '' }}" name="document_type_id" required="required" style="width: 100%;">
 					@if($documentTypes->isNotEmpty())
 						@foreach($documentTypes as $documentType)
 							<option value="{{ $documentType->id }}" @if((@old('document_type_id') ?? $incomingDocument->document_type_id ?? 0) == $documentType->id) selected @endif >{{ $documentType->name }}</option>

@@ -82,4 +82,11 @@ class IncomingDocument extends BaseModel
 		return $this->hasMany(IncomingDocumentResponsible::class);
     }
 	
+	/**
+     * Получить всех пользователей, чтобы знать кому надо подписать и т.д. (аккуратнее)
+     */
+    public function users()
+    {
+		return $this->hasMany(IncomingDocumentUser::class);
+    }
 }

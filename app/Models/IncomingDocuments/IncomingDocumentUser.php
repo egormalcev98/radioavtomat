@@ -57,6 +57,37 @@ class IncomingDocumentUser extends BaseModel
 		return $this->sign_up->format('H:i');
 	}
 	
+	
+	public function getSomeSignedAtAttribute()
+	{
+		return $this->signed_at->format('d.m.Y H:i');
+	}
+	
+	public function getDateSignedAtAttribute()
+	{
+		return $this->signed_at->format('Y-m-d');
+	}
+	
+	public function getTimeSignedAtAttribute()
+	{
+		return $this->signed_at->format('H:i');
+	}
+	
+	
+	public function getSomeRejectAtAttribute()
+	{
+		return $this->reject_at->format('d.m.Y H:i');
+	}
+	
+	public function getDateRejectAtAttribute()
+	{
+		return $this->reject_at->format('Y-m-d');
+	}
+	
+	public function getTimeRejectAtAttribute()
+	{
+		return $this->reject_at->format('H:i');
+	}
 	/**
      * Получим конкретного пользователя
      */
@@ -75,5 +106,13 @@ class IncomingDocumentUser extends BaseModel
         return $this->belongsTo(\App\Models\References\EmployeeTask::class)->withDefault([
 			'name' => '',
 		]);
+    }
+	
+	/**
+     * Получить записи ответственных или распределенных для подписей
+     */
+	public function scopeAuthElements($query)
+    {
+        return $query->where('user_id', auth()->user()->id);
     }
 }

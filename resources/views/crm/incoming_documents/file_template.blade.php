@@ -4,7 +4,7 @@
 		@endif
 	</td>
 	<td>
-		@if(!isset($disableActions))
+		@if(!isset($disableActions) or !$disableActions)
 			<a href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title="Загрузить" >
 				<input style="display: none;" @if(isset($dataFile)) name="scan_files[{{ $dataFile->id }}]" @else name="new_scan_files[]" @endif type="file" id="{{ isset( $dataFile) ? 'scan_input' . $dataFile->id : '' }}" onchange="IncomingDocument.getFileName(this);" {{--accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/vnd.wap.wbmp,image/jpeg"--}} >
 				@if(isset($dataFile))
@@ -16,7 +16,7 @@
 		<a @if(!isset($dataFile)) style="display: none;" @endif href="{{ isset( $dataFile) ? Storage::url($dataFile->file_path) : 'javascript:void(0);' }}" data-toggle="tooltip" data-placement="top" title="Скачать" download>
 			<i class="fas fa-cloud-download-alt"></i>
 		</a>
-		@if(!isset($disableActions))
+		@if(!isset($disableActions) or !$disableActions)
 			<a @if(!isset($dataFile)) style="display: none;" @endif href="javascript:void(0);" @if(isset($dataFile)) onclick="IncomingDocument.showFileNameModal('{{ $dataFile->name }}', {{ $dataFile->id }});" @endif >
 				<i class="fas fa-edit"></i>
 			</a>

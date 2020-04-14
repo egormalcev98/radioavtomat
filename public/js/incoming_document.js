@@ -168,4 +168,32 @@ let IncomingDocument = {
 		return false;
 	},
 	
+	signedAt: function(thisSelector, url){
+		if(thisSelector && url){
+			let thisGeneral = this;
+			
+			let errorHandle = function(jqXHR, textStatus, errorThrown ){
+				let data = jqXHR.responseJSON;
+				
+				Main.popUp('Произошла ошибка, попробуйте еще раз');
+			};
+			
+			let successHandle = function(arrayData){
+				if(arrayData && arrayData['status']) {
+					Main.popUp('Действия сохранены');
+					
+					window.LaravelDataTables["dtListDistributed"].ajax.reload( null, false );
+					window.LaravelDataTables["dtListResponsibles"].ajax.reload( null, false );
+				}
+			};
+			
+			let formData = new FormData(thisSelector.parents('form')[0]);
+			
+			Main.ajaxRequest('POST', url, formData, successHandle, errorHandle);
+			
+			return true;
+		}
+		return false;
+	},
+	
 }

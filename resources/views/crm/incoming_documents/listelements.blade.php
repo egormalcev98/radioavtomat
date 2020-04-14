@@ -7,11 +7,13 @@
 @stop
 
 @section('css')
-	<style>
-		#dtListElements tbody tr {
-			cursor: pointer;
-		}
-	</style>
+	@if(auth()->user()->can('view_incoming_card_document'))
+		<style>
+			#dtListElements tbody tr {
+				cursor: pointer;
+			}
+		</style>
+	@endif
 @stop
 
 @section('content')
@@ -21,13 +23,15 @@
 @section('js')
 	{!! $datatable->scripts() !!}
 	
-	<script type="text/javascript">
-		$('#dtListElements tbody').on('click', 'tr', function(event){
-			if(event.target.nodeName == 'TD') {
-				
-				let data = window.LaravelDataTables["dtListElements"].row( this ).data();
-				location.href = data['showUrl'];
-			}
-		});
-	</script>
+	@if(auth()->user()->can('view_incoming_card_document'))
+		<script type="text/javascript">
+			$('#dtListElements tbody').on('click', 'tr', function(event){
+				if(event.target.nodeName == 'TD') {
+					
+					let data = window.LaravelDataTables["dtListElements"].row( this ).data();
+					location.href = data['showUrl'];
+				}
+			});
+		</script>
+	@endif
 @stop

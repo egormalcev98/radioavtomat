@@ -13,13 +13,8 @@ class IncomingUserService extends BaseService
 	
 	public $translation = 'incoming_documents.users.';
 	
-	public $permissionKey = 'incoming_document';
+	public $permissionKey = 'incoming_card_document';
 	
-	// public function __construct()
-    // {
-        // parent::__construct(IncomingDocumentUser::query());
-    // }
-
 	/**
 	 * Возвращает список всех колонок для DataTable
 	 */
@@ -56,12 +51,14 @@ class IncomingUserService extends BaseService
 	
 	public function constructViewDTDistributed($incomingDocumentId) 
 	{
-		return $this->constructViewDT()->ajax(route($this->routeName . '.list_distributed', $incomingDocumentId));
+		return $this->constructViewDT()
+			->ajax(route($this->routeName . '.list_distributed', $incomingDocumentId));
 	}
 	
 	public function constructViewDTResponsibles($incomingDocumentId) 
 	{
-		return $this->constructViewDT()->ajax(route($this->routeName . '.list_responsibles', $incomingDocumentId));
+		return $this->constructViewDT()
+			->ajax(route($this->routeName . '.list_responsibles', $incomingDocumentId));
 	}
 	
 	private function dataTableConstruct($query)
@@ -98,39 +95,53 @@ class IncomingUserService extends BaseService
 	/**
 	 * Формирует данные для шаблона "Список элементов"
 	 */
-	public function dataTableDataDistributed()
+	public function dataTableDataDistributed($incomingDocument)
 	{	
 		$select = $this->columnsToSelect( $this->tableColumns() );
 		$select[] = 'id';
 		
-		$query = IncomingDocumentDistributed::select( $select );
+		$query = $incomingDocument->distributed()->select( $select );
 					
 		return $this->dataTableConstruct($query)
-					->addColumn('action', function ($element){
+					->addColumn('action', function ($element) use($incomingDocument) {
 						$routeName = $this->routeName;
 						
-						return view('crm.incoming_documents.users.action_buttons_distributed', compact('element', 'routeName'));
+						return ($this->checkEditDistributed($incomingDocument->id)) ? view('crm.incoming_documents.users.action_buttons_distributed', compact('element', 'routeName')) : '';
 					})
+					->with([
+						'percent_signatures' => $this->percentSignatures($incomingDocument)
+					])
 					->make(true);
 	}
 	
 	/**
 	 * Формирует данные для шаблона "Список элементов"
 	 */
-	public function dataTableDataResponsibles()
+	public function dataTableDataResponsibles($incomingDocument)
 	{	
 		$select = $this->columnsToSelect( $this->tableColumns() );
 		$select[] = 'id';
 		
-		$query = IncomingDocumentResponsible::select( $select );
+		$query = $incomingDocument->responsibles()->select( $select );
 					
 		return $this->dataTableConstruct($query)
-					->addColumn('action', function ($element){
+					->addColumn('action', function ($element) use($incomingDocument) {
 						$routeName = $this->routeName;
 						
-						return view('crm.incoming_documents.users.action_buttons_responsibles', compact('element', 'routeName'));
+						return ($this->checkEditResponsibles($incomingDocument->id)) ? view('crm.incoming_documents.users.action_buttons_responsibles', compact('element', 'routeName')) : '';
 					})
+					->with([
+						'percent_signatures' => $this->percentSignatures($incomingDocument)
+					])
 					->make(true);
+	}
+	
+	public function percentSignatures($incomingDocument)
+	{
+		$countUsers = $incomingDocument->users()->count();
+		$countUsersNotNullSigned = $incomingDocument->users()->whereNotNull('signed_at')->count();
+		
+		return ($countUsers > 0) ? (( $countUsersNotNullSigned / $countUsers ) * 100) : 0 ;
 	}
 	
 	/**
@@ -154,7 +165,8 @@ class IncomingUserService extends BaseService
 			);
 		
 			foreach($users as $user) {
-				$user->permissions()->sync([ $permission->id ]);
+				$user->permissions()->syncWithoutDetaching([ $permission->id ]);
+				$user->flushCache();
 			}
 		}
 		
@@ -199,5 +211,38 @@ class IncomingUserService extends BaseService
 		return $userIds;
 	}
 	
+	public function checkSignatureUsers($incomingDocument)
+	{
+		$activeUsers = $incomingDocument->users->pluck('user_id');
+		
+		return $activeUsers->contains(auth()->user()->id);
+	}
+	
+	public function checkEditDistributed($incomingDocumentId)
+	{
+		return auth()->user()->hasRole(['secretary', 'admin']);
+	}
+	
+	public function checkEditResponsibles($incomingDocumentId)
+	{
+		return auth()->user()->can('read_incoming_doc_' . $incomingDocumentId) or auth()->user()->hasRole(['admin']);
+	}
+	
+	/**
+	 * Сохраним подпись пользователя
+	 */
+	public function saveSigned($request, $incomingDocument)
+	{	
+		$requestAll = $request->all();
+		
+		$incomingDocument->users()
+						->where('user_id', auth()->user()->id)
+						->update([
+							$requestAll['signed'] . '_at' => $requestAll[$requestAll['signed'] . '_at_date'] . ' ' . $requestAll[$requestAll['signed'] . '_at_time'],
+							($requestAll['signed'] == 'reject') ? 'signed_at' : 'reject_at' => null,
+						]);
+		
+		return true;
+	}
 	
 }

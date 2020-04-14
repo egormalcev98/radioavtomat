@@ -9,6 +9,7 @@ return [
             'user' => 'c,r,u,d,v',
             'references' => 'c,r,u,d,v',
             'incoming_document' => 'c,r,u,d,v',
+            'incoming_card_document' => 'c,r,u,d,v',
         ],
     ],
     'permissions_map' => [

@@ -1,6 +1,6 @@
 
 <div class="modal fade" id="modal_distributed">
-	<div class="modal-dialog" style="min-width: 1000px;">
+	<div class="modal-dialog" style="min-width: 1100px;">
 		<div class="modal-content">
 			<form role="form" method="POST" onsubmit="Main.sendFormDataReferences(event, $(this), window.LaravelDataTables['dtListDistributed']);" action="{{ route('incoming_document_users.save_distributed', $incomingDocument->id) }}" >
 				@csrf
