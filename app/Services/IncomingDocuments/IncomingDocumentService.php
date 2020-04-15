@@ -37,11 +37,10 @@ class IncomingDocumentService extends BaseService
 	 */
 	public function outputData()
 	{
-		// $routeName = $this->routeName;
-		// $roles = Role::withoutAdmin()->get();
-		// $structuralUnits = StructuralUnit::orderedGet();
+		$documentTypes = DocumentType::orderedGet();
+		$incomingDocStatuses = IncomingDocStatus::orderedGet();
 		
-		// return compact('routeName', 'roles', 'structuralUnits');
+		return compact('documentTypes', 'incomingDocStatuses');
 	}
 	
 	/**
@@ -55,12 +54,182 @@ class IncomingDocumentService extends BaseService
 				'data' => 'id',
 			],
 			[
+				'title' => __($this->translation . 'list_columns.created_at'),
+				'data' => 'created_at',
+			],
+			[
 				'title' => __($this->translation . 'list_columns.title'),
 				'data' => 'title',
+			],
+			[
+				'title' => __($this->translation . 'list_columns.counterparty'),
+				'data' => 'counterparty',
+			],
+			[
+				'title' => __($this->translation . 'list_columns.number'),
+				'data' => 'number',
+			],
+			[
+				'title' => __($this->translation . 'list_columns.date_letter_at'),
+				'data' => 'date_letter_at',
+			],
+			[
+				'title' => __($this->translation . 'list_columns.document_type'),
+				'data' => 'document_type.name',
+				'name' => 'document_type_id',
+			],
+			[
+				'title' => __($this->translation . 'list_columns.who_painted'),
+				'data' => 'who_painted',
+				'remove_select' => true,
+				'searchable' => false,
+				'orderable' => false,
+			],
+			[
+				'title' => __($this->translation . 'list_columns.date_painted'),
+				'data' => 'date_painted',
+				'remove_select' => true,
+				'searchable' => false,
+				'orderable' => false,
+			],
+			[
+				'title' => __($this->translation . 'list_columns.whom_distributed'),
+				'data' => 'whom_distributed',
+				'remove_select' => true,
+				'searchable' => false,
+				'orderable' => false,
+			],
+			[
+				'title' => __($this->translation . 'list_columns.responsibles'),
+				'data' => 'list_responsibles',
+				'remove_select' => true,
+				'searchable' => false,
+				'orderable' => false,
+			],
+			[
+				'title' => __($this->translation . 'list_columns.note'),
+				'data' => 'note',
+			],
+			[
+				'title' => __($this->translation . 'list_columns.percentage_consideration'),
+				'data' => 'percentage_consideration',
+				'remove_select' => true,
+				'searchable' => false,
+				'orderable' => false,
+			],
+			[
+				'title' => __($this->translation . 'list_columns.status_name'),
+				'data' => 'status.name',
+				'name' => 'incoming_doc_status_id',
 			],
 			
 			$this->actionButton()
 		];
+	}
+	
+	/**
+	 * Формирует данные для шаблона "Список элементов"
+	 */
+	public function dataTableData()
+	{	
+		$select = $this->columnsToSelect( $this->tableColumns() );
+		$select[] = 'urgent';
+		
+		$query = $this->model
+					->select( $select )
+					->with([
+						'documentType',
+						'users.user',
+						'users',
+						'distributed',
+						'distributed.user',
+						'responsibles',
+						'responsibles.user',
+						'status',
+					]);
+		
+		// Фильтры
+		
+		if(isset(request()->period)){
+			$query->whereBetween('created_at', $this->dateRange(request()->period));
+		}
+		
+		if (request()->has('document_type_id') and request()->document_type_id) {
+			$query->where('document_type_id', request()->document_type_id);
+		}
+		
+		if (request()->has('incoming_doc_status_id') and request()->incoming_doc_status_id) {
+			$query->where('incoming_doc_status_id', request()->incoming_doc_status_id);
+		}
+		
+		//////////////////
+		
+		return Datatables::of($query)
+				->addColumn('action', $this->actionColumnDT())
+				->addColumn('showUrl', function ($element) {
+					return route($this->routeName . '.show', $element->id);
+				})
+				->addColumn('who_painted', function ($element) {
+					if($element->users->isNotEmpty()) {
+						return $element->users
+							->whereNotNull('signed_at')
+							->groupBy('user_id')
+							->map(function($user) {
+								
+							return $user->first()->user->fullName;
+						})->implode(', ');
+					}
+					return '';
+				})
+				->addColumn('date_painted', function ($element) {
+					if($element->users->isNotEmpty()) {
+						$lastSigned = $element->users
+										->whereNotNull('signed_at')
+										->sortByDesc('signed_at')
+										->first();
+						if($lastSigned) {
+							return $lastSigned->someSignedAt;
+						}
+					}
+					return '';
+				})
+				->addColumn('whom_distributed', function ($element) {
+					if($element->distributed->isNotEmpty()) {
+						return $element->distributed->map(function($distr) {
+							
+							return $distr->user->fullName;
+						})->implode(', ');
+					}
+					return '';
+				})
+				->addColumn('list_responsibles', function ($element) {
+					if($element->responsibles->isNotEmpty()) {
+						return $element->responsibles->map(function($distr) {
+							
+							return $distr->user->fullName;
+						})->implode(', ');
+					}
+					return '';
+				})
+				->addColumn('percentage_consideration', function ($element) {
+					$countUsers = $element->users->count();
+					$countUsersNotNullSigned = $element->users->whereNotNull('signed_at')->count();
+					
+					return ($countUsers > 0) ? (( $countUsersNotNullSigned / $countUsers ) * 100) : 0 ;
+				})
+				->removeColumn('users')
+				->removeColumn('distributed')
+				->removeColumn('responsibles')
+				->make(true);
+	}
+	/**
+	 * Собираем объект DataTable для фронта
+	 */
+	public function constructViewDT($selectorForm = '#dt_filters') 
+	{
+		$dt = parent::constructViewDT($selectorForm);
+		
+		return $dt->scrollX(true);
 	}
 	
 	/**
@@ -90,6 +259,12 @@ class IncomingDocumentService extends BaseService
 			$signedUser = $this->model->users()->whereNotNull('signed_at')->authElements()->first() ?? 
 						  $this->model->users()->whereNotNull('reject_at')->authElements()->first() ??
 						  null;
+						  
+			$reconciliationSections = $this->model
+										->users()
+										->with(['user'])
+										->groupBy('user_id')
+										->get();
 		}
 		
 		return compact(
@@ -105,39 +280,9 @@ class IncomingDocumentService extends BaseService
 			'employees',
 			'employeeTasks',
 			'signatureUser',
-			'signedUser'
+			'signedUser',
+			'reconciliationSections'
 		);
-	}
-	
-	/**
-	 * Формирует данные для шаблона "Список элементов"
-	 */
-	public function dataTableData()
-	{	
-		$select = $this->columnsToSelect( $this->tableColumns() );
-		
-		$query = $this->model
-					->select( $select );
-					// ->with(['structuralUnit', 'roles', 'status']);
-		
-		// Фильтры
-		
-		// if (request()->has('role') and request()->role) {
-			// $query->whereRoleIs(request()->role);
-		// }
-		
-		// if (request()->has('structural_unit') and request()->structural_unit) {
-			// $query->where('structural_unit_id', request()->structural_unit);
-		// }
-		
-		//////////////////
-		
-		return Datatables::of($query)
-				->addColumn('action', $this->actionColumnDT())
-				->addColumn('showUrl', function ($element) {
-					return route($this->routeName . '.show', $element->id);
-				})
-				->make(true);
 	}
 	
 	/**

@@ -9,6 +9,16 @@
 @section('content')
 
 	<div class="row">
+		@if($reconciliationSections->isNotEmpty())
+			<div class="col-12 mb-2">
+				<div class="btn-group">
+					@foreach($reconciliationSections as $reconciliationSection)
+						<button type="button" class="btn btn-{{ $reconciliationSection->statusColor }} btn-flat">{{ $reconciliationSection->user->fullName }}</button>
+					@endforeach
+				</div>
+			</div>
+		@endif
+		  
 		<!-- general form elements -->
 		<div class="col-12 row">
 			<div class="col-8">

@@ -18,7 +18,7 @@
 					@endif
 					
 					<div class="p-0">
-						{!! $datatable->table() !!}
+						{!! $datatable->table($tableParams ?? []) !!}
 					</div>
 				</div>
 				<!-- /.card-body -->

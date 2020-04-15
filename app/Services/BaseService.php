@@ -4,6 +4,7 @@ namespace App\Services;
 use DataTables;
 use Illuminate\Database\Eloquent\Builder;
 use Yajra\DataTables\Html\Builder as BuilderDT;
+use Carbon\Carbon;
 
 class BaseService
 {
@@ -172,5 +173,22 @@ class BaseService
 	public function removeElement()
 	{
 		return $this->model->delete();
+	}
+	
+	/**
+     * Разбиваем временной интервал из daterangepicker на ключи массива
+     */
+	protected function dateRange($period)
+	{
+		if(isset($period) and $period){
+			$dates = explode(' - ', $period);
+			if(isset($dates[1])){
+				$dates[0] = Carbon::parse($dates[0]);
+				$dates[1] = Carbon::parse($dates[1])->endOfDay();
+				return $dates;
+			}
+		}
+		
+		return [];
 	}
 }

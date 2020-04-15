@@ -16,6 +16,40 @@ $(document).ready(function(){
 });
 
 let Main = {
+	confDrp: {
+        "format": "DD.MM.YYYY",
+        "separator": " - ",
+        "applyLabel": "Применить",
+        "cancelLabel": "Отменить",
+        "fromLabel": "От",
+        "toLabel": "До",
+        "customRangeLabel": "Custom",
+        "weekLabel": "W",
+        "daysOfWeek": [
+            "Вс",
+            "Пн",
+            "Вт",
+            "Ср",
+            "Чт",
+            "Пт",
+            "Сб"
+        ],
+        "monthNames": [
+            "Январь",
+            "Февраль",
+            "Март",
+            "Апрель",
+            "Май",
+            "Июнь",
+            "Июль",
+            "Август",
+            "Сентябрь",
+            "Октябрь",
+            "Ноябрь",
+            "Декабрь"
+        ],
+        "firstDay": 1
+    },
 	
 	autocompleteLanguageConfig: {
 		errorLoading: function () {

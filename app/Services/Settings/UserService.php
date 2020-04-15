@@ -247,7 +247,14 @@ class UserService extends BaseService
 	{
 		$requestAll = $request->all();
 		$arrSync = [];
-			
+		
+		$arrSync = $this->model
+			 ->permissions()
+			 ->where('name', 'like', "read_incoming_doc\_%")		
+			 ->get()
+			 ->pluck('id')
+			 ->toArray();
+		
 		if(!empty($requestAll['permission_modules'])) {
 			$permissionModules = config('permission.modules');
 			$permissionTypes = $this->permissionTypes;
@@ -270,7 +277,7 @@ class UserService extends BaseService
 												->toArray();
 						
 						if(!empty($permissions)) {
-							$arrSync  = array_merge($arrSync, $permissions);
+							$arrSync = array_merge($arrSync, $permissions);
 						}
 					}
 					

@@ -7,6 +7,18 @@ return [
 	'list_columns' => [
 		'id' => 'ID',
 		'title' => 'Заголовок',
+		'created_at' => 'Дата создания',
+		'counterparty' => 'Контрагент',
+		'number' => 'Исходящий номер',
+		'date_letter_at' => 'Исходящая дата',
+		'document_type' => 'Вид документа',
+		'who_painted' => 'Кем расписано',
+		'date_painted' => 'Дата росписи',
+		'whom_distributed' => 'Кому распределено',
+		'responsibles' => 'Ответственные',
+		'note' => 'Примечания',
+		'percentage_consideration' => 'Процент рассмотрения',
+		'status_name' => 'Статус',
 	],
 	'messages' => [
 		'check_number_success' => 'Номер свободен',

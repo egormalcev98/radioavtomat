@@ -17,7 +17,7 @@
 @stop
 
 @section('content')
-	@include('crm.listelements.structure'/*, ['filterTemplate']*/)
+	@include('crm.listelements.structure', ['filterTemplate' => 'incoming_documents.filter_listelements', 'tableParams' => ['class' => 'small table table-hover dataTable no-footer', 'style' => 'width:100%;']])
 @stop
 
 @section('js')
@@ -34,4 +34,25 @@
 			});
 		</script>
 	@endif
+	
+	<script type="text/javascript">
+		$(document).ready(function(){
+			
+			$('#dtListElements').dataTable().fnSettings().aoRowCallback.push( {
+				"fn": function (nRow, aData, iDisplayIndex) {
+					if(aData['urgent'] == 1){
+						$(nRow).css('background', '#f9caca');
+					}
+				}
+			} );
+			
+			$('#period').daterangepicker({
+				'opens': 'right',
+				'locale': Main.confDrp,
+				'autoUpdateInput': false
+			}, function(start_date, end_date) {
+				this.element.val(start_date.format(Main.confDrp.format) + ' - ' + end_date.format(Main.confDrp.format)).change();
+			});
+		});
+	</script>
 @stop

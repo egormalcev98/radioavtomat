@@ -88,6 +88,23 @@ class IncomingDocumentUser extends BaseModel
 	{
 		return $this->reject_at->format('H:i');
 	}
+	
+	/**
+     * Цвет в зависимотси от статуса подписи документа пользователем
+     */
+	public function getStatusColorAttribute()
+	{
+		if($this->signed_at) {
+			return 'success';
+		}
+		
+		if($this->reject_at or ($this->signed_at == null and $this->sign_up < now())) {
+			return 'danger';
+		}
+		
+		return 'primary';
+	}
+	
 	/**
      * Получим конкретного пользователя
      */
