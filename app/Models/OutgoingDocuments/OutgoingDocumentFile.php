@@ -15,4 +15,9 @@ class OutgoingDocumentFile extends Activity
 		'file_path',
 	];
 
+    public function outgoingDocument()
+    {
+        return $this->belongsTo(\App\Models\OutgoingDocuments\OutgoingDocument::class);
+    }
+
 }

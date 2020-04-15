@@ -228,11 +228,11 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
-	
-	'debug_blacklist' => [      
-		'_SERVER' => array_keys($_ENV),      
-		'_COOKIE' => array_keys($_COOKIE),      
-		'_ENV' => array_keys($_ENV),  
+
+	'debug_blacklist' => [
+		'_SERVER' => array_keys($_ENV),
+		'_COOKIE' => array_keys($_COOKIE),
+		'_ENV' => array_keys($_ENV),
 		'_POST' => [
             'password',
         ],

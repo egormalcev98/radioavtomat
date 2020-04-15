@@ -1,23 +1,26 @@
-@extends('adminlte::page')
-
-@section('title', $title)
-
-@section('content_header')
-    <h1>{{$title}}</h1>
-@stop
-
-@section('content')
-    <div class="card">
-        <div class="card-body">
-            {{--        @include('crm.outgoing_documents.filter_listelemnts')--}}
-
-            <div class="p-0">
-                {!! $datatable->table() !!}
+@if(!empty($tableData))
+    @foreach( $tableData as $date => $dataRows)
+        <div class="row activity_row">
+            <div class="container-fluid">
+                <div class="activity_date">
+                    {{ $date }}
+                </div>
             </div>
+            @foreach( $dataRows as $key => $rows)
+                <div class="activity_doby">
+                    {{ $rows[0]['formatedTitle'] }}
+                    @foreach( $rows as $row)
+                        {{ $row->formatedProperties }}
+                    @endforeach
+                </div>
+            @endforeach
+        </div>
+    @endforeach
+    <div class="activity_footer">
+        <div class="float-right">
+            {!! $paginator !!}
         </div>
     </div>
-@stop
-
-@section('js')
-	{!! $datatable->scripts() !!}
-@stop
+    @else
+    Ничего не найдено
+@endif

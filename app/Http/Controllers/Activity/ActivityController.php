@@ -12,7 +12,7 @@ class ActivityController extends Controller
     {
         $this->service = $service;
 
-//        $this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index', 'show']]);
+//        $this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index']]);
 //        $this->middleware('permission:delete_' . $this->service->permissionKey, ['only' => ['destroy']]);
 
         view()->share('permissionKey', $this->service->permissionKey);
@@ -22,15 +22,19 @@ class ActivityController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            return $this->service->dataTableData();
-        }
+            $result = $this->service->tableData(request()->all());
+            $with['tableData'] = $result[0];
+            $with['paginator'] = $result[1];
 
-        $with = $this->service->outputData();
+            return view($this->service->templatePath . 'listelements')->with($with);
+        }
+        $result = $this->service->tableData();
+        $with['tableData'] = $result[0];
+        $with['paginator'] = $result[1];
 
         $with['title'] = __($this->service->translation . 'index.title');
-        $with['datatable'] = $this->service->constructViewDT();
 
-        return view($this->service->templatePath . 'listelements')->with($with);
+        return view($this->service->templatePath . 'general')->with($with);
     }
 
 }
