@@ -10,6 +10,7 @@ return [
             'references' => 'c,r,u,d,v',
             'incoming_document' => 'c,r,u,d,v',
             'outgoing_document' => 'c,r,u,d,v',
+            'activity' => 'c,r,u,d,v',
         ],
     ],
     'permissions_map' => [

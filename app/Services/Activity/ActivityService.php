@@ -93,6 +93,7 @@ class ActivityService extends BaseService
             ]);
 
         // Фильтры
+        // Фильтры еще пишем и в куки чтобы они не сбрасывались при пагинации
         $keyword = null;
         $wayFilter = null;
         if ($request != []) {
@@ -105,6 +106,8 @@ class ActivityService extends BaseService
             if ($request['way']) {
                 $wayFilter = $request['way'];
                 Cookie::queue(Cookie::make("activity_way", $wayFilter, 518400));
+            } else {
+                Cookie::queue(Cookie::forget("activity_way"));
             }
         } else {
             $keyword = Cookie::get('activity_search');
@@ -127,7 +130,7 @@ class ActivityService extends BaseService
             }
 
 
-        $raws = $raws->paginate(10);
+        $raws = $raws->paginate(30);
 
         $paginator = $raws->links();
         //->get();

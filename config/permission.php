@@ -37,10 +37,15 @@ return [
 			'dependent' => [],
 		],
         [
-			'name' => 'outgoing_document',
-			'lang_title' => 'adminlte::menu.outgoing_documents',
-			'dependent' => [],
-		],
+            'name' => 'outgoing_document',
+            'lang_title' => 'adminlte::menu.outgoing_documents',
+            'dependent' => [],
+        ],
+        [
+            'name' => 'activity',
+            'lang_title' => 'adminlte::menu.activity',
+            'dependent' => [],
+        ],
     ],
 
 ];

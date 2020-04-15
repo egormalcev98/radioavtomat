@@ -12,7 +12,7 @@ class ActivityController extends Controller
     {
         $this->service = $service;
 
-//        $this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index']]);
+        $this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index']]);
 //        $this->middleware('permission:delete_' . $this->service->permissionKey, ['only' => ['destroy']]);
 
         view()->share('permissionKey', $this->service->permissionKey);

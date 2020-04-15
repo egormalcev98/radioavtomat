@@ -211,17 +211,26 @@ return [
         [
             'text'      	=> 'incoming_documents',
             'route' 		=> 'incoming_documents.index',
-			'active'		=> ['incoming_documents', 'incoming_documents/*'],
+            'active'		=> ['incoming_documents', 'incoming_documents/*'],
             'icon'        	=> 'fas fa-file-download',
-			'permission'	=> [
-				'view_incoming_document'
-			]
+            'permission'	=> [
+                'view_incoming_document'
+            ]
         ],
         [
            'text'       	=> 'outgoing_documents',
            'icon'           => 'fas fa-file-upload',
            'active'		=> ['outgoing_documents', 'outgoing_documents/*'],
            'route' 		    => 'outgoing_documents.index',
+        ],
+        [
+            'text'      	=> 'activity',
+            'route' 		=> 'activity.index',
+            'active'		=> ['activity', 'activity/*'],
+            'icon'        	=> 'fas fa-clock',
+            'permission'	=> [
+                'view_activity'
+            ]
         ],
         [
             'text'      	=> 'settings',

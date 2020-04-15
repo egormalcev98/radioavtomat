@@ -34,5 +34,5 @@ return [
 
     'outgoing_documents'			=> 'Исходящие документы',
 	'incoming_documents'			=> 'Входящие документы',
-    'history'			            => 'История',
+    'activity'			            => 'История',
 ];
