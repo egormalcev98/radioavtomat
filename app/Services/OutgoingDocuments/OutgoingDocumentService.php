@@ -2,12 +2,14 @@
 
 namespace App\Services\OutgoingDocuments;
 
+use App\Exports\OutgoingDocumentExport;
 use App\Models\OutgoingDocuments\OutgoingDocument;
 use App\Models\OutgoingDocuments\OutgoingDocumentFile;
 use App\Models\References\DocumentType;
 use App\Models\References\LetterForm;
 use App\Models\References\OutgoingDocStatus;
 use App\Models\References\StructuralUnit;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Html\Builder as BuilderDT;
 use App\Role;
 use App\Services\BaseService;
@@ -70,12 +72,12 @@ class OutgoingDocumentService extends BaseService
             ],
             [
                 'title' => __($this->translation . 'list_columns.document_type'),
-                'data' => 'document_type.name',
+                'data' => 'document_type_name',
                 'name' => 'document_type_id',
             ],
             [
                 'title' => __($this->translation . 'list_columns.from_user'),
-                'data' => 'from_user.surnameWithInitials',
+                'data' => 'from_user_surnameWithInitials',
                 'name' => 'from_user_id',
             ],
             [
@@ -84,7 +86,7 @@ class OutgoingDocumentService extends BaseService
             ],
             [
                 'title' => __($this->translation . 'list_columns.outgoing_doc_status'),
-                'data' => 'outgoing_doc_status.name',
+                'data' => 'outgoing_doc_status_name',
                 'name' => 'outgoing_doc_status_id',
             ],
 
@@ -95,7 +97,7 @@ class OutgoingDocumentService extends BaseService
     /**
      * Формирует данные для шаблона "Список элементов"
      */
-    public function dataTableData()
+    public function constructQueryDT($limit = null)
     {
         $select = $this->columnsToSelect($this->tableColumns());
 
@@ -106,6 +108,10 @@ class OutgoingDocumentService extends BaseService
                 'fromUser',
                 'outgoingDocStatus'
             ]);
+
+        if($limit) {
+            $query->limit($limit);
+        }
 
         // Фильтры
 
@@ -138,6 +144,24 @@ class OutgoingDocumentService extends BaseService
             ->addColumn('showUrl', function ($element) {
                 return route($this->routeName . '.show', $element->id);
             })
+            ->addColumn('document_type_name', function ($element) {
+                if($element->documentType) {
+                    return $element->documentType->name;
+                }
+                return '';
+            })
+            ->addColumn('from_user_surnameWithInitials', function ($element) {
+                if($element->fromUser) {
+                    return $element->fromUser->surnameWithInitials;
+                }
+                return '';
+            })
+            ->addColumn('outgoing_doc_status_name', function ($element) {
+                if($element->outgoingDocStatus) {
+                    return $element->outgoingDocStatus->name;
+                }
+                return '';
+            })
             ->filterColumn('document_type_id', function ($query, $keyword) {
                 return $query->whereHas('documentType', function ($query) use ($keyword) {
                     return $query->where('name', 'like', '%' . $keyword . '%');
@@ -147,8 +171,41 @@ class OutgoingDocumentService extends BaseService
                 return $query->whereHas('fromUser', function ($query) use ($keyword) {
                     return $query->where('surname', 'like', '%' . $keyword . '%');
                 });
-            })
-            ->make(true);
+            });
+    }
+
+    /**
+     * Формирует данные для шаблона "Список элементов"
+     */
+    public function dataTableData()
+    {
+        return $this->constructQueryDT()->make(true);
+    }
+    /**
+//     * Собираем объект DataTable для фронта
+//     */
+//    public function constructViewDT($selectorForm = '#dt_filters')
+//    {
+//        $dt = parent::constructViewDT($selectorForm);
+//
+//        return $dt->scrollX(true);
+//    }
+
+    public function constructViewDT($selectorForm = '#dt_filters')
+    {
+        $dt = parent::constructViewDT($selectorForm);
+
+        //$dt = $dt->scrollX(true);
+        return $dt;
+
+        return app(BuilderDT::class)
+            ->language(config('datatables.lang'))
+            ->orders([0, 'desc'])
+            ->pageLength(25)
+            ->dom('<"row"<"col-2"l><"col-8"B><"col-2"f>>rt<"row"<"col-10"i><"col-2"p>>')
+            ->buttons('csv', 'excel')
+            ->ajaxWithForm('', $selectorForm)
+            ->columns($this->tableColumns());
     }
 
     /**
@@ -181,17 +238,6 @@ class OutgoingDocumentService extends BaseService
         return true;
     }
 
-    public function constructViewDT($selectorForm = '#dt_filters')
-    {
-        return app(BuilderDT::class)
-            ->language(config('datatables.lang'))
-            ->orders([0, 'desc'])
-            ->pageLength(25)
-            ->dom('<"row"<"col-2"l><"col-8"B><"col-2"f>>rt<"row"<"col-10"i><"col-2"p>>')
-            ->buttons('csv', 'excel')
-            ->ajaxWithForm('', $selectorForm)
-            ->columns($this->tableColumns());
-    }
 
     private function furtherPreparation($requestAll)
     {
@@ -286,6 +332,20 @@ class OutgoingDocumentService extends BaseService
         }
 
         return compact('outgoingDocument', 'letterForms', 'outgoingDocStatuses', 'documentTypes', 'structuralUnits', 'outgoingDocumentFiles');
+    }
+
+    /**
+     * Сформируем excel документ с даными из списка элементов
+     */
+    public function printExcel()
+    {
+        $columns = $this->columnUsedKeys($this->tableColumns());
+
+        $arrayQueryDT = $this->constructQueryDT(200)->skipPaging()->toArray();
+
+        $data = $this->collectDataExcel($arrayQueryDT['data'], $columns);
+
+        return Excel::download(new OutgoingDocumentExport($data, array_values($columns)), 'data.xlsx');
     }
 
 }
