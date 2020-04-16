@@ -69,4 +69,12 @@ class OutgoingDocumentController extends Controller
         return abort(403);
     }
 
+    /**
+     * Отдадим excel документ с даными из списка элементов
+     */
+    public function printExcel()
+    {
+        return $this->service->printExcel();
+    }
+
 }

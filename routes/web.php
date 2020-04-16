@@ -42,6 +42,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('incoming_document_users/list_distributed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@listDistributed')->name('incoming_document_users.list_distributed');
 
     //Журнал регистрации исходящих документов
+    Route::get('outgoing_documents/print', 'OutgoingDocuments\OutgoingDocumentController@printExcel')->name('outgoing_documents.print');
     Route::resource('outgoing_documents', 'OutgoingDocuments\OutgoingDocumentController');
     Route::post('outgoing_documents/check_number', 'OutgoingDocuments\OutgoingDocumentController@checkNumber')->name('outgoing_documents.check_number');
 
