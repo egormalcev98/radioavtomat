@@ -3,9 +3,6 @@
 @section('title', $title)
 
 @section('content_header')
-    @permission('read_'.$permissionKey)
-        <a class="btn btn-outline-primary float-right" href="{{ $action }}">{{ __('references.main.edit_button') }}</a>
-    @endpermission
     <h1>{{ $title }}</h1>
 @stop
 
