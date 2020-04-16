@@ -77,7 +77,7 @@ class OutgoingDocumentService extends BaseService
             ],
             [
                 'title' => __($this->translation . 'list_columns.from_user'),
-                'data' => 'from_user_surnameWithInitials',
+                'data' => 'from_user',
                 'name' => 'from_user_id',
             ],
             [
@@ -109,7 +109,7 @@ class OutgoingDocumentService extends BaseService
                 'outgoingDocStatus'
             ]);
 
-        if($limit) {
+        if ($limit) {
             $query->limit($limit);
         }
 
@@ -145,19 +145,19 @@ class OutgoingDocumentService extends BaseService
                 return route($this->routeName . '.show', $element->id);
             })
             ->addColumn('document_type_name', function ($element) {
-                if($element->documentType) {
+                if ($element->documentType) {
                     return $element->documentType->name;
                 }
                 return '';
             })
-            ->addColumn('from_user_surnameWithInitials', function ($element) {
-                if($element->fromUser) {
+            ->addColumn('from_user', function ($element) {
+                if ($element->fromUser) {
                     return $element->fromUser->surnameWithInitials;
                 }
                 return '';
             })
             ->addColumn('outgoing_doc_status_name', function ($element) {
-                if($element->outgoingDocStatus) {
+                if ($element->outgoingDocStatus) {
                     return $element->outgoingDocStatus->name;
                 }
                 return '';
@@ -181,31 +181,29 @@ class OutgoingDocumentService extends BaseService
     {
         return $this->constructQueryDT()->make(true);
     }
-    /**
-//     * Собираем объект DataTable для фронта
-//     */
-//    public function constructViewDT($selectorForm = '#dt_filters')
-//    {
-//        $dt = parent::constructViewDT($selectorForm);
-//
-//        return $dt->scrollX(true);
-//    }
 
+    /**
+     * //
+     * *Собираем объект DataTable для фронта
+     * //
+     *
+     */
     public function constructViewDT($selectorForm = '#dt_filters')
     {
         $dt = parent::constructViewDT($selectorForm);
 
-        //$dt = $dt->scrollX(true);
+        $dt = $dt->scrollX(true);
+
         return $dt;
 
-        return app(BuilderDT::class)
-            ->language(config('datatables.lang'))
-            ->orders([0, 'desc'])
-            ->pageLength(25)
-            ->dom('<"row"<"col-2"l><"col-8"B><"col-2"f>>rt<"row"<"col-10"i><"col-2"p>>')
-            ->buttons('csv', 'excel')
-            ->ajaxWithForm('', $selectorForm)
-            ->columns($this->tableColumns());
+//        return app(BuilderDT::class)
+//            ->language(config('datatables.lang'))
+//            ->orders([0, 'desc'])
+//            ->pageLength(25)
+//            ->dom('<"row"<"col-2"l><"col-8"B><"col-2"f>>rt<"row"<"col-10"i><"col-2"p>>')
+//            ->buttons('csv', 'excel')
+//            ->ajaxWithForm('', $selectorForm)
+//            ->columns($this->tableColumns());
     }
 
     /**
