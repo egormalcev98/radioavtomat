@@ -1,4 +1,4 @@
-	
+
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
@@ -14,7 +14,7 @@
 					@if(isset($filterTemplate))
 						@include('crm.' . $filterTemplate)
 					@endif
-					
+
 					<div class="p-0">
 						{!! $datatable->table($tableParams ?? []) !!}
 					</div>

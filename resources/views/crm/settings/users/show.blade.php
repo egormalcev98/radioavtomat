@@ -13,9 +13,9 @@
             <!-- general form elements -->
             <div class="card card-primary">
 				<fieldset disabled="true">
-				
+
 					@include('crm.settings.users.form_elements')
-					
+
 				</fieldset>
             </div>
             <!-- /.card -->

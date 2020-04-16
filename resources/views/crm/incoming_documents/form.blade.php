@@ -8,72 +8,72 @@
 
 @section('content')
 
-	@include('crm.box_errors')
-	
-	<form role="form" method="POST" action="{{ $action }}" enctype="multipart/form-data" >
-		@csrf
-		@if($method == 'edit')
-			{{ method_field('PATCH') }}
-		@endif
-				
-		<!-- general form elements -->
-		<div class="col-12 row">
-			<div class="col-8">
-				<div class="card card-primary">
-				  <!-- form start -->
-				  
-					@include('crm.incoming_documents.form_elements')
-					
-					@include('crm.box_footer')
-						
-				</div>
-			</div>
-			<div class="col-4">
-				<div class="card">
-					@if(auth()->user()->can('create_' . $permissionKey))
-					<div class="card-header">
-						<button type="button" class="btn btn-info" onclick="IncomingDocument.addTrScan($(this));" >Добавить скан (pdf,doc,docx,xlsx,bmp,jpeg)</button>
-					</div>
-					@endif
-					<div class="card-body row">
-						<table class="table table-bordered table-sm">
-							@include('crm.incoming_documents.file_table_head')
-							<tbody>
-								<tr style="display: none;" id="clone_file_tr">
-									@include('crm.incoming_documents.file_template')
-								</tr>
-								@if(isset($incomingDocumentFiles) and $incomingDocumentFiles->isNotEmpty())
-									@foreach($incomingDocumentFiles as $incomingDocumentFile)
-										<tr>@include('crm.incoming_documents.file_template', ['dataFile' => $incomingDocumentFile, 'disableActions' => (auth()->user()->can('create_' . $permissionKey)) ? false : true ])</tr>
-									@endforeach
-								@endif
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-			<!-- /.card -->
-		</div>
-	</form>
+    @include('crm.box_errors')
+
+    <form role="form" method="POST" action="{{ $action }}" enctype="multipart/form-data" >
+    @csrf
+    @if($method == 'edit')
+        {{ method_field('PATCH') }}
+    @endif
+
+    <!-- general form elements -->
+        <div class="col-12 row">
+            <div class="col-8">
+                <div class="card card-primary">
+                    <!-- form start -->
+
+                    @include('crm.incoming_documents.form_elements')
+
+                    @include('crm.box_footer')
+
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card">
+                    @if(auth()->user()->can('create_' . $permissionKey))
+                        <div class="card-header">
+                            <button type="button" class="btn btn-info" onclick="IncomingDocument.addTrScan($(this));" >Добавить скан (pdf,doc,docx,xlsx,bmp,jpeg)</button>
+                        </div>
+                    @endif
+                    <div class="card-body row">
+                        <table class="table table-bordered table-sm">
+                            @include('crm.incoming_documents.file_table_head')
+                            <tbody>
+                            <tr style="display: none;" id="clone_file_tr">
+                                @include('crm.incoming_documents.file_template')
+                            </tr>
+                            @if(isset($incomingDocumentFiles) and $incomingDocumentFiles->isNotEmpty())
+                                @foreach($incomingDocumentFiles as $incomingDocumentFile)
+                                    <tr>@include('crm.incoming_documents.file_template', ['dataFile' => $incomingDocumentFile, 'disableActions' => (auth()->user()->can('create_' . $permissionKey)) ? false : true ])</tr>
+                                @endforeach
+                            @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+    </form>
 @stop
 
 @if($method == 'edit' and auth()->user()->can('update_' . $permissionKey))
-	@section('modal')
-		@section('modal_title', 'Файл')
-		@section('modal_id', 'modal_file')
-		<div class="modal-body">
-			<div class="form-group">
-				<label>Название</label>
-				<input type="text" class="form-control" id="new_file_name">
-			</div>
-		</div>
-		<div class="modal-footer justify-content-between">
-			<button type="button" class="btn btn-default" data-dismiss="modal">{{ __('references.main.close_button') }}</button>
-			<button type="button" class="btn btn-primary" data-file-id="" onclick="IncomingDocument.saveFileNameModal($(this));" >{{ __('references.main.save_button') }}</button>
-		</div>
-	@stop
+@section('modal')
+@section('modal_title', 'Файл')
+@section('modal_id', 'modal_file')
+<div class="modal-body">
+    <div class="form-group">
+        <label>Название</label>
+        <input type="text" class="form-control" id="new_file_name">
+    </div>
+</div>
+<div class="modal-footer justify-content-between">
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('references.main.close_button') }}</button>
+    <button type="button" class="btn btn-primary" data-file-id="" onclick="IncomingDocument.saveFileNameModal($(this));" >{{ __('references.main.save_button') }}</button>
+</div>
+@stop
 @endif
 
 @section('js')
-	<script src="{{ asset('/js/incoming_document.js') }}"></script>
+    <script src="{{ asset('/js/incoming_document.js') }}"></script>
 @stop

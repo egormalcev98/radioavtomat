@@ -18,11 +18,11 @@
 					@if($method == 'edit')
 						{{ method_field('PATCH') }}
 					@endif
-					
+
 					@include('crm.settings.users.form_elements')
-					
+
 					@include('crm.box_footer')
-					
+
 				</form>
             </div>
             <!-- /.card -->

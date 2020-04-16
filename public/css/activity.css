@@ -1,0 +1,60 @@
+.activity_row{
+    margin-top: 50px;
+}
+
+.activity_date {
+    display: block;
+    font-size: 22px;
+    color: white;
+    background: grey;
+    padding: 7px;
+    width: fit-content;
+}
+
+.activity_title{
+    display: block;
+    font-size: 22px;
+}
+
+.activity_title_icon{
+    font-size: 26px;
+}
+
+.activity_doby{
+    margin: 20px 40px;
+    background: Gainsboro;
+    width: 100%;
+    padding: 10px;
+}
+
+.activity_description{
+    margin-left: 50px;
+    margin-top: 10px;
+}
+
+.activity_description_text{
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.activity_description_properties_foreach{
+    padding-left: 30px;
+}
+
+.activity_footer{
+    padding: 30px;
+}
+
+.activity_btn{
+    width: 120px;
+    margin-left: 10px;
+}
+
+
+.activity_btn_active{
+    background: #17a2b8 !important;
+}
+
+.activity_search_span{
+    font-size: 24px;
+}
