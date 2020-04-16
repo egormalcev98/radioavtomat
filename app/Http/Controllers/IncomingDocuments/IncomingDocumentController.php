@@ -15,7 +15,7 @@ class IncomingDocumentController extends Controller
     public function __construct(Service $service) {
 		$this->service = $service;
 		
-		$this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index']]);
+		$this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index', 'printExcel']]);
         $this->middleware('permission:create_' . $this->service->permissionKey, ['only' => ['create', 'store', 'checkNumber']]);
         $this->middleware('permission:update_' . $this->service->permissionKey, ['only' => ['update']]);
         $this->middleware('permission:read_' . $this->service->permissionKey, ['only' => ['edit']]);
@@ -93,5 +93,13 @@ class IncomingDocumentController extends Controller
 		}
 		
 		return abort(403);
+    }
+	
+    /**
+     * Отдадим excel документ с даными из списка элементов
+     */
+    public function printExcel()
+    {
+		return $this->service->printExcel();
     }
 }

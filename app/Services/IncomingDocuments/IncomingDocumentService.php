@@ -10,6 +10,8 @@ use App\Models\References\EmployeeTask;
 use App\User;
 use DataTables;
 use App\Services\IncomingDocuments\IncomingUserService;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\IncomingDocumentExport;
 
 class IncomingDocumentService extends BaseService
 {	
@@ -75,7 +77,7 @@ class IncomingDocumentService extends BaseService
 			],
 			[
 				'title' => __($this->translation . 'list_columns.document_type'),
-				'data' => 'document_type.name',
+				'data' => 'document_type_name',
 				'name' => 'document_type_id',
 			],
 			[
@@ -119,7 +121,7 @@ class IncomingDocumentService extends BaseService
 			],
 			[
 				'title' => __($this->translation . 'list_columns.status_name'),
-				'data' => 'status.name',
+				'data' => 'status_name',
 				'name' => 'incoming_doc_status_id',
 			],
 			
@@ -127,11 +129,8 @@ class IncomingDocumentService extends BaseService
 		];
 	}
 	
-	/**
-	 * Формирует данные для шаблона "Список элементов"
-	 */
-	public function dataTableData()
-	{	
+	private function constructQueryDT($limit = null)
+	{
 		$select = $this->columnsToSelect( $this->tableColumns() );
 		$select[] = 'urgent';
 		
@@ -147,6 +146,10 @@ class IncomingDocumentService extends BaseService
 						'responsibles.user',
 						'status',
 					]);
+		
+		if($limit) {
+			$query->limit($limit);
+		}
 		
 		// Фильтры
 		
@@ -217,10 +220,25 @@ class IncomingDocumentService extends BaseService
 					
 					return ($countUsers > 0) ? (( $countUsersNotNullSigned / $countUsers ) * 100) : 0 ;
 				})
+				->addColumn('status_name', function ($element) { // для экселя эти жертвы
+					return $element->status->name;
+				})
+				->addColumn('document_type_name', function ($element) {
+					return $element->documentType->name;
+				})
 				->removeColumn('users')
 				->removeColumn('distributed')
 				->removeColumn('responsibles')
-				->make(true);
+				->removeColumn('document_type')
+				->removeColumn('status');
+	}
+	
+	/**
+	 * Формирует данные для шаблона "Список элементов"
+	 */
+	public function dataTableData()
+	{	
+		return $this->constructQueryDT()->make(true);
 	}
 	/**
 	 * Собираем объект DataTable для фронта
@@ -395,4 +413,18 @@ class IncomingDocumentService extends BaseService
 		
 		return true;
 	}
+	
+    /**
+     * Сформируем excel документ с даными из списка элементов
+     */
+    public function printExcel()
+    {
+		$columns = $this->columnUsedKeys($this->tableColumns());
+		
+		$arrayQueryDT = $this->constructQueryDT(200)->skipPaging()->toArray();
+		
+		$data = $this->collectDataExcel($arrayQueryDT['data'], $columns);
+		
+		return Excel::download(new IncomingDocumentExport($data, array_values($columns)), 'data.xlsx');
+    }
 }

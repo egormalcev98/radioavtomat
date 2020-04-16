@@ -34,6 +34,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::patch('users/permissions_save/{user}', 'Settings\UserController@permissionsSave')->name('users.permissions_save');
 	
 	//Журнал регистрации входящих документов
+	Route::get('incoming_documents/print', 'IncomingDocuments\IncomingDocumentController@printExcel')->name('incoming_documents.print');
 	Route::resource('incoming_documents', 'IncomingDocuments\IncomingDocumentController');
 	Route::post('incoming_documents/check_number', 'IncomingDocuments\IncomingDocumentController@checkNumber')->name('incoming_documents.check_number');
 	

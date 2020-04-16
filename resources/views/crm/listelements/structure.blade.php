@@ -12,9 +12,7 @@
 				<!-- /.card-header -->
 				<div class="card-body">
 					@if(isset($filterTemplate))
-						<div class="col-12 row" id="dt_filters">
-							@include('crm.' . $filterTemplate)
-						</div>
+						@include('crm.' . $filterTemplate)
 					@endif
 					
 					<div class="p-0">

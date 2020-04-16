@@ -191,4 +191,46 @@ class BaseService
 		
 		return [];
 	}
+	
+	/**
+     * Получаем только ключи колонок DT
+     */
+	protected function columnUsedKeys($array)
+	{
+		if(!empty($array)){
+			$resultArray = [];
+			
+			foreach($array as $value){
+				if($value['data'] !== 'action')
+					$resultArray[$value['data']] = $value['title'];
+			}
+			
+			return $resultArray;
+		}
+		
+		return $array;
+	}
+	
+	/**
+     * Собираем данные для Excel, отсортируем для соответсвия шапке и уберем лишние колонки, которых нет в шапке
+     */
+	protected function collectDataExcel($data, $columns)
+	{
+		$sColumns = array_flip(array_keys($columns));
+				
+		if(!empty($data)) {
+			foreach($data as $key => $value) {
+				$newArray = array_intersect_key($value, $columns);
+				
+				uksort($newArray, function ($a, $b) use($sColumns) {
+					
+					return $sColumns[$a] > $sColumns[$b];
+				});
+				
+				$data[$key] = $newArray;
+			}
+		}
+		
+		return $data;
+	}
 }
