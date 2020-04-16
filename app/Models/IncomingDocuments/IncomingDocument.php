@@ -59,6 +59,22 @@ class IncomingDocument extends BaseModel
     }
 	
 	/**
+     * Преобразуем дату создания документа.
+     */
+	public function getCreatedAtAttribute($date)
+    {
+        return Carbon::parse($date)->format('d.m.Y H:i');
+    }
+	
+	/**
+     * Преобразуем исходящую дату документа.
+     */
+	public function getDateLetterAtAttribute($date)
+    {
+        return Carbon::parse($date)->format('d.m.Y');
+    }
+	
+	/**
      * Получить сканы файлов
      */
     public function files()
@@ -66,4 +82,47 @@ class IncomingDocument extends BaseModel
 		return $this->hasMany(IncomingDocumentFile::class);
     }
 	
+	/**
+     * Получить распределенных пользователей
+     */
+    public function distributed()
+    {
+		return $this->hasMany(IncomingDocumentDistributed::class);
+    }
+	
+	/**
+     * Получить ответственных пользователей
+     */
+    public function responsibles()
+    {
+		return $this->hasMany(IncomingDocumentResponsible::class);
+    }
+	
+	/**
+     * Получить всех пользователей, чтобы знать кому надо подписать и т.д. (аккуратнее)
+     */
+    public function users()
+    {
+		return $this->hasMany(IncomingDocumentUser::class);
+    }
+	
+	/**
+     * Получим вид документа
+     */
+    public function documentType()
+    {
+        return $this->belongsTo(\App\Models\References\DocumentType::class)->withDefault([
+			'name' => '',
+		]);
+    }
+	
+	/**
+     * Получим статус документа
+     */
+    public function status()
+    {
+        return $this->belongsTo(\App\Models\References\IncomingDocStatus::class, 'incoming_doc_status_id')->withDefault([
+			'name' => '',
+		]);
+    }
 }

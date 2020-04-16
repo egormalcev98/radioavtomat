@@ -15,11 +15,13 @@ class IncomingDocumentController extends Controller
     public function __construct(Service $service) {
 		$this->service = $service;
 		
-		// $this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index', 'show']]);
-        // $this->middleware('permission:create_' . $this->service->permissionKey, ['only' => ['create', 'store']]);
-        // $this->middleware('permission:update_' . $this->service->permissionKey, ['only' => ['update', 'permissionsSave']]);
-        // $this->middleware('permission:read_' . $this->service->permissionKey, ['only' => ['edit', 'permissions']]);
-        // $this->middleware('permission:delete_' . $this->service->permissionKey, ['only' => ['destroy']]);
+		$this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index', 'printExcel']]);
+        $this->middleware('permission:create_' . $this->service->permissionKey, ['only' => ['create', 'store', 'checkNumber']]);
+        $this->middleware('permission:update_' . $this->service->permissionKey, ['only' => ['update']]);
+        $this->middleware('permission:read_' . $this->service->permissionKey, ['only' => ['edit']]);
+        $this->middleware('permission:delete_' . $this->service->permissionKey, ['only' => ['destroy']]);
+		
+		$this->middleware('permission:view_incoming_card_document', ['only' => ['show']]);
 		
 		view()->share('permissionKey', $this->service->permissionKey);
 	}
@@ -91,5 +93,13 @@ class IncomingDocumentController extends Controller
 		}
 		
 		return abort(403);
+    }
+	
+    /**
+     * Отдадим excel документ с даными из списка элементов
+     */
+    public function printExcel()
+    {
+		return $this->service->printExcel();
     }
 }

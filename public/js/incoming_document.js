@@ -104,4 +104,96 @@ let IncomingDocument = {
 		return false;
 	},
 	
+	selectEmployee: function(thisSelect){
+		if(thisSelect){
+			
+			return this.selectEmployeeConstruct(thisSelect.parents('form'), thisSelect.val(), thisSelect.find('option:selected').text());
+		}
+		return false;
+	},
+	
+	selectEmployeeConstruct: function(formSelector, employeeId, employeeName){
+		if(formSelector && employeeId && employeeName){
+			
+			let clone = formSelector.find('[data-type="hidden_clone"]');
+			
+			if(formSelector.find('[data-type="user_id"][value=' + employeeId + ']').length == 0) {
+			
+				clone.after('<tr>' + clone.html() + '</tr>');
+				
+				let newTR = clone.next('tr');
+			
+				newTR.find('[data-type="user_id"]').val(employeeId);
+					
+				newTR.find('td:first').text(employeeName);
+					
+				newTR.find('[name]').each(function(key, value){
+					let elementName = $(this);
+					
+					elementName.attr('name', elementName.attr('name').replace('[*]', '[' + employeeId + ']'));
+				});
+			}
+			
+			return true;
+		}
+		return false;
+	},
+	
+	getDataModalUser: function(thisSelector, modalSelector){
+		if(thisSelector && modalSelector){
+			let thisGeneral = this,
+				tr = thisSelector.parents('tr'),
+				modalElement = $(modalSelector),
+				table = window.LaravelDataTables[thisSelector.parents('table').attr('id')];
+			
+			data = table.row(tr).data();
+			
+			if(data) {
+				
+				modalElement.find('tbody').find('tr:not([data-type="hidden_clone"])').remove();
+				
+				thisGeneral.selectEmployeeConstruct(modalElement.find('form'), data['user_id'], data['user_full_name']);
+				
+				$.each(data, function( key, value ) {
+					modalElement.find('tr:last').find('[name="users[' + data['user_id'] + '][' + key + ']"]').val(value);
+				});
+				
+				modalElement.find('tr:last').find('[data-type="user_id"]').prop('checked', true);
+				
+				modalElement.modal('show');
+			}
+			
+			return true;
+		}
+		return false;
+	},
+	
+	signedAt: function(thisSelector, url){
+		if(thisSelector && url){
+			let thisGeneral = this;
+			
+			let errorHandle = function(jqXHR, textStatus, errorThrown ){
+				let data = jqXHR.responseJSON;
+				
+				Main.popUp('Произошла ошибка, попробуйте еще раз');
+			};
+			
+			let successHandle = function(arrayData){
+				if(arrayData && arrayData['status']) {
+					Main.popUp('Действия сохранены');
+					
+					window.LaravelDataTables["dtListDistributed"].ajax.reload( null, false );
+					window.LaravelDataTables["dtListResponsibles"].ajax.reload( null, false );
+				}
+			};
+			
+			let formData = new FormData(thisSelector.parents('form')[0]);
+			
+			Main.ajaxRequest('POST', url, formData, successHandle, errorHandle);
+			
+			return true;
+		}
+		return false;
+	},
+	
 }

@@ -6,9 +6,12 @@ use App\Services\BaseService;
 use App\Models\IncomingDocuments\IncomingDocument;
 use App\Models\References\IncomingDocStatus;
 use App\Models\References\DocumentType;
+use App\Models\References\EmployeeTask;
 use App\User;
 use DataTables;
 use App\Services\IncomingDocuments\IncomingUserService;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\IncomingDocumentExport;
 
 class IncomingDocumentService extends BaseService
 {
@@ -36,11 +39,10 @@ class IncomingDocumentService extends BaseService
      */
     public function outputData()
     {
-        // $routeName = $this->routeName;
-        // $roles = Role::withoutAdmin()->get();
-        // $structuralUnits = StructuralUnit::orderedGet();
+        $documentTypes = DocumentType::orderedGet();
+        $incomingDocStatuses = IncomingDocStatus::orderedGet();
 
-        // return compact('routeName', 'roles', 'structuralUnits');
+        return compact('documentTypes', 'incomingDocStatuses');
     }
 
     /**
@@ -54,59 +56,114 @@ class IncomingDocumentService extends BaseService
                 'data' => 'id',
             ],
             [
+                'title' => __($this->translation . 'list_columns.created_at'),
+                'data' => 'created_at',
+            ],
+            [
                 'title' => __($this->translation . 'list_columns.title'),
                 'data' => 'title',
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.counterparty'),
+                'data' => 'counterparty',
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.number'),
+                'data' => 'number',
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.date_letter_at'),
+                'data' => 'date_letter_at',
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.document_type'),
+                'data' => 'document_type_name',
+                'name' => 'document_type_id',
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.who_painted'),
+                'data' => 'who_painted',
+                'remove_select' => true,
+                'searchable' => false,
+                'orderable' => false,
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.date_painted'),
+                'data' => 'date_painted',
+                'remove_select' => true,
+                'searchable' => false,
+                'orderable' => false,
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.whom_distributed'),
+                'data' => 'whom_distributed',
+                'remove_select' => true,
+                'searchable' => false,
+                'orderable' => false,
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.responsibles'),
+                'data' => 'list_responsibles',
+                'remove_select' => true,
+                'searchable' => false,
+                'orderable' => false,
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.note'),
+                'data' => 'note',
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.percentage_consideration'),
+                'data' => 'percentage_consideration',
+                'remove_select' => true,
+                'searchable' => false,
+                'orderable' => false,
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.status_name'),
+                'data' => 'status_name',
+                'name' => 'incoming_doc_status_id',
             ],
 
             $this->actionButton()
         ];
     }
 
-    public function checkViewResponse()
-    {
-        return auth()->user()->hasRole(['secretary', 'admin']);
-    }
-
-    /**
-     * Данные для работы с элементом
-     */
-    public function elementData()
-    {
-        if(class_basename($this->model) != 'Builder') {
-            $incomingDocument = $this->model;
-            $incomingDocumentFiles = $incomingDocument->files()->orderedGet();
-            $viewResponse = $this->checkViewResponse();
-
-            $datatableDistributed = $this->incomingUserService->constructViewDTDistributed($this->model->id);
-        }
-
-        $incomingDocStatuses = IncomingDocStatus::orderedGet();
-        $documentTypes = DocumentType::orderedGet();
-        $recipients = User::withoutAdmin()->get();
-
-        return compact('incomingDocument', 'incomingDocStatuses', 'documentTypes', 'recipients', 'incomingDocumentFiles', 'viewResponse', 'datatableDistributed');
-    }
-
-    /**
-     * Формирует данные для шаблона "Список элементов"
-     */
-    public function dataTableData()
+    private function constructQueryDT($limit = null)
     {
         $select = $this->columnsToSelect( $this->tableColumns() );
+        $select[] = 'urgent';
 
         $query = $this->model
-            ->select( $select );
-        // ->with(['structuralUnit', 'roles', 'status']);
+            ->select( $select )
+            ->with([
+                'documentType',
+                'users.user',
+                'users',
+                'distributed',
+                'distributed.user',
+                'responsibles',
+                'responsibles.user',
+                'status',
+            ]);
+
+        if($limit) {
+            $query->limit($limit);
+        }
 
         // Фильтры
 
-        // if (request()->has('role') and request()->role) {
-        // $query->whereRoleIs(request()->role);
-        // }
+        if(isset(request()->period)){
+            $query->whereBetween('created_at', $this->dateRange(request()->period));
+        }
 
-        // if (request()->has('structural_unit') and request()->structural_unit) {
-        // $query->where('structural_unit_id', request()->structural_unit);
-        // }
+        if (request()->has('document_type_id') and request()->document_type_id) {
+            $query->where('document_type_id', request()->document_type_id);
+        }
+
+        if (request()->has('incoming_doc_status_id') and request()->incoming_doc_status_id) {
+            $query->where('incoming_doc_status_id', request()->incoming_doc_status_id);
+        }
 
         //////////////////
 
@@ -115,7 +172,135 @@ class IncomingDocumentService extends BaseService
             ->addColumn('showUrl', function ($element) {
                 return route($this->routeName . '.show', $element->id);
             })
-            ->make(true);
+            ->addColumn('who_painted', function ($element) {
+                if($element->users->isNotEmpty()) {
+                    return $element->users
+                        ->whereNotNull('signed_at')
+                        ->groupBy('user_id')
+                        ->map(function($user) {
+
+                            return $user->first()->user->fullName;
+                        })->implode(', ');
+                }
+                return '';
+            })
+            ->addColumn('date_painted', function ($element) {
+                if($element->users->isNotEmpty()) {
+                    $lastSigned = $element->users
+                        ->whereNotNull('signed_at')
+                        ->sortByDesc('signed_at')
+                        ->first();
+                    if($lastSigned) {
+                        return $lastSigned->someSignedAt;
+                    }
+                }
+                return '';
+            })
+            ->addColumn('whom_distributed', function ($element) {
+                if($element->distributed->isNotEmpty()) {
+                    return $element->distributed->map(function($distr) {
+
+                        return $distr->user->fullName;
+                    })->implode(', ');
+                }
+                return '';
+            })
+            ->addColumn('list_responsibles', function ($element) {
+                if($element->responsibles->isNotEmpty()) {
+                    return $element->responsibles->map(function($distr) {
+
+                        return $distr->user->fullName;
+                    })->implode(', ');
+                }
+                return '';
+            })
+            ->addColumn('percentage_consideration', function ($element) {
+                $countUsers = $element->users->count();
+                $countUsersNotNullSigned = $element->users->whereNotNull('signed_at')->count();
+
+                return ($countUsers > 0) ? (( $countUsersNotNullSigned / $countUsers ) * 100) : 0 ;
+            })
+            ->addColumn('status_name', function ($element) { // для экселя эти жертвы
+                return $element->status->name;
+            })
+            ->addColumn('document_type_name', function ($element) {
+                return $element->documentType->name;
+            })
+            ->removeColumn('users')
+            ->removeColumn('distributed')
+            ->removeColumn('responsibles')
+            ->removeColumn('document_type')
+            ->removeColumn('status');
+    }
+
+    /**
+     * Формирует данные для шаблона "Список элементов"
+     */
+    public function dataTableData()
+    {
+        return $this->constructQueryDT()->make(true);
+    }
+    /**
+     * Собираем объект DataTable для фронта
+     */
+    public function constructViewDT($selectorForm = '#dt_filters')
+    {
+        $dt = parent::constructViewDT($selectorForm);
+
+        return $dt->scrollX(true);
+    }
+
+    /**
+     * Данные для работы с элементом
+     */
+    public function elementData()
+    {
+        $incomingDocStatuses = IncomingDocStatus::orderedGet();
+        $documentTypes = DocumentType::orderedGet();
+        $recipients = User::withoutAdmin()->get();
+
+        if(class_basename($this->model) != 'Builder') {
+            $incomingDocument = $this->model;
+            $incomingDocumentFiles = $this->model->files()->orderedGet();
+
+            $editDistributed = $this->incomingUserService->checkEditDistributed($this->model->id);
+            $editResponsibles = $this->incomingUserService->checkEditResponsibles($this->model->id);
+
+            $datatableDistributed = $this->incomingUserService->constructViewDTDistributed($this->model->id);
+            $datatableResponsibles = $this->incomingUserService->constructViewDTResponsibles($this->model->id);
+
+            $employees = $recipients;
+            $employeeTasks = EmployeeTask::orderedGet();
+
+            $signatureUser = $this->incomingUserService->checkSignatureUsers($incomingDocument);
+
+            $signedUser = $this->model->users()->whereNotNull('signed_at')->authElements()->first() ??
+                $this->model->users()->whereNotNull('reject_at')->authElements()->first() ??
+                null;
+
+            $reconciliationSections = $this->model
+                ->users()
+                ->with(['user'])
+                ->groupBy('user_id')
+                ->get();
+        }
+
+        return compact(
+            'incomingDocument',
+            'incomingDocStatuses',
+            'documentTypes',
+            'recipients',
+            'incomingDocumentFiles',
+            'editDistributed',
+            'editResponsibles',
+            'datatableDistributed',
+            'datatableResponsibles',
+            'employees',
+            'employeeTasks',
+            'signatureUser',
+            'signedUser',
+            'reconciliationSections'
+        );
     }
 
     /**
@@ -227,5 +412,19 @@ class IncomingDocumentService extends BaseService
         $this->furtherPreparation($requestAll);
 
         return true;
+    }
+
+    /**
+     * Сформируем excel документ с даными из списка элементов
+     */
+    public function printExcel()
+    {
+        $columns = $this->columnUsedKeys($this->tableColumns());
+
+        $arrayQueryDT = $this->constructQueryDT(200)->skipPaging()->toArray();
+
+        $data = $this->collectDataExcel($arrayQueryDT['data'], $columns);
+
+        return Excel::download(new IncomingDocumentExport($data, array_values($columns)), 'data.xlsx');
     }
 }

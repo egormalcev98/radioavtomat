@@ -11,6 +11,7 @@ return [
             'incoming_document' => 'c,r,u,d,v',
             'outgoing_document' => 'c,r,u,d,v',
             'activity' => 'c,r,u,d,v',
+            'incoming_card_document' => 'c,r,u,d,v',
         ],
     ],
     'permissions_map' => [

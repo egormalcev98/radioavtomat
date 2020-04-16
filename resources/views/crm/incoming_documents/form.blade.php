@@ -10,54 +10,54 @@
 
     @include('crm.box_errors')
 
-    <div class="row">
-        <form role="form" method="POST" action="{{ $action }}" enctype="multipart/form-data" >
-        @csrf
-        @if($method == 'edit')
-            {{ method_field('PATCH') }}
-        @endif
+    <form role="form" method="POST" action="{{ $action }}" enctype="multipart/form-data" >
+    @csrf
+    @if($method == 'edit')
+        {{ method_field('PATCH') }}
+    @endif
 
-        <!-- general form elements -->
-            <div class="col-12 row">
-                <div class="col-8">
-                    <div class="card card-primary">
-                        <!-- form start -->
+    <!-- general form elements -->
+        <div class="col-12 row">
+            <div class="col-8">
+                <div class="card card-primary">
+                    <!-- form start -->
 
-                        @include('crm.incoming_documents.form_elements')
+                    @include('crm.incoming_documents.form_elements')
 
-                        @include('crm.box_footer')
+                    @include('crm.box_footer')
 
-                    </div>
                 </div>
-                <div class="col-4">
-                    <div class="card">
+            </div>
+            <div class="col-4">
+                <div class="card">
+                    @if(auth()->user()->can('create_' . $permissionKey))
                         <div class="card-header">
                             <button type="button" class="btn btn-info" onclick="IncomingDocument.addTrScan($(this));" >Добавить скан (pdf,doc,docx,xlsx,bmp,jpeg)</button>
                         </div>
-                        <div class="card-body row">
-                            <table class="table table-bordered table-sm">
-                                @include('crm.incoming_documents.file_table_head')
-                                <tbody>
-                                <tr style="display: none;" id="clone_file_tr">
-                                    @include('crm.incoming_documents.file_template')
-                                </tr>
-                                @if(isset($incomingDocumentFiles) and $incomingDocumentFiles->isNotEmpty())
-                                    @foreach($incomingDocumentFiles as $incomingDocumentFile)
-                                        <tr>@include('crm.incoming_documents.file_template', ['dataFile' => $incomingDocumentFile])</tr>
-                                    @endforeach
-                                @endif
-                                </tbody>
-                            </table>
-                        </div>
+                    @endif
+                    <div class="card-body row">
+                        <table class="table table-bordered table-sm">
+                            @include('crm.incoming_documents.file_table_head')
+                            <tbody>
+                            <tr style="display: none;" id="clone_file_tr">
+                                @include('crm.incoming_documents.file_template')
+                            </tr>
+                            @if(isset($incomingDocumentFiles) and $incomingDocumentFiles->isNotEmpty())
+                                @foreach($incomingDocumentFiles as $incomingDocumentFile)
+                                    <tr>@include('crm.incoming_documents.file_template', ['dataFile' => $incomingDocumentFile, 'disableActions' => (auth()->user()->can('create_' . $permissionKey)) ? false : true ])</tr>
+                                @endforeach
+                            @endif
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <!-- /.card -->
             </div>
-        </form>
-    </div>
+            <!-- /.card -->
+        </div>
+    </form>
 @stop
 
-@if($method == 'edit')
+@if($method == 'edit' and auth()->user()->can('update_' . $permissionKey))
 @section('modal')
 @section('modal_title', 'Файл')
 @section('modal_id', 'modal_file')
