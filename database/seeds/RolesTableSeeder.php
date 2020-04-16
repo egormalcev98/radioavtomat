@@ -539,5 +539,13 @@ class RolesTableSeeder extends Seeder
             'description' => '',
 			'without_destroy' => 1,
 		]);
+		
+        Role::firstOrCreate([
+            'name' => 'secretary',
+        ], [
+            'display_name' => 'Секретарь',
+            'description' => '',
+			'without_destroy' => 1,
+		]);
     }
 }

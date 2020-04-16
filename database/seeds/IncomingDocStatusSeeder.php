@@ -15,16 +15,23 @@ class IncomingDocStatusSeeder extends Seeder
 		if(!IncomingDocStatus::withoutGlobalScopes()->first()){
 			
 			IncomingDocStatus::create([
-				'name' => 'Новый документ',
-			]);
-			
-			IncomingDocStatus::create([
-				'name' => 'На рассмотрении',
+				'name' => 'Ожидание подписи',
+				'without_destroy' => 1,
+				'color' => 'primary'
 			]);
 			
 			IncomingDocStatus::create([
 				'name' => 'Подписан',
+				'without_destroy' => 1,
+				'color' => 'success'
 			]);
+			
+			IncomingDocStatus::create([
+				'name' => 'Просрочен',
+				'without_destroy' => 1,
+				'color' => 'danger'
+			]);
+			
 		}
     }
 }

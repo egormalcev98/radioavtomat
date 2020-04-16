@@ -31,4 +31,5 @@ return [
 	'user_statuses'					=> 'Статусы пользователей',
 	'structural_units'				=> 'Структурные подразд-ия',
 	'roles'							=> 'Роли пользователей',
+	'incoming_documents'			=> 'Входящие документы',
 ];

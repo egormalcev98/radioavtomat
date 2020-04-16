@@ -16,6 +16,40 @@ $(document).ready(function(){
 });
 
 let Main = {
+	confDrp: {
+        "format": "DD.MM.YYYY",
+        "separator": " - ",
+        "applyLabel": "Применить",
+        "cancelLabel": "Отменить",
+        "fromLabel": "От",
+        "toLabel": "До",
+        "customRangeLabel": "Custom",
+        "weekLabel": "W",
+        "daysOfWeek": [
+            "Вс",
+            "Пн",
+            "Вт",
+            "Ср",
+            "Чт",
+            "Пт",
+            "Сб"
+        ],
+        "monthNames": [
+            "Январь",
+            "Февраль",
+            "Март",
+            "Апрель",
+            "Май",
+            "Июнь",
+            "Июль",
+            "Август",
+            "Сентябрь",
+            "Октябрь",
+            "Ноябрь",
+            "Декабрь"
+        ],
+        "firstDay": 1
+    },
 	
 	autocompleteLanguageConfig: {
 		errorLoading: function () {
@@ -92,7 +126,7 @@ let Main = {
 				title = 'Информация';
 			}
 			
-			text = '<h3>' + text + '</h3>';
+			text = '<p>' + text + '</p>';
 			
 			if(thisGeneral.modalWithInformation){
 				thisGeneral.modalWithInformation.changeTitle(title);
@@ -269,17 +303,24 @@ let Main = {
 	
 	displayAllErrors: function(dataErrors, selectorBlock){
 		if(selectorBlock){
+			let thisGeneral = this;
+			
 			if(dataErrors) {
 				$.each(dataErrors, function(name, msgData){
-					let formElement = selectorBlock.find('[name=' + name + ']');
+					let formElement = selectorBlock.find('[name="' + name + '"]');
 					
-					if(!formElement.hasClass('is-invalid')) {
-						formElement.addClass('is-invalid');
-						formElement.after('\
-							<div class="invalid-feedback">\
-								' + msgData[0] + '\
-							</div>\
-						');
+					if(formElement.html()) {
+						if(!formElement.hasClass('is-invalid')) {
+							formElement.addClass('is-invalid');
+							formElement.after('\
+								<div class="invalid-feedback">\
+									' + msgData[0] + '\
+								</div>\
+							');
+						}
+					} else {
+						// console.log(Object.values(dataErrors)[0]);
+						thisGeneral.outputValidatorError(msgData[0], selectorBlock);
 					}
 				});
 			} else {
@@ -382,11 +423,11 @@ let Main = {
 	},
 	
 	resetModalValues: function(modalElement){
-		var thisGeneral = this,
+		let thisGeneral = this,
 			formS = modalElement.find('form');
 
 		$.each(formS.find('select'), function( key, selData ) {
-			var selector = $(selData);
+			let selector = $(selData);
 
 			selector.val(selector.find('option').first().val());
 		});

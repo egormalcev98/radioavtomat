@@ -36,6 +36,16 @@ return [
 			'lang_title' => 'adminlte::menu.references',
 			'dependent' => [],
 		],
+		[
+			'name' => 'incoming_document',
+			'lang_title' => 'Карточка нового входящего документа',
+			'dependent' => [],
+		],
+		[
+			'name' => 'incoming_card_document',
+			'lang_title' => 'Карточка входящего документа',
+			'dependent' => [],
+		],
     ],
 
 ];

@@ -43,7 +43,7 @@
 							@if(!empty($permissionModules))
 								@foreach($permissionModules as $module)
 									<div class="form-group row">
-										<div class="col-3 col-form-label">
+										<div class="col-5 col-form-label">
 											<label class="control-label">@if(isset($module['lang_title']))@lang($module['lang_title']) @else {{ $module['title'] }} @endif</label>
 										</div>
 										<div class="col-3">

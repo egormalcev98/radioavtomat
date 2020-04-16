@@ -53,10 +53,22 @@ trait ReferenceHelper
 	/**
      * Успешный ответ сервера на ajax-запрос
      */
-	public function ajaxSuccessResponse()
+	public function ajaxSuccessResponse($msg = '')
 	{
 		return response()->json([
 			'status' => 'success',
+			'msg' => $msg,
+		]);
+	}
+	
+	/**
+     * Неудачная обработка даных сервером ajax-запроса
+     */
+	public function ajaxFailedResponse($msg = '')
+	{
+		return response()->json([
+			'status' => 'error',
+			'msg' => $msg,
 		]);
 	}
 	

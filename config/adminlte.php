@@ -105,9 +105,9 @@ return [
     'classes_brand_text' => '',
     'classes_content_header' => 'container-fluid',
     'classes_content' => 'container-fluid',
-    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar' => 'sidebar-light-info elevation-4',
     'classes_sidebar_nav' => '',
-    'classes_topnav' => 'navbar-white navbar-light',
+    'classes_topnav' => 'navbar-info navbar-dark',
     'classes_topnav_nav' => 'navbar-expand-md',
     'classes_topnav_container' => 'container',
 
@@ -208,6 +208,15 @@ return [
     */
 
     'menu' => [
+        [
+            'text'      	=> 'incoming_documents',
+            'route' 		=> 'incoming_documents.index',
+			'active'		=> ['incoming_documents', 'incoming_documents/*'],
+            'icon'        	=> 'fas fa-file-download',
+			'permission'	=> [
+				'view_incoming_document'
+			]
+        ],
         [
             'text'      	=> 'settings',
             'route' 		=> 'settings.index',
@@ -385,6 +394,27 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'Daterangepicker',
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/daterangepicker/daterangepicker.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/daterangepicker/moment.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/daterangepicker/daterangepicker.js',
                 ],
             ],
         ],

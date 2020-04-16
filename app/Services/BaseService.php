@@ -4,6 +4,7 @@ namespace App\Services;
 use DataTables;
 use Illuminate\Database\Eloquent\Builder;
 use Yajra\DataTables\Html\Builder as BuilderDT;
+use Carbon\Carbon;
 
 class BaseService
 {
@@ -136,7 +137,8 @@ class BaseService
 	 */
 	public function elementData() 
 	{
-		$element = $this->model;
+		if(class_basename($this->model) != 'Builder')
+			$element = $this->model;
 		
 		return compact('element');
 	}
@@ -171,5 +173,64 @@ class BaseService
 	public function removeElement()
 	{
 		return $this->model->delete();
+	}
+	
+	/**
+     * Разбиваем временной интервал из daterangepicker на ключи массива
+     */
+	protected function dateRange($period)
+	{
+		if(isset($period) and $period){
+			$dates = explode(' - ', $period);
+			if(isset($dates[1])){
+				$dates[0] = Carbon::parse($dates[0]);
+				$dates[1] = Carbon::parse($dates[1])->endOfDay();
+				return $dates;
+			}
+		}
+		
+		return [];
+	}
+	
+	/**
+     * Получаем только ключи колонок DT
+     */
+	protected function columnUsedKeys($array)
+	{
+		if(!empty($array)){
+			$resultArray = [];
+			
+			foreach($array as $value){
+				if($value['data'] !== 'action')
+					$resultArray[$value['data']] = $value['title'];
+			}
+			
+			return $resultArray;
+		}
+		
+		return $array;
+	}
+	
+	/**
+     * Собираем данные для Excel, отсортируем для соответсвия шапке и уберем лишние колонки, которых нет в шапке
+     */
+	protected function collectDataExcel($data, $columns)
+	{
+		$sColumns = array_flip(array_keys($columns));
+				
+		if(!empty($data)) {
+			foreach($data as $key => $value) {
+				$newArray = array_intersect_key($value, $columns);
+				
+				uksort($newArray, function ($a, $b) use($sColumns) {
+					
+					return $sColumns[$a] > $sColumns[$b];
+				});
+				
+				$data[$key] = $newArray;
+			}
+		}
+		
+		return $data;
 	}
 }

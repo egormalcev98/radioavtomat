@@ -153,11 +153,7 @@ class UserService extends BaseService
 		//////////////////
 		
 		return Datatables::of($query)
-				->addColumn('action', function ($element){
-					$routeName = $this->routeName;
-					
-					return view('crm.action_buttons', compact('element', 'routeName'));
-				})
+				->addColumn('action', $this->actionColumnDT())
 				->addColumn('showUrl', function ($element) {
 					return route($this->routeName . '.show', $element->id);
 				})
@@ -251,7 +247,14 @@ class UserService extends BaseService
 	{
 		$requestAll = $request->all();
 		$arrSync = [];
-			
+		
+		$arrSync = $this->model
+			 ->permissions()
+			 ->where('name', 'like', "read_incoming_doc\_%")		
+			 ->get()
+			 ->pluck('id')
+			 ->toArray();
+		
 		if(!empty($requestAll['permission_modules'])) {
 			$permissionModules = config('permission.modules');
 			$permissionTypes = $this->permissionTypes;
@@ -274,7 +277,7 @@ class UserService extends BaseService
 												->toArray();
 						
 						if(!empty($permissions)) {
-							$arrSync  = array_merge($arrSync, $permissions);
+							$arrSync = array_merge($arrSync, $permissions);
 						}
 					}
 					
