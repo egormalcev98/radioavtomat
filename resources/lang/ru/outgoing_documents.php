@@ -15,7 +15,7 @@ return [
         'note' => 'Примечания',
     ],
     'filters' => [
-        'period' => 'Период',
+        'period' => 'Выберите дату',
         'document_type' => 'Вид документа',
         'outgoing_doc_status' => 'Статус документа',
     ],

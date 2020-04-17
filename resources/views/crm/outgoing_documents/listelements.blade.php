@@ -1,30 +1,17 @@
 @extends('crm.outgoing_documents.general')
 
 @section('css')
-	<style>
-		#dtListElements tbody tr {
-			cursor: pointer;
-		}
-        .buttons-excel, .buttons-csv {
-            height: 30px;
-            padding: 2px 10px 2px 10px;
-            margin-right: 10px;
-        }
-	</style>
+    @if(auth()->user()->can('view_outgoing_card_document'))
+        <style>
+            #dtListElements tbody tr {
+                cursor: pointer;
+            }
+        </style>
+    @endif
 @stop
 
 @section('content_content')
-		@if(isset($createLink) and auth()->user()->can('create_' . $permissionKey))
-			<div class="col-12 row mb-3">
-				<a href="{{ $createLink }}" class="btn btn-primary " >{{ __('references.main.create_element') }}</a>
-			</div>
-		@endif
-
-        @include('crm.outgoing_documents.filter_listelemnts')
-
-		<div class="p-0">
-			{!! $datatable->table() !!}
-		</div>
+    @include('crm.listelements.structure', ['filterTemplate' => 'outgoing_documents.filter_listelemnts', 'tableParams' => ['class' => 'small table table-hover dataTable no-footer', 'style' => 'width:100%;']])
 @stop
 
 @section('js')

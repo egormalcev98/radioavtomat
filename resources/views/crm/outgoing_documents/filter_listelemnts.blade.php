@@ -3,7 +3,12 @@
         <div class="col-3">
             <div class="form-group">
                 <label>{{ __('outgoing_documents.filters.period') }}</label>
-                <input onchange="Main.updateDataTable(event);" class="form-control date-range-picker" name="period">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
+                    <input onchange="Main.updateDataTable(event);" class="form-control date-range-picker" name="period" autocomplete="off">
+                </div>
             </div>
         </div>
         <div class="col-3">

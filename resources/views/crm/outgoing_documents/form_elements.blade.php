@@ -170,6 +170,14 @@
         </div>
     </div>
     <div class="col-4">
+        @if($method == 'show')
+            @permission('read_'.$permissionKey)
+            <div class="col-12 row mb-3">
+                <a href="{{ route('outgoing_documents.edit', $outgoingDocument->id) }}"
+                   class="btn btn-block btn-success" style="pointer-events:all;">Редактировать</a>
+            </div>
+            @endpermission
+        @endif
         <div class="card">
             @if($method != 'show')
                 <div class="card-header">

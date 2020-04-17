@@ -56,6 +56,11 @@ return [
 			'lang_title' => 'Карточка входящего документа',
 			'dependent' => [],
 		],
+        [
+            'name' => 'outgoing_card_document',
+            'lang_title' => 'Карточка входящего документа',
+            'dependent' => [],
+        ],
     ],
 
 ];
