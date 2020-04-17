@@ -36,16 +36,6 @@ return [
 			'lang_title' => 'adminlte::menu.references',
 			'dependent' => [],
 		],
-        [
-            'name' => 'outgoing_document',
-            'lang_title' => 'adminlte::menu.outgoing_documents',
-            'dependent' => [],
-        ],
-        [
-            'name' => 'activity',
-            'lang_title' => 'adminlte::menu.activity',
-            'dependent' => [],
-        ],
 		[
 			'name' => 'incoming_document',
 			'lang_title' => 'Карточка нового входящего документа',
@@ -57,8 +47,18 @@ return [
 			'dependent' => [],
 		],
         [
+            'name' => 'outgoing_document',
+            'lang_title' => 'Карточка нового исходящего документа',
+            'dependent' => [],
+        ],
+        [
             'name' => 'outgoing_card_document',
-            'lang_title' => 'Карточка входящего документа',
+            'lang_title' => 'Карточка исходящего документа',
+            'dependent' => [],
+        ],
+        [
+            'name' => 'activity',
+            'lang_title' => 'adminlte::menu.activity',
             'dependent' => [],
         ],
     ],
