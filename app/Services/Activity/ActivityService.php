@@ -159,7 +159,7 @@ class ActivityService extends BaseService
                         // это чтобы учитывать что для разных методов (updated, created) Json строки могут отличаться, например при created отсутствует массив old
                         switch ($raw->description) {
                             case 'updated':
-                                $outgoing_document_id = json_decode($raw->properties)->old->outgoing_document_id;
+                                $outgoing_document_id = $raw->outgoingDocumentFile->outgoing_document_id;
                                 break;
                             case 'created':
                                 $outgoing_document_id = json_decode($raw->properties)->attributes->outgoing_document_id;
@@ -175,7 +175,7 @@ class ActivityService extends BaseService
                         // это чтобы учитывать что для разных методов (updated, created) Json строки могут отличаться, например при created отсутствует массив old
                         switch ($raw->description) {
                             case 'updated':
-                                $incoming_document_id = json_decode($raw->properties)->old->incoming_document_id;
+                                $incoming_document_id = $raw->incomingDocumentFile->outgoing_document_id;;
                                 break;
                             case 'created':
                                 $incoming_document_id = json_decode($raw->properties)->attributes->incoming_document_id;
