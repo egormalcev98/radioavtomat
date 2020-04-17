@@ -47,7 +47,7 @@
 		
 		<div class="col-2">
 			<label>&nbsp;</label>
-			<button type="button" class="btn btn-block btn-warning">История</button>
+			<a href="{{ route('activity.index') }}" class="btn btn-block btn-warning">История</a>
 		</div>
 	</div>
 </form>

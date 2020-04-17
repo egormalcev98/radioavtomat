@@ -3,7 +3,7 @@
     <div class="activity_description_text">
         <u><b>{{ $name }}</b></u> {{ $text }} <b>{{ $old }}
             @if($new)
-                <i class="fas fa-arrow-circle-right"></i> {{ $old }}
+                <i class="fas fa-arrow-circle-right"></i> {{ $new }}
             @endif
         </b>
     </div>

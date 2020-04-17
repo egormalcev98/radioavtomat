@@ -5,6 +5,8 @@ namespace App\Models\Activity;
 use App\Models\BaseModel;
 use App\Models\OutgoingDocuments\OutgoingDocument;
 use App\Models\OutgoingDocuments\OutgoingDocumentFile;
+use App\Models\IncomingDocuments\IncomingDocument;
+use App\Models\IncomingDocuments\IncomingDocumentFile;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -56,6 +58,18 @@ class ActivityLog extends BaseModel
     public function outgoingDocumentFile()
     {
         return $this->belongsTo(OutgoingDocumentFile::class,  'subject_id' )
+            ->withoutGlobalScope(SoftDeletingScope::class);
+    }
+
+    public function incomingDocument()
+    {
+        return $this->belongsTo(IncomingDocument::class,  'subject_id')
+            ->withoutGlobalScope(SoftDeletingScope::class);
+    }
+
+    public function incomingDocumentFile()
+    {
+        return $this->belongsTo(IncomingDocumentFile::class,  'subject_id' )
             ->withoutGlobalScope(SoftDeletingScope::class);
     }
 

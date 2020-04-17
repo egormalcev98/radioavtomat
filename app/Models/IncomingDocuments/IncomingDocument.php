@@ -2,11 +2,13 @@
 
 namespace App\Models\IncomingDocuments;
 
-use App\Models\BaseModel;
+use App\Models\Activity\Activity;
 use Carbon\Carbon;
 
-class IncomingDocument extends BaseModel
+class IncomingDocument extends Activity
 {
+    protected static $logName = __CLASS__;
+
 	/**
      * Атрибуты, которые должны быть преобразованы в даты.
      *

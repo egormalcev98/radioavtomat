@@ -8,6 +8,8 @@ use App\Models\OutgoingDocuments\OutgoingDocumentFile;
 use App\Models\References\DocumentType;
 use App\Models\References\LetterForm;
 use App\Models\References\OutgoingDocStatus;
+use App\Models\References\IncomingDocStatus;
+use App\User;
 use Carbon\Carbon;
 use \Illuminate\Support\Facades\Cookie as Cookie;
 use Yajra\DataTables\Html\Builder as BuilderDT;
@@ -58,7 +60,7 @@ class ActivityService extends BaseService
         ],
         'in' => [
             'App\Models\IncomingDocuments\IncomingDocument',
-            'App\Models\IncomingDocumentsIncomingDocumentFile',
+            'App\Models\IncomingDocuments\IncomingDocumentFile',
         ]
     ];
 
@@ -68,15 +70,9 @@ class ActivityService extends BaseService
 
         $this->letterForms = LetterForm::select('id', 'name')->get()->pluck('name', 'id')->toArray();
         $this->outgoingDocStatuses = OutgoingDocStatus::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+        $this->incomingDocStatuses = IncomingDocStatus::select('id', 'name')->get()->pluck('name', 'id')->toArray();
         $this->documentTypes = DocumentType::select('id', 'name')->get()->pluck('name', 'id')->toArray();
-    }
-
-    /**
-     * Формирует данные для шаблона "Список элементов"
-     */
-    public function outputData()
-    {
-        return [];
+        $this->recipients = User::withoutAdmin()->select('id', 'name', 'surname', 'middle_name')->get()->pluck('fullName', 'id')->toArray();
     }
 
     /**
@@ -90,6 +86,8 @@ class ActivityService extends BaseService
                 'outgoingDocument',
                 'outgoingDocumentFile.outgoingDocument',
                 'causer',
+                'incomingDocument',
+                'incomingDocumentFile.incomingDocument',
             ]);
 
         // Фильтры
@@ -119,10 +117,18 @@ class ActivityService extends BaseService
                 return $query->where('number', 'like', '%' . $keyword . '%')
                     ->orWhere('title', 'like', '%' . $keyword . '%');
             })
-                ->orWhereHas('outgoingDocumentFile.outgoingDocument', function ($query) use ($keyword) {
-                    return $query->where('number', 'like', '%' . $keyword . '%')
-                        ->orWhere('title', 'like', '%' . $keyword . '%');
-                });
+			->orWhereHas('outgoingDocumentFile.outgoingDocument', function ($query) use ($keyword) {
+				return $query->where('number', 'like', '%' . $keyword . '%')
+					->orWhere('title', 'like', '%' . $keyword . '%');
+			})
+			->whereHas('incomingDocument', function ($query) use ($keyword) {
+                return $query->where('number', 'like', '%' . $keyword . '%')
+                    ->orWhere('title', 'like', '%' . $keyword . '%');
+            })
+			->orWhereHas('incomingDocumentFile.incomingDocument', function ($query) use ($keyword) {
+				return $query->where('number', 'like', '%' . $keyword . '%')
+					->orWhere('title', 'like', '%' . $keyword . '%');
+			});
         }
 
             if ($wayFilter) {
@@ -162,6 +168,22 @@ class ActivityService extends BaseService
                         $formatedDateRaws[$dateRawKey]['out_' . $outgoing_document_id][] = $raw;
                         break;
 
+                    case 'App\Models\IncomingDocuments\IncomingDocument':
+                        $formatedDateRaws[$dateRawKey]['inc_' . $raw->subject_id][] = $raw;
+                        break;
+                    case 'App\Models\IncomingDocuments\IncomingDocumentFile':
+                        // это чтобы учитывать что для разных методов (updated, created) Json строки могут отличаться, например при created отсутствует массив old
+                        switch ($raw->description) {
+                            case 'updated':
+                                $incoming_document_id = json_decode($raw->properties)->old->incoming_document_id;
+                                break;
+                            case 'created':
+                                $incoming_document_id = json_decode($raw->properties)->attributes->incoming_document_id;
+                                break;
+                        }
+                        $formatedDateRaws[$dateRawKey]['inc_' . $incoming_document_id][] = $raw;
+                        break;
+
                     // тут надо дописать правила группировки по ID документа для входящих документов через ключ например in_. или для каких то еще документов использую свой ключ
 
                     default:
@@ -180,6 +202,9 @@ class ActivityService extends BaseService
                     case 'out':
                         $this->processingJsonOutgoingDocument($raws);
                         break;
+                    case 'inc':
+                        $this->processingJsonIncomingDocument($raws);
+                        break;
                 }
             }
         }
@@ -193,9 +218,19 @@ class ActivityService extends BaseService
         return $this->formatingDocumenTitle($iconClassDoc, $way, $raw->outgoingDocument->title, $raw->outgoingDocument->number);
     }
 
+    public function prepareFormatingIncomingDocumentTitle($iconClassDoc, $way, $raw)
+    {
+        return $this->formatingDocumenTitle($iconClassDoc, $way, $raw->incomingDocument->title, $raw->incomingDocument->number);
+    }
+
     public function prepareFormatingOutgoingDocumentFileTitle($iconClassDoc, $way, $raw)
     {
         return $this->formatingDocumenTitle($iconClassDoc, $way, $raw->outgoingDocumentFile->outgoingDocument->title, $raw->outgoingDocumentFile->outgoingDocument->number);
+    }
+
+    public function prepareFormatingIncomingDocumentFileTitle($iconClassDoc, $way, $raw)
+    {
+        return $this->formatingDocumenTitle($iconClassDoc, $way, $raw->incomingDocumentFile->incomingDocument->title, $raw->incomingDocumentFile->incomingDocument->number);
     }
 
     public function formatingDocumenTitle($iconClassDoc, $way, $title, $number)
@@ -244,7 +279,41 @@ class ActivityService extends BaseService
         return $result;
     }
 
-    public function preparePropertiesOutgoingDocumentFile($properties)
+    public function formatingtPropertiesIncomingDocument($properties)
+    {//letter_form_id
+        $result = [];
+        $properties = json_decode($properties);
+
+        foreach ($properties->old as $key => $property) {
+            switch ($key) {
+                case 'recipient_id':
+                    $old = $this->recipients[$property];
+                    $new = $this->recipients[$properties->attributes->$key];
+                    break;
+                case 'incoming_doc_status_id':
+                    $old = $this->incomingDocStatuses[$property];
+                    $new = $this->incomingDocStatuses[$properties->attributes->$key];
+                    break;
+                case 'document_type_id':
+                    $old = $this->documentTypes[$property];
+                    $new = $this->documentTypes[$properties->attributes->$key];
+                    break;
+                default:
+                    $old = $property;
+                    $new = $properties->attributes->$key;
+            }
+
+            $result[] = [
+                'caption' => __('validation.attributes.' . $key),
+                'old' => $old,
+                'new' => $new,
+            ];
+
+        }
+        return $result;
+    }
+
+    public function preparePropertiesDocumentFile($properties)
     {
         $action = $this->baseText['rename_scan'];
 
@@ -290,7 +359,76 @@ class ActivityService extends BaseService
                     $raw->formatedTitle = $this->prepareFormatingOutgoingDocumentFileTitle($iconClassDoc, $way, $raw);
                     switch ($raw->description) {
                         case 'updated':
-                            $description = $this->preparePropertiesOutgoingDocumentFile($raw->properties);
+                            $description = $this->preparePropertiesDocumentFile($raw->properties);
+                            $raw->formatedProperties = $this->formatingDocumenProperties(
+                                $this->iconClasses['updated'],
+                                $name,
+                                $description['caption'],
+                                $description['old'],
+                                $description['new'],
+                                false,
+                                $time
+                            );
+                            break;
+                        case 'created':
+                            $raw->formatedProperties = $this->formatingDocumenProperties(
+                                $this->iconClasses['uploaded'],
+                                $name,
+                                $this->baseText['uploaded'],
+                                json_decode($raw->properties)->attributes->name,
+                                false,
+                                false,
+                                $time
+                            );
+                            break;
+                        case 'deleted':
+                            $raw->formatedProperties = $this->formatingDocumenProperties(
+                                $this->iconClasses['deleted'],
+                                $name,
+                                $this->baseText['deleted_scan'],
+                                json_decode($raw->properties)->attributes->name,
+                                false,
+                                false,
+                                $time
+                            );
+                            break;
+                    }
+                    break;
+                // тут для других
+                default:
+                    $raw->formatedTitle = 'Документ не найден';
+                    $raw->formatedProperties = 'Действие не определено';
+            }
+        }
+    }
+	
+    /**
+     * Обработка Json входящего документа
+     */
+    public function processingJsonIncomingDocument($raws)
+    {
+        $way = 'Входящий';
+        $iconClassDoc = 'fas fa-file-upload ';
+
+        foreach ($raws as $raw) {
+            $name = $raw->causer->fullName;
+            $time = Carbon::parse($raw->created_at)->format('H:i');
+            switch ($raw->subject_type) {
+                case 'App\Models\IncomingDocuments\IncomingDocument':
+                    $raw->formatedTitle = $this->prepareFormatingIncomingDocumentTitle($iconClassDoc, $way, $raw);
+                    $iconClass = $this->iconClasses[$raw->description];
+                    $text = $this->baseText[$raw->description];
+                    $properties = false;
+                    if ($raw->description == 'updated') {
+                        $properties = $this->formatingtPropertiesIncomingDocument($raw->properties);
+                    }
+                    $raw->formatedProperties = $this->formatingDocumenProperties($iconClass, $name, $text, false, false, $properties, $time);
+                    break;
+                case 'App\Models\IncomingDocuments\IncomingDocumentFile':
+                    $raw->formatedTitle = $this->prepareFormatingIncomingDocumentFileTitle($iconClassDoc, $way, $raw);
+                    switch ($raw->description) {
+                        case 'updated':
+                            $description = $this->preparePropertiesDocumentFile($raw->properties);
                             $raw->formatedProperties = $this->formatingDocumenProperties(
                                 $this->iconClasses['updated'],
                                 $name,
