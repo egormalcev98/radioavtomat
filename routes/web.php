@@ -39,7 +39,15 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('incoming_documents', 'IncomingDocuments\IncomingDocumentController');
 	Route::post('incoming_documents/check_number', 'IncomingDocuments\IncomingDocumentController@checkNumber')->name('incoming_documents.check_number');
 
-    Route::get('incoming_document_users/list_distributed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@listDistributed')->name('incoming_document_users.list_distributed');
+	Route::post('incoming_document_users/signed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@signed')->name('incoming_document_users.signed');
+
+	Route::get('incoming_document_users/list_distributed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@listDistributed')->name('incoming_document_users.list_distributed');
+	Route::post('incoming_document_users/save_distributed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@saveDistributed')->name('incoming_document_users.save_distributed');
+	Route::delete('incoming_document_users/destroy_distributed/{incomingDocumentDistributed}', 'IncomingDocuments\IncomingUserController@destroyDistributed')->name('incoming_document_users.destroy_distributed');
+
+	Route::get('incoming_document_users/list_responsibles/{incomingDocument}', 'IncomingDocuments\IncomingUserController@listResponsibles')->name('incoming_document_users.list_responsibles');
+	Route::post('incoming_document_users/save_responsible/{incomingDocument}', 'IncomingDocuments\IncomingUserController@saveResponsible')->name('incoming_document_users.save_responsible');
+	Route::delete('incoming_document_users/destroy_responsible/{incomingDocumentResponsible}', 'IncomingDocuments\IncomingUserController@destroyResponsible')->name('incoming_document_users.destroy_responsible');
 
     //Журнал регистрации исходящих документов
     Route::get('outgoing_documents/print', 'OutgoingDocuments\OutgoingDocumentController@printExcel')->name('outgoing_documents.print');
@@ -51,18 +59,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('activity', 'Activity\ActivityController')->only([
         'index'
     ]);
-
-
-	Route::post('incoming_document_users/signed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@signed')->name('incoming_document_users.signed');
-
-	Route::get('incoming_document_users/list_distributed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@listDistributed')->name('incoming_document_users.list_distributed');
-	Route::post('incoming_document_users/save_distributed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@saveDistributed')->name('incoming_document_users.save_distributed');
-	Route::delete('incoming_document_users/destroy_distributed/{incomingDocumentDistributed}', 'IncomingDocuments\IncomingUserController@destroyDistributed')->name('incoming_document_users.destroy_distributed');
-
-	Route::get('incoming_document_users/list_responsibles/{incomingDocument}', 'IncomingDocuments\IncomingUserController@listResponsibles')->name('incoming_document_users.list_responsibles');
-	Route::post('incoming_document_users/save_responsible/{incomingDocument}', 'IncomingDocuments\IncomingUserController@saveResponsible')->name('incoming_document_users.save_responsible');
-	Route::delete('incoming_document_users/destroy_responsible/{incomingDocumentResponsible}', 'IncomingDocuments\IncomingUserController@destroyResponsible')->name('incoming_document_users.destroy_responsible');
-
 
 	//Справочники
 	Route::resource('document_types', 'References\DocumentTypeController')->except([

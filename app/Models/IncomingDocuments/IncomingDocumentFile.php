@@ -2,10 +2,14 @@
 
 namespace App\Models\IncomingDocuments;
 
-use App\Models\BaseModel;
+use App\Models\Activity\Activity;
 
-class IncomingDocumentFile extends BaseModel
+class IncomingDocumentFile extends Activity
 {
+    protected static $logName = __CLASS__;
+
+    protected static $forcedOldAttributes = ['outgoing_document_id'];
+
     /**
      * Атрибуты, для которых разрешено массовое назначение.
      *
@@ -15,4 +19,9 @@ class IncomingDocumentFile extends BaseModel
 		'name',
 		'file_path',
 	];
+	
+    public function incomingDocument()
+    {
+        return $this->belongsTo(IncomingDocument::class);
+    }
 }
