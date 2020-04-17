@@ -21,7 +21,7 @@ class CreateOutgoingDocumentsTable extends Migration
             $table->string('counterparty')->comment('котрагент'); // котрагент
             $table->integer('document_type_id')->comment('вид документа');// вид документа
             $table->integer('from_user_id')->comment('сотрудник отправитель');// сотрудник отправитель
-            $table->string('note', 400)->comment('примечания'); // примечания
+            $table->string('note', 400)->nullable()->comment('примечания'); // примечания
             $table->integer('outgoing_doc_status_id')->comment('статус'); // статус
             // это добавляется на странице создания и редактирования
             $table->integer('letter_form_id')->comment('бланк письма'); // бланк письма
