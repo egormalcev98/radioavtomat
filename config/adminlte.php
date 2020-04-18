@@ -233,6 +233,15 @@ return [
             ]
         ],
         [
+            'text'      	=> 'tasks',
+            'route' 		=> 'tasks.index',
+            'active'		=> ['tasks', 'tasks/*'],
+            'icon'        	=> 'fas fa-calendar-alt',
+//            'permission'	=> [
+//                'view_incoming_document'
+//            ]
+        ],
+        [
             'text'      	=> 'settings',
             'route' 		=> 'settings.index',
 			'active'		=> ['settings', 'settings/*', 'users', 'users/*'],

@@ -98,4 +98,8 @@ Route::group(['middleware' => ['auth']], function () {
 		'index', 'update'
 	]);
 
+	// Задачи
+    Route::resource('tasks', 'Tasks\TaskController')->names('tasks');
+    Route::get('/get_tasks', 'Tasks\TaskController@getTasks');
+
 });

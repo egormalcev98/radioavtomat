@@ -35,4 +35,5 @@ return [
     'outgoing_documents'			=> 'Исходящие документы',
 	'incoming_documents'			=> 'Входящие документы',
     'activity'			            => 'История',
+    'tasks'			                => 'Задачи',
 ];
