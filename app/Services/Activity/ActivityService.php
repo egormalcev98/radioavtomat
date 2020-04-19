@@ -3,6 +3,8 @@
 namespace App\Services\Activity;
 
 use App\Models\Activity\ActivityLog;
+use App\Models\IncomingDocuments\IncomingDocument;
+use App\Models\IncomingDocuments\IncomingDocumentFile;
 use App\Models\OutgoingDocuments\OutgoingDocument;
 use App\Models\OutgoingDocuments\OutgoingDocumentFile;
 use App\Models\References\DocumentType;
@@ -81,15 +83,7 @@ class ActivityService extends BaseService
     public function tableData($request = [])
     {
         $raws = $this->model
-            ->select(['*'])
-            ->with([
-                'outgoingDocument',
-                'outgoingDocumentFile.outgoingDocument',
-                'causer',
-                'incomingDocument',
-                'incomingDocumentFile.incomingDocument',
-            ]);
-
+            ->select(['*']);
         // Фильтры
         // Фильтры еще пишем и в куки чтобы они не сбрасывались при пагинации
         $keyword = null;
@@ -113,30 +107,43 @@ class ActivityService extends BaseService
         }
 
         if ($keyword) {
-            $raws->whereHas('outgoingDocument', function ($query) use ($keyword) {
-                return $query->where('number', 'like', '%' . $keyword . '%')
-                    ->orWhere('title', 'like', '%' . $keyword . '%');
-            })
-			->orWhereHas('outgoingDocumentFile.outgoingDocument', function ($query) use ($keyword) {
-				return $query->where('number', 'like', '%' . $keyword . '%')
-					->orWhere('title', 'like', '%' . $keyword . '%');
-			})
-			->whereHas('incomingDocument', function ($query) use ($keyword) {
-                return $query->where('number', 'like', '%' . $keyword . '%')
-                    ->orWhere('title', 'like', '%' . $keyword . '%');
-            })
-			->orWhereHas('incomingDocumentFile.incomingDocument', function ($query) use ($keyword) {
-				return $query->where('number', 'like', '%' . $keyword . '%')
-					->orWhere('title', 'like', '%' . $keyword . '%');
-			});
+            $searchedProperties = clone $raws;
+            $searchedDocument = clone $raws;
+
+            $searchedPropertiesIds = $searchedProperties
+                ->where('description', 'updated')
+                ->where('properties', 'like', '%' . $keyword . '%')
+                ->get()->pluck('id')->toArray();
+
+            $searchedDocumentIds = $searchedDocument
+                ->whereHasMorph('subject', [OutgoingDocument::class, IncomingDocument::class], $this->scopeOfDocs($keyword ))
+                ->orWhereHasMorph('subject', [OutgoingDocumentFile::class], function ($query) use ($keyword) {
+                    return $query->whereHas('outgoingDocument', $this->scopeOfDocs($keyword ));
+                })
+                ->orWhereHasMorph('subject', [IncomingDocumentFile::class], function ($query) use ($keyword) {
+                    return $query->whereHas('incomingDocument', $this->scopeOfDocs($keyword ));
+                })
+                ->get()->pluck('id')->toArray();
+
+            $searchedIds = array_merge($searchedPropertiesIds, $searchedDocumentIds);
+
+            $raws->whereIn('id', $searchedIds);
+
         }
 
-            if ($wayFilter) {
-                $raws->whereIn('subject_type', $this->filterWays[$wayFilter]);
-            }
+        if ($wayFilter) {
+            $raws->whereIn('subject_type', $this->filterWays[$wayFilter]);
+        }
 
-
-        $raws = $raws->paginate(30);
+        $raws = $raws
+            ->with([
+                'outgoingDocument',
+                'outgoingDocumentFile.outgoingDocument',
+                'causer',
+                'incomingDocument',
+                'incomingDocumentFile.incomingDocument',
+            ])
+            ->paginate(30);
 
         $paginator = $raws->links();
         //->get();
@@ -401,7 +408,7 @@ class ActivityService extends BaseService
             }
         }
     }
-	
+
     /**
      * Обработка Json входящего документа
      */
@@ -470,4 +477,13 @@ class ActivityService extends BaseService
             }
         }
     }
+
+    public function scopeOfDocs($keyword)
+    {
+        return function($query) use ($keyword) {
+            $query->where('number', 'like', '%' . $keyword . '%')
+                ->orWhere('title', 'like', '%' . $keyword . '%');
+        };
+    }
+
 }

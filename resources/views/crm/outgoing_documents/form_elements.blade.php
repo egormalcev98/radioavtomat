@@ -118,7 +118,13 @@
                             <div class="form-group">
                                 <label>{{ __('validation.attributes.date_letter_at') }}</label>
                                 <input type=""
-                                       class="form-control date-picker {{ $errors->has('date_letter_at') ? 'is-invalid' : '' }}"
+                                       class="form-control
+                                       @if($method == 'create')
+                                           date-picker-autocomplete
+                                        @else
+                                           date-picker
+                                        @endif
+                                       {{ $errors->has('date_letter_at') ? 'is-invalid' : '' }}"
                                        name="date_letter_at"
                                        autocomplete="off"
                                        value="{{ old('date_letter_at') ?? $outgoingDocument->date ?? '' }}">
