@@ -69,6 +69,14 @@ class IncomingDocument extends Activity
     }
 	
 	/**
+     * Преобразуем дату получения документа.
+     */
+	public function getDateDeliveryAtAttribute($date)
+    {
+        return Carbon::parse($date)->format('d.m.Y');
+    }
+	
+	/**
      * Преобразуем исходящую дату документа.
      */
 	public function getDateLetterAtAttribute($date)

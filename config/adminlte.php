@@ -220,7 +220,7 @@ return [
         [
            'text'       	=> 'outgoing_documents',
            'icon'           => 'fas fa-file-upload',
-           'active'		=> ['outgoing_documents', 'outgoing_documents/*'],
+           'active'			=> ['outgoing_documents', 'outgoing_documents/*'],
            'route' 		    => 'outgoing_documents.index',
         ],
         [
@@ -230,6 +230,15 @@ return [
             'icon'        	=> 'fas fa-clock',
             'permission'	=> [
                 'view_activity'
+            ]
+        ],
+        [
+            'text'      	=> 'reports',
+            'route' 		=> 'reports.index',
+            // 'active'		=> ['reports', 'reports/*'],
+            'icon'        	=> 'fas fa-chart-line',
+            'permission'	=> [
+                'view_reports'
             ]
         ],
         [

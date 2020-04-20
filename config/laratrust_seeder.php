@@ -13,6 +13,7 @@ return [
             'activity' => 'c,r,u,d,v',
             'incoming_card_document' => 'c,r,u,d,v',
             'outgoing_card_document' => 'c,r,u,d,v',
+            'reports' => 'c,r,u,d,v',
         ],
     ],
     'permissions_map' => [
