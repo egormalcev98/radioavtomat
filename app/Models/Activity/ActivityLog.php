@@ -44,6 +44,11 @@ class ActivityLog extends BaseModel
         }
     }
 
+    public function subject()
+    {
+        return $this->morphTo();
+    }
+
     public function causer()
     {
         return $this->belongsTo(User::class, 'causer_id');
