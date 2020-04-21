@@ -61,6 +61,11 @@ return [
             'lang_title' => 'adminlte::menu.activity',
             'dependent' => [],
         ],
+		[
+			'name' => 'reports',
+			'lang_title' => 'adminlte::menu.reports',
+			'dependent' => [],
+		],
     ],
 
 ];
