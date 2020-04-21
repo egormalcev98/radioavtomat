@@ -222,6 +222,9 @@ return [
            'icon'           => 'fas fa-file-upload',
            'active'			=> ['outgoing_documents', 'outgoing_documents/*'],
            'route' 		    => 'outgoing_documents.index',
+           'permission'	=> [
+                'view_outgoing_document'
+            ]
         ],
         [
             'text'      	=> 'activity',
