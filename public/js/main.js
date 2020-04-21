@@ -485,3 +485,30 @@ let Main = {
     },
 
 }
+
+
+let Chat = {
+	changeStructuralUnit: function(selector){
+        if(selector){
+			
+			if(selector.val()) {
+				$('#chat_users').val(null).trigger('change');
+			}
+			
+            return true;
+        }
+        return false;
+    },
+	
+	changeUser: function(selector){
+        if(selector){
+			
+			if(selector.val()) {
+				$('#chat_structural_units').val(null).trigger('change');
+			}
+			
+            return true;
+        }
+        return false;
+    },
+}
