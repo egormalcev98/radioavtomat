@@ -36,7 +36,7 @@ class MainService
 	public function users() 
 	{
 		if(\Schema::hasTable(app(User::class)->getTable())){
-			return User::withoutAdmin()->orderBy('surname')->get();
+			return User::/*withoutAdmin()->*/orderBy('surname')->get();
 		}
 	}
 }

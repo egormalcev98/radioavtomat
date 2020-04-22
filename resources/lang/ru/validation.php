@@ -226,5 +226,8 @@ return [
 		'incoming_letter_number'=> 'Ответ на №',
 		'signed_at'				=> 'Подписать',
 		'reject_at'				=> 'Отклонить',
+		'text'					=> 'Текст',
+		'structural_unit_id'	=> 'Отдел',
+		'to_user_id'			=> 'СОтрудник',
     ],
 ];

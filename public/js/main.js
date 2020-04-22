@@ -308,11 +308,11 @@ let Main = {
             if(dataErrors) {
                 $.each(dataErrors, function(name, msgData){
                     let formElement = selectorBlock.find('[name="' + name + '"]');
-
-                    if(formElement.html()) {
+					
+                    if(formElement.length > 0) {
                         if(!formElement.hasClass('is-invalid')) {
                             formElement.addClass('is-invalid');
-                            formElement.after('\
+                            formElement.parent().append('\
 								<div class="invalid-feedback">\
 									' + msgData[0] + '\
 								</div>\
@@ -500,15 +500,88 @@ let Chat = {
         return false;
     },
 	
-	changeUser: function(selector){
-        if(selector){
+	currentChannelUser: null,
+	
+	changeUser: function(selector, Pusher, authId){
+        if(selector && Pusher && authId){
+			let thisMain = this;
+			
+			if (thisMain.currentChannelUser !== null) {
+				Pusher.unsubscribe(thisMain.currentChannelUser);
+				thisMain.currentChannelUser = null;
+			}
 			
 			if(selector.val()) {
 				$('#chat_structural_units').val(null).trigger('change');
+				
+				thisMain.listenUserchannel(Pusher, authId, selector.val());
 			}
 			
             return true;
         }
         return false;
     },
+	
+	listenUserchannel: function(Pusher, authId, toUserId){
+		if(Pusher && authId && toUserId){
+			let thisMain = this;
+			
+			let channelId = [authId, toUserId].sort(function(a, b) {
+			  return a - b;
+			}).join('.');
+			
+			thisMain.currentChannelUser = Pusher.subscribe('chat_user.' + channelId);
+			
+			thisMain.currentChannelUser.bind('newMessage', function (data) {
+				alert('MESSAGA');
+			});
+			
+            return true;
+        }
+        return false;
+	},
+	
+    sendMessage: function(event){
+        if(event){
+			event.preventDefault();
+
+            let thisMain = this,
+				selectorForm = $('#chat_form'),
+                selectorButton = selectorForm.find('button[type="submit"]'),
+				buttonHtml = selectorButton.html();
+
+            let errorHandle = function(jqXHR, textStatus, errorThrown ){
+                let data = jqXHR.responseJSON;
+
+                if(data['errors'] && data['message']){
+                    Main.displayAllErrors(data['errors'], selectorForm);
+                } else {
+                    Main.popUp('Произошла ошибка при отправке сообщения, обратитесь к администратору');
+                }
+
+				selectorButton.html(buttonHtml);
+            };
+
+            let successEvent = function(arrayData){
+                if(arrayData['status'] && arrayData['status'] == 'success'){
+					console.log(arrayData);
+					Main.clearAllMessages(selectorForm);
+                } else {
+                    Main.popUp('Произошла ошибка при отправке сообщения, обратитесь к администратору');
+                }
+				
+				selectorButton.html(buttonHtml);
+            };
+
+            formData = new FormData(selectorForm[0]);
+			
+            selectorButton.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+
+            Main.ajaxRequest('POST', selectorForm.attr('action'), formData, successEvent, errorHandle);
+
+            return true;
+        }
+        return false;
+    },
+
 }

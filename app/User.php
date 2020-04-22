@@ -174,4 +174,13 @@ class User extends Authenticatable
             return $q->where('name', $name);
         });
     }
+	
+	/**
+     * Получить отправленные пользователем сообщения
+     */
+    public function sentChatMessages()
+    {
+		return $this->hasMany(Models\Chat\ChatMessage::class, 'sender_user_id');
+    }
+	
 }

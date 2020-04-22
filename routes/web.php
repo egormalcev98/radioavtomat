@@ -100,5 +100,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('roles', 'References\RoleController')->only([
 		'index', 'update'
 	]);
-
+	
+	//Чат
+	Route::post('chat/send_message', 'Chat\ChatController@sendMessage')->name('chat.send_message');
 });
