@@ -507,22 +507,71 @@ let Chat = {
 			let thisMain = this;
 			
 			if (thisMain.currentChannelUser !== null) {
-				Pusher.unsubscribe(thisMain.currentChannelUser);
+				Pusher.unsubscribe(thisMain.currentChannelUser.name);
 				thisMain.currentChannelUser = null;
 			}
 			
 			if(selector.val()) {
 				$('#chat_structural_units').val(null).trigger('change');
 				
-				thisMain.listenUserchannel(Pusher, authId, selector.val());
+				thisMain.listenUserChannel(Pusher, authId, selector.val());
 			}
+			
+			thisMain.selectChannel('users', selector.val());
 			
             return true;
         }
         return false;
     },
 	
-	listenUserchannel: function(Pusher, authId, toUserId){
+	selectChannel: function(type, id){
+		let thisMain = this,
+			selectorCard = $('#chat_widget').find('.card');
+		
+		let errorHandle = function(jqXHR, textStatus, errorThrown ){
+			let data = jqXHR.responseJSON;
+
+			Main.popUp('Произошла ошибка при подгрузке сообщений чата');
+
+			selectorCard.find('.overlay').remove();
+		};
+
+		let successEvent = function(arrayData){
+			if(arrayData['status'] && arrayData['status'] == 'success'){
+				console.log(arrayData['messages']);
+				
+				if(arrayData['messages']) {
+					// $.each(arrayData['messages'], function( key, value ) {
+						// modalElement.find('[name=' + key + ']').val(value);
+					// });
+				}
+				
+				selectorCard.removeClass('direct-chat-contacts-open');
+			} else {
+				selectorCard.find('.direct-chat-messages').html('');
+			}
+			
+			selectorCard.find('.overlay').remove();
+		};
+
+		selectorCard.append('\
+			<div class="overlay dark">\
+                <i class="fas fa-2x spinner-border"></i>\
+            </div>\
+		');
+
+		formData = new FormData();
+		
+		formData.append('_token', config.token);
+		formData.append('type', type);
+		formData.append('id', id);
+		
+		Main.ajaxRequest('POST', config.route.chat_select_channel, formData, successEvent, errorHandle);
+		
+		return true;
+	},
+	
+	listenUserChannel: function(Pusher, authId, toUserId){
 		if(Pusher && authId && toUserId){
 			let thisMain = this;
 			
@@ -530,10 +579,10 @@ let Chat = {
 			  return a - b;
 			}).join('.');
 			
-			thisMain.currentChannelUser = Pusher.subscribe('chat_user.' + channelId);
+			thisMain.currentChannelUser = Pusher.subscribe('private-chat-user.' + channelId);
 			
 			thisMain.currentChannelUser.bind('newMessage', function (data) {
-				alert('MESSAGA');
+				alert(data['messageData']['text']);
 			});
 			
             return true;

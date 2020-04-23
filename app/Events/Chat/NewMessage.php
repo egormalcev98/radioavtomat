@@ -44,7 +44,7 @@ class NewMessage implements ShouldBroadcast
 			$channelId = implode('.', $arrChannelId);
 		}
 		
-        return new PrivateChannel('chat_user.' . $channelId);
+        return new PrivateChannel('chat-user.' . $channelId);
     }
 	
 	/**

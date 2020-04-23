@@ -62,6 +62,7 @@ class User extends Authenticatable
 
     protected $appends = [
         'surnameWithInitials',
+        'full_name',
     ];
 
     /**

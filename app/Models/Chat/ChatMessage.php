@@ -16,4 +16,16 @@ class ChatMessage extends BaseModel
 		'to_user_id',
 		'structural_unit_id',
 	];
+	
+	/**
+     * Получим отправителя сообщения
+     */
+    public function senderUser()
+    {
+        return $this->belongsTo(\App\User::class)->withDefault([
+			'full_name' => '',
+			'surname' => '',
+			'name' => '',
+		]);
+    }
 }

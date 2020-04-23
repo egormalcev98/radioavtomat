@@ -72,7 +72,10 @@
 	<script>
 		// global app configuration object
 		var config = {
-			token: '{!! csrf_token() !!}'
+			token: '{!! csrf_token() !!}',
+			route: {
+				chat_select_channel: '{{ route("chat.select_channel") }}'
+			}
 		};
 	</script>
 
@@ -99,7 +102,7 @@
 			Chat.changeUser($(this), Pusher, {{ auth()->user()->id }});
 		});
 		
-		// Chat.listenUserchannel(Pusher, 1, 3);
+		// Chat.listenUserChannel(Pusher, 1, 3);
 		
 		{{--
 		var channel = Pusher.subscribe('user.{{ auth()->user()->id }}');

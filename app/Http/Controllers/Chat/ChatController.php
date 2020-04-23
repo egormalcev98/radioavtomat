@@ -24,4 +24,19 @@ class ChatController extends Controller
 		
 		return abort(404);
     }
+	
+	public function selectChannel(Request $request)
+    {
+		if ($request->ajax()) {
+			
+			$messages = $this->service->saveChannelAndGetMessages($request);
+			
+			return response()->json([
+				'status' => 'success',
+				'messages' => $messages,
+			]);
+		}
+		
+		return abort(404);
+    }
 }

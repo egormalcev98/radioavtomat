@@ -103,4 +103,5 @@ Route::group(['middleware' => ['auth']], function () {
 	
 	//Чат
 	Route::post('chat/send_message', 'Chat\ChatController@sendMessage')->name('chat.send_message');
+	Route::post('chat/select_channel', 'Chat\ChatController@selectChannel')->name('chat.select_channel');
 });

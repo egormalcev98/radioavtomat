@@ -27,6 +27,6 @@ Broadcast::channel('chat_user.{id}', function ($user, $id) {
    return (int) $user->id === (int) $id;
 });*/
 
-// Broadcast::channel('chat_user.{oneUserId}.{twoUserId}', function ($user, $oneUserId, $twoUserId) {
-    // return (int) $user->id === (int) $oneUserId or (int) $user->id === (int) $twoUserId;
-// });
+Broadcast::channel('chat-user.{oneUserId}.{twoUserId}', function ($user, $oneUserId, $twoUserId) {
+    return (int) $user->id === (int) $oneUserId or (int) $user->id === (int) $twoUserId;
+});
