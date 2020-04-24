@@ -98,11 +98,13 @@
 		   }
 		});
 		
-		$('#chat_users').change(function() {
-			Chat.changeUser($(this), Pusher, {{ auth()->user()->id }});
+		$(document).ready(function(){
+			$('#chat_users').change(function() {
+				Chat.changeUser($(this), Pusher, {{ auth()->user()->id }});
+			});
+			
+			Chat.selectedChannelAuthUser({!! auth()->user()->chat_channel !!}, {{ auth()->user()->id }});
 		});
-		
-		// Chat.listenUserChannel(Pusher, 1, 3);
 		
 		{{--
 		var channel = Pusher.subscribe('user.{{ auth()->user()->id }}');

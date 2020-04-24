@@ -30,7 +30,17 @@ class NewMessage implements ShouldBroadcast
         $this->authUserId = $authUserId;
         $this->messageCollect = $messageCollect;
     }
-
+	
+	/**
+	 * Get the data to broadcast.
+	 *
+	 * @return array
+	 */
+	public function broadcastWith()
+	{
+		return $this->messageData;
+	}
+	
     /**
      * Get the channels the event should broadcast on.
      *

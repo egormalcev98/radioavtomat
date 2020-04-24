@@ -3,6 +3,7 @@
 namespace App\Services\Chat;
 
 use App\Models\Chat\ChatMessage;
+use Illuminate\Support\Facades\DB;
 
 class ChatService
 {	
@@ -25,6 +26,11 @@ class ChatService
 			broadcast(new \App\Events\Chat\NewMessage(
 				[
 					'text' => $newMessage->text,
+					'created_at' => $newMessage->created_at,
+					'sender_user_id' => $newMessage->sender_user_id,
+					'sender_user' => [
+						'full_name' => auth()->user()->fullName
+					],
 				], 
 				auth()->user()->id,
 				$newMessage
@@ -50,7 +56,11 @@ class ChatService
 		
 		$user = auth()->user();
 		
-		$messages = ChatMessage::select(['text', 'sender_user_id'])
+		$messages = ChatMessage::select([
+							'text', 
+							'sender_user_id', 
+							'created_at',
+						])
 					->with([
 						'senderUser' => function($query) {
 							$query->select([
@@ -71,11 +81,20 @@ class ChatService
 				'id' => $request->id,
 			];
 			
-			$messages->where($accessTypes[$request->type], (int) $request->id);
+			if($request->type == 'users') {
+				$messages->where(function($q) use($request, $user) {
+					$q->where('to_user_id', $request->id)->where('sender_user_id', $user->id);
+				})
+				->orWhere(function($q) use($request, $user) {
+					$q->where('to_user_id', $user->id)->where('sender_user_id', $request->id);
+				});
+			} else {
+				$messages->where($accessTypes[$request->type], (int) $request->id);
+			}
 		}
 		
 		$user->save();
 		
-		return $messages->limit($LimitMsg)->get();
+		return $messages->limit($LimitMsg)->orderBy('created_at')->get();
 	}
 }

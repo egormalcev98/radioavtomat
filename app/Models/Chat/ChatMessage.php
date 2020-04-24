@@ -3,6 +3,7 @@
 namespace App\Models\Chat;
 
 use App\Models\BaseModel;
+use Carbon\Carbon;
 
 class ChatMessage extends BaseModel
 {
@@ -28,4 +29,13 @@ class ChatMessage extends BaseModel
 			'name' => '',
 		]);
     }
+	
+	/**
+     * Преобразуем дату создания.
+     */
+	public function getCreatedAtAttribute($date)
+    {
+        return Carbon::parse($date)->format('d.m.Y H:i');
+    }
+	
 }

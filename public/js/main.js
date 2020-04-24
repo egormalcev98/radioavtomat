@@ -515,16 +515,37 @@ let Chat = {
 				$('#chat_structural_units').val(null).trigger('change');
 				
 				thisMain.listenUserChannel(Pusher, authId, selector.val());
+				
+				thisMain.selectChannel(authId, 'users', selector.val(), selector.find('option:selected').text());
+			} else {
+				if(!$('#chat_structural_units').val()) {
+					thisMain.selectChannel(authId, '', '');
+				}
 			}
-			
-			thisMain.selectChannel('users', selector.val());
 			
             return true;
         }
         return false;
     },
 	
-	selectChannel: function(type, id){
+	renameChat: function(name) {
+		
+		if(!name) {
+			name = 'Чат';
+		}
+		
+		$('#chat_widget').find('.card-title').text(name);
+	},
+	
+	selectedChannelAuthUser: function(data, authId) {
+		if(data) {
+			$('#chat_' + data['type']).val(data['id']).trigger('change');
+		} else {
+			return Chat.selectChannel(authId, '', '');
+		}
+	},
+	
+	selectChannel: function(authId, type, id, nameChannel){
 		let thisMain = this,
 			selectorCard = $('#chat_widget').find('.card');
 		
@@ -538,14 +559,21 @@ let Chat = {
 
 		let successEvent = function(arrayData){
 			if(arrayData['status'] && arrayData['status'] == 'success'){
-				console.log(arrayData['messages']);
+				
+				let htmlMessages = '';
 				
 				if(arrayData['messages']) {
-					// $.each(arrayData['messages'], function( key, value ) {
-						// modalElement.find('[name=' + key + ']').val(value);
-					// });
+					$.each(arrayData['messages'], function( key, value ) {
+						htmlMessages += thisMain.chatCollectMessage(value, authId);
+					});
 				}
 				
+				selectorCard.find('.direct-chat-messages').html(htmlMessages);
+				
+				thisMain.scrolDirectMessagesBottom(selectorCard.find('.direct-chat-messages'));
+				
+				thisMain.renameChat(nameChannel);
+			
 				selectorCard.removeClass('direct-chat-contacts-open');
 			} else {
 				selectorCard.find('.direct-chat-messages').html('');
@@ -571,6 +599,18 @@ let Chat = {
 		return true;
 	},
 	
+	chatCollectMessage: function(data, authId) {
+		return '<div class="direct-chat-msg ' + ((data['sender_user_id'] == authId) ? 'right' : '') + '">\
+					<div class="direct-chat-infos clearfix">\
+						<span class="direct-chat-name float-' + ((data['sender_user_id'] == authId) ? 'right' : 'left') + '">' + data['sender_user']['full_name'] + '</span>\
+						<span class="direct-chat-timestamp float-' + ((data['sender_user_id'] == authId) ? 'left' : 'right') + '">' + data['created_at'] + '</span>\
+					</div>\
+					<div class="direct-chat-text" style="' + ((data['sender_user_id'] == authId) ? 'margin-right: 1px;' : 'margin: 5px 0 0 0px') + '">\
+						' + data['text'] + '\
+					</div>\
+				</div>';
+	},
+	
 	listenUserChannel: function(Pusher, authId, toUserId){
 		if(Pusher && authId && toUserId){
 			let thisMain = this;
@@ -582,12 +622,26 @@ let Chat = {
 			thisMain.currentChannelUser = Pusher.subscribe('private-chat-user.' + channelId);
 			
 			thisMain.currentChannelUser.bind('newMessage', function (data) {
-				alert(data['messageData']['text']);
+				if(data) {
+					let directChatMessages = $('#chat_widget').find('.direct-chat-messages');
+					
+					directChatMessages.append(thisMain.chatCollectMessage(data, authId));
+						
+					thisMain.scrolDirectMessagesBottom(directChatMessages);
+				}
 			});
 			
             return true;
         }
         return false;
+	},
+	
+	scrolDirectMessagesBottom: function(directChatMessages) {
+		let dataDCM = directChatMessages[0];
+					
+        dataDCM.scrollTop = dataDCM.scrollHeight;
+		
+		return true;
 	},
 	
     sendMessage: function(event){
@@ -613,7 +667,8 @@ let Chat = {
 
             let successEvent = function(arrayData){
                 if(arrayData['status'] && arrayData['status'] == 'success'){
-					console.log(arrayData);
+					selectorForm.find('input[name="text"]').val('');
+					
 					Main.clearAllMessages(selectorForm);
                 } else {
                     Main.popUp('Произошла ошибка при отправке сообщения, обратитесь к администратору');
