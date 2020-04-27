@@ -31,6 +31,16 @@ class ChatMessage extends BaseModel
     }
 	
 	/**
+     * Получим группу структурные подразделения сообщения
+     */
+    public function structuralUnit()
+    {
+        return $this->belongsTo(\App\Models\References\StructuralUnit::class)->withDefault([
+			'name' => '',
+		]);
+    }
+	
+	/**
      * Преобразуем дату создания.
      */
 	public function getCreatedAtAttribute($date)
@@ -38,4 +48,11 @@ class ChatMessage extends BaseModel
         return Carbon::parse($date)->format('d.m.Y H:i');
     }
 	
+	/**
+     * Получим отметки о прочитанных сообщениях
+     */
+    public function viewed()
+    {
+        return $this->belongsToMany(\App\User::class, 'chat_message_user')->withTimestamps();
+    }
 }

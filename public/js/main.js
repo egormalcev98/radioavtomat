@@ -488,11 +488,26 @@ let Main = {
 
 
 let Chat = {
-	changeStructuralUnit: function(selector){
-        if(selector){
+	
+	currentChannel: null,
+	
+	changeStructuralUnit: function(selector, Pusher, authId){
+        if(selector && Pusher && authId){
+			let thisMain = this;
+			
+			thisMain.unsubscribeChannel(Pusher);
 			
 			if(selector.val()) {
 				$('#chat_users').val(null).trigger('change');
+				
+				thisMain.listenStructuralUnitChannel(Pusher, authId, selector.val());
+				
+				thisMain.selectChannel(authId, 'structural_units', selector.val(), selector.find('option:selected').text());
+				
+			} else {
+				if(!$('#chat_users').val()) {
+					thisMain.listenGeneralChannel(Pusher, authId);
+				}
 			}
 			
             return true;
@@ -500,16 +515,11 @@ let Chat = {
         return false;
     },
 	
-	currentChannelUser: null,
-	
 	changeUser: function(selector, Pusher, authId){
         if(selector && Pusher && authId){
 			let thisMain = this;
 			
-			if (thisMain.currentChannelUser !== null) {
-				Pusher.unsubscribe(thisMain.currentChannelUser.name);
-				thisMain.currentChannelUser = null;
-			}
+			thisMain.unsubscribeChannel(Pusher);
 			
 			if(selector.val()) {
 				$('#chat_structural_units').val(null).trigger('change');
@@ -519,7 +529,8 @@ let Chat = {
 				thisMain.selectChannel(authId, 'users', selector.val(), selector.find('option:selected').text());
 			} else {
 				if(!$('#chat_structural_units').val()) {
-					thisMain.selectChannel(authId, '', '');
+					
+					thisMain.listenGeneralChannel(Pusher, authId);
 				}
 			}
 			
@@ -537,11 +548,11 @@ let Chat = {
 		$('#chat_widget').find('.card-title').text(name);
 	},
 	
-	selectedChannelAuthUser: function(data, authId) {
+	selectedChannelAuthUser: function(Pusher, data, authId) {
 		if(data) {
 			$('#chat_' + data['type']).val(data['id']).trigger('change');
 		} else {
-			return Chat.selectChannel(authId, '', '');
+			return this.listenGeneralChannel(Pusher, authId);
 		}
 	},
 	
@@ -562,10 +573,43 @@ let Chat = {
 				
 				let htmlMessages = '';
 				
-				if(arrayData['messages']) {
-					$.each(arrayData['messages'], function( key, value ) {
+				if(arrayData['messages']['data']) {
+					$.each(arrayData['messages']['data'], function( key, value ) {
 						htmlMessages += thisMain.chatCollectMessage(value, authId);
 					});
+				}
+				
+				if(arrayData['messages']['count_new_messages']) {
+					let countMsg = 0,
+						cardHeader = selectorCard.find('.card-header');
+					$.each(arrayData['messages']['count_new_messages'], function( channel, data ) {
+						
+						if(channel == 'general' && data > 0) {
+							countMsg += parseInt(data);
+							thisMain.countNewMessages['general'] = parseInt(data);
+							cardHeader.find('span[data-widget="chat-pane-toggle"]').attr('data-original-title', 'В общем чате новых сообщений: ' + data);
+						} else {
+							if(data) {
+								$.each(data, function( k, channelData ) {
+									let optionEl = selectorCard.find('#chat_' + channel).find('option[value="' + channelData['c_id'] + '"]');
+									countMsg += parseInt(channelData['count']);
+									thisMain.countNewMessages['chat_' + channel] += parseInt(channelData['count']);
+									optionEl.html(optionEl.text() + ' (' + channelData['count'] + ')');
+								});
+								
+								selectorCard.find('#chat_' + channel)
+									.closest('.form-group')
+									.find('.select2-selection')
+									.css('border-color','#17a2b8');
+								
+							}
+						}
+					});
+					
+					if(countMsg > 0) {
+						cardHeader.find('span[data-widget="chat-pane-toggle"]').text(countMsg).show();
+						cardHeader.find('button[data-widget="chat-pane-toggle"]').hide();
+					}
 				}
 				
 				selectorCard.find('.direct-chat-messages').html(htmlMessages);
@@ -611,6 +655,17 @@ let Chat = {
 				</div>';
 	},
 	
+	unsubscribeChannel: function(Pusher){
+		let thisMain = this;
+		
+		if (thisMain.currentChannel !== null) {
+			Pusher.unsubscribe(thisMain.currentChannel.name);
+			thisMain.currentChannel = null;
+		}
+		
+		return true;
+	},
+	
 	listenUserChannel: function(Pusher, authId, toUserId){
 		if(Pusher && authId && toUserId){
 			let thisMain = this;
@@ -619,21 +674,56 @@ let Chat = {
 			  return a - b;
 			}).join('.');
 			
-			thisMain.currentChannelUser = Pusher.subscribe('private-chat-user.' + channelId);
+			thisMain.currentChannel = Pusher.subscribe('private-chat-user.' + channelId);
 			
-			thisMain.currentChannelUser.bind('newMessage', function (data) {
-				if(data) {
-					let directChatMessages = $('#chat_widget').find('.direct-chat-messages');
-					
-					directChatMessages.append(thisMain.chatCollectMessage(data, authId));
-						
-					thisMain.scrolDirectMessagesBottom(directChatMessages);
-				}
-			});
+			thisMain.bindNewMessage(authId);
 			
             return true;
         }
         return false;
+	},
+	
+	listenStructuralUnitChannel: function(Pusher, authId, groupId){
+		if(Pusher && authId && groupId){
+			let thisMain = this;
+			
+			thisMain.currentChannel = Pusher.subscribe('private-chat-structural-unit.' + groupId);
+			
+			thisMain.bindNewMessage(authId);
+			
+            return true;
+        }
+        return false;
+	},
+	
+	listenGeneralChannel: function(Pusher, authId){
+		if(Pusher && authId){
+			let thisMain = this;
+			thisMain.currentChannel = Pusher.subscribe('private-chat-general');
+			
+			thisMain.bindNewMessage(authId);
+			
+			thisMain.selectChannel(authId, '', '');
+			
+            return true;
+        }
+        return false;
+	},
+	
+	bindNewMessage: function(authId) {
+		let thisMain = this;
+		
+		thisMain.currentChannel.bind('newMessage', function (data) {
+			if(data) {
+				let directChatMessages = $('#chat_widget').find('.direct-chat-messages');
+							
+				directChatMessages.append(thisMain.chatCollectMessage(data, authId));
+					
+				thisMain.scrolDirectMessagesBottom(directChatMessages);
+			}
+		});
+		
+		return true;
 	},
 	
 	scrolDirectMessagesBottom: function(directChatMessages) {
@@ -688,4 +778,46 @@ let Chat = {
         return false;
     },
 
+	countNewMessages: {
+		'general' : 0,
+		'chat_users' : 0,
+		'chat_structural_units' : 0,
+	},
+
+	actionCollapseWidget: function() {
+		let widget = $('#chat_widget'),
+			thisMain = this,
+			countMsgButton = widget.find('span[data-widget="chat-pane-toggle"]');
+		
+		let activeSelect = widget.find('.direct-chat-contacts').find('select').filter(
+			function () {
+				return parseInt(this.value) > 0; 
+			}
+		);
+			
+		if(!widget.find('.direct-chat-messages').is(":visible") && thisMain.countNewMessages[activeSelect.length ? activeSelect.attr('id') : 'general'] > 0) {
+			
+			let errorHandle = function(jqXHR, textStatus, errorThrown ){
+				let data = jqXHR.responseJSON;
+			};
+
+			let successEvent = function(arrayData){
+				if(arrayData['status'] && arrayData['status'] == 'success'){
+					
+				}
+			};
+
+			formData = new FormData();
+			
+			formData.append('_token', config.token);
+			formData.append('type', activeSelect.attr('name') ? activeSelect.attr('name') : '');
+			formData.append('id', activeSelect.val() ? activeSelect.val() : '');
+			
+			Main.ajaxRequest('POST', config.route.chat_read_msg, formData, successEvent, errorHandle);
+			
+		}
+		
+		return true;
+	},
+	
 }

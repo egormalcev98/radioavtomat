@@ -74,7 +74,8 @@
 		var config = {
 			token: '{!! csrf_token() !!}',
 			route: {
-				chat_select_channel: '{{ route("chat.select_channel") }}'
+				chat_select_channel: '{{ route("chat.select_channel") }}',
+				chat_read_msg: '{{ route("chat.read_msg") }}'
 			}
 		};
 	</script>
@@ -103,20 +104,22 @@
 				Chat.changeUser($(this), Pusher, {{ auth()->user()->id }});
 			});
 			
-			Chat.selectedChannelAuthUser({!! auth()->user()->chat_channel !!}, {{ auth()->user()->id }});
+			$('#chat_structural_units').change(function() {
+				Chat.changeStructuralUnit($(this), Pusher, {{ auth()->user()->id }});
+			});
+			
+			Chat.selectedChannelAuthUser(Pusher, @if(auth()->user()->chat_channel) {!! auth()->user()->chat_channel !!} @else null @endif, {{ auth()->user()->id }});
+			
 		});
 		
-		{{--
-		var channel = Pusher.subscribe('user.{{ auth()->user()->id }}');
+		var channel = Pusher.subscribe('private-user.{{ auth()->user()->id }}');
 
-		channel.bind('outgoingCall', function (data) {
-		   Main.outgoingCall(data);
-		});
+		/*channel.bind('newMessage', function (data) {
+			if(data && !Chat.currentChannel) {
+				Chat.bindNewMessage(data, {{ auth()->user()->id }});
+			}
+		});*/
 		
-		channel.bind('incomingCall', function (data) {
-		   Main.incomingCall(data);
-		});
-		--}}
 	</script>
 @endif
 

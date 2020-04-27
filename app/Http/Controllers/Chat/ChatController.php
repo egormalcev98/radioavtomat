@@ -39,4 +39,16 @@ class ChatController extends Controller
 		
 		return abort(404);
     }
+	
+	public function readMessages(Request $request)
+    {
+		if ($request->ajax()) {
+			
+			$this->service->saveReadMessages($request);
+			
+			return $this->ajaxSuccessResponse();
+		}
+		
+		return abort(404);
+    }
 }

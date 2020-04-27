@@ -16,19 +16,17 @@ class NewMessage implements ShouldBroadcast
 
 	public $messageData; //Данные сообщения, которые отправим на фронт
 	
-	private $authUserId;
-	private $messageCollect; //Собственно коллекция сообщения для манипуляций
+	private $channelName;
 	
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($messageData, $authUserId, $messageCollect)
+    public function __construct($messageData, $channelName)
     {
         $this->messageData = $messageData;
-        $this->authUserId = $authUserId;
-        $this->messageCollect = $messageCollect;
+        $this->channelName = $channelName;
     }
 	
 	/**
@@ -48,13 +46,7 @@ class NewMessage implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-		if($this->messageCollect->to_user_id) {
-			$arrChannelId = [$this->messageCollect->to_user_id, $this->authUserId];
-			sort($arrChannelId);
-			$channelId = implode('.', $arrChannelId);
-		}
-		
-        return new PrivateChannel('chat-user.' . $channelId);
+        return new PrivateChannel($this->channelName);
     }
 	
 	/**

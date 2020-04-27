@@ -184,4 +184,11 @@ class User extends Authenticatable
 		return $this->hasMany(Models\Chat\ChatMessage::class, 'sender_user_id');
     }
 	
+	/**
+     * Получим отметки о прочитанных сообщениях чата
+     */
+    public function viewedMessages()
+    {
+        return $this->belongsToMany(Models\Chat\ChatMessage::class, 'chat_message_user')->withTimestamps();
+    }
 }

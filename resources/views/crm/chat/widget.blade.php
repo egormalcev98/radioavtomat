@@ -6,10 +6,10 @@
 				<h3 class="card-title">Чат</h3>
 
 				<div class="card-tools">
-					<span class="badge bg-info">3</span>
-					<button type="button" class="btn btn-tool" data-card-widget="collapse">
+					<button type="button" class="btn btn-tool" data-card-widget="collapse" onclick="Chat.actionCollapseWidget();">
 						<i class="fas fa-plus"></i>
 					</button>
+					<span class="badge bg-info btn-tool" data-widget="chat-pane-toggle" data-toggle="tooltip" data-placement="top" data-original-title="" style="cursor: pointer; display:none;"></span>
 					<button type="button" class="btn btn-tool" data-widget="chat-pane-toggle">
 						<i class="fas fa-comments"></i>
 					</button>
@@ -28,7 +28,7 @@
 					@if($chatStructuralUnits->isNotEmpty())
 						<div class="form-group m-2">
 							<label style="color: #000">Отделы</label>
-							<select class="form-control select2" style="width: 100%;" id="chat_structural_units" onchange="Chat.changeStructuralUnit($(this));" name="structural_unit_id" form="chat_form">
+							<select class="form-control select2" style="width: 100%;" id="chat_structural_units" name="structural_unit_id" form="chat_form">
 								<option value="" >Ничего не выбрано</option>
 								@foreach($chatStructuralUnits as $sUnit)
 									<option value="{{ $sUnit->id }}" >{{ $sUnit->name }}</option>
