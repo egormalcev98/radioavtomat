@@ -442,5 +442,62 @@ return [
                 ],
             ],
         ],
+        [
+            'name' => 'FullCalendar',
+            'active' => true,
+            'files' => [
+                [
+                    'type'  => 'css',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar/main.css',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar/main.js',
+                ],
+                [
+                    'type'  => 'css',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/daygrid/main.css',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/daygrid/main.js',
+                ],
+                [
+                    'type'  => 'css',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/timegrid/main.css',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/timegrid/main.js',
+                ],
+                [
+                    'type'  => 'css',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/bootstrap/main.css',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/bootstrap/main.js',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/interaction/main.js',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar/locales/ru.js',
+                ],
+            ],
+        ],
     ],
 ];
+

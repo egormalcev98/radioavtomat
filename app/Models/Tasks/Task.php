@@ -25,12 +25,17 @@ class Task extends BaseModel
 
 	public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withPivot('completed');
     }
 
     public function taskStatus()
     {
         return $this->belongsTo(TaskStatus::class);
+    }
+
+    public function taskType()
+    {
+        return $this->belongsTo(TaskType::class);
     }
 
     public function eventType()

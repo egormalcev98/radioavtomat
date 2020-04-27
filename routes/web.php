@@ -38,7 +38,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('incoming_documents/print', 'IncomingDocuments\IncomingDocumentController@printExcel')->name('incoming_documents.print');
 	Route::resource('incoming_documents', 'IncomingDocuments\IncomingDocumentController');
 	Route::post('incoming_documents/check_number', 'IncomingDocuments\IncomingDocumentController@checkNumber')->name('incoming_documents.check_number');
-
+    Route::get('incoming_documents_get_documents', 'IncomingDocuments\IncomingDocumentController@getDocuments')->name('incoming_documents.get_documents');
 	Route::post('incoming_document_users/signed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@signed')->name('incoming_document_users.signed');
 
 	Route::get('incoming_document_users/list_distributed/{incomingDocument}', 'IncomingDocuments\IncomingUserController@listDistributed')->name('incoming_document_users.list_distributed');
@@ -100,6 +100,12 @@ Route::group(['middleware' => ['auth']], function () {
 
 	// Задачи
     Route::resource('tasks', 'Tasks\TaskController')->names('tasks');
-    Route::get('/get_tasks', 'Tasks\TaskController@getTasks');
-
+    Route::post('/tasks-store-task', 'Tasks\TaskController@storeTask')->name('tasks.store-task');
+    Route::post('/tasks-store-order', 'Tasks\TaskController@storeOrder')->name('tasks.store-order');
+    Route::post('/tasks-update-task/{task}', 'Tasks\TaskController@updateTask')->name('tasks.update-task');
+    Route::post('/tasks-update-order/{task}', 'Tasks\TaskController@updateOrder')->name('tasks.update-order');
+    Route::get('/get-tasks', 'Tasks\TaskController@getTasks')->name('tasks.get');
+    Route::get('/task-info/{task}', 'Tasks\TaskController@taskInfo')->name('tasks.info');
+    Route::post('/task-get-weeks', 'Tasks\TaskController@getWeeks')->name('tasks.get-weeks');
+    Route::get('/task-do-completed/{task}', 'Tasks\TaskController@doCompleted')->name('tasks.do_completed'); // это чтобы отмечать что уведомление о задачи просмотрено
 });

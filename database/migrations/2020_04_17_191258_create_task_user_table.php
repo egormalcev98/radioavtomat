@@ -16,7 +16,7 @@ class CreateTaskUserTable extends Migration
         Schema::create('task_user', function (Blueprint $table) {
             $table->unsignedInteger('task_id');
             $table->unsignedInteger('user_id');
-
+            $table->boolean('completed')->nullable()->comment('пользователь увидел уведомление');
         });
     }
 
