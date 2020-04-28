@@ -153,13 +153,13 @@ class NoteService extends BaseService
             })
             ->addColumn('creator', function ($element) {
                 if ($element->creator) {
-                    return $element->creator->surnameWithInitials;
+                    return $element->creator->fullName;
                 }
                 return '';
             })
             ->addColumn('user', function ($element) {
                 if ($element->user) {
-                    return $element->user->surnameWithInitials;
+                    return $element->user->fullName;
                 }
                 return '';
             })
@@ -234,6 +234,20 @@ class NoteService extends BaseService
     public function store($request)
     {
         $requestAll = $request->all();
+
+        $currentYear = Carbon::now()->endOfYear()->toDateTimeString();
+
+       $lastNote = Note::where('created_at', '<', $currentYear)->latest()->first();
+
+       if($lastNote) {
+           $number = $lastNote->number + 1;
+       } else {
+           $number = 1;
+       }
+
+        $requestAll['number'] = $number;
+        $requestAll['creator_id'] = auth()->id();
+
         $this->model = $this->model->create($requestAll);
 
         $this->furtherPreparation($requestAll);
@@ -247,6 +261,9 @@ class NoteService extends BaseService
     public function update($request)
     {
         $requestAll = $request->all();
+
+        unset($requestAll['number']);
+        unset($requestAll['created_at']);
 
         $this->model->update($requestAll);
 

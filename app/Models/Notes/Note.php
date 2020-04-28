@@ -18,6 +18,7 @@ class Note extends BaseModel
         'user_id',
         'creator_id',
         'text',
+        'created_at'
     ];
 
     public function getCreatedAtAttribute($data)

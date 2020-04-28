@@ -10,7 +10,7 @@
                     @if($method != 'create')
                         <div class="form-group">
                             <label>{{ __('notes.form.number') }}</label>
-                            <input type="text" required="true" disabled
+                            <input type="text" disabled
                                    class="form-control"
                                    value="{{$note->number}}">
                         </div>
@@ -19,7 +19,7 @@
                     <div class="form-group">
                         <label>{{ __('notes.form.title') }}</label>
                         <input type="text" required="true"
-                               class="form-control {{ $errors->has('number') ? 'is-invalid' : '' }}"
+                               class="form-control {{ $errors->has('title') ? 'is-invalid' : '' }}"
                                name="title"
                                value="{{ old('title') ?? $note->title ?? '' }}">
                         @include('crm.error_message', ['nameField' => 'title'])
@@ -96,7 +96,7 @@
                                 <p>Нет пользователей</p>
                             @endforelse
                         </select>
-                        @include('crm.error_message', ['nameField' => 'from_user_id'])
+                        @include('crm.error_message', ['nameField' => 'user_id'])
                     </div>
 
                     <div class="form-group">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Notes;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Notes\StoreRequest;
+use App\Http\Requests\Notes\UpdateRequest;
 use App\Models\Notes\Note;
 use App\Services\Notes\NoteService as Service;
 
@@ -45,7 +46,7 @@ class NoteController extends Controller
         return $this->editElement($note);
     }
 
-    public function update(StoreRequest $request, Note $note)
+    public function update(UpdateRequest $request, Note $note)
     {
         return $this->updateElement($request, $note);
     }
