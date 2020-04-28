@@ -236,6 +236,15 @@ return [
             ]
         ],
         [
+            'text'      	=> 'notes',
+            'route' 		=> 'notes.index',
+            'active'		=> ['notes', 'notes/*'],
+            'icon'        	=> 'fas fa-file-alt',
+            'permission'	=> [
+                'view_note'
+            ]
+        ],
+        [
             'text'      	=> 'reports',
             'route' 		=> 'reports.index',
             // 'active'		=> ['reports', 'reports/*'],

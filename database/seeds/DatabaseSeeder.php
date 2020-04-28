@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EventTypeSeeder::class);
         $this->call(CategoryNoteSeeder::class);
         $this->call(StatusNoteSeeder::class);
+        $this->call(PermissionTablesSeeder::class);
     }
 }

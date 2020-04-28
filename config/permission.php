@@ -66,6 +66,11 @@ return [
 			'lang_title' => 'adminlte::menu.reports',
 			'dependent' => [],
 		],
+        [
+            'name' => 'note',
+            'lang_title' => 'adminlte::menu.notes',
+            'dependent' => [],
+        ],
     ],
 
 ];

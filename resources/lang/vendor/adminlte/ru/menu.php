@@ -35,4 +35,5 @@ return [
 	'incoming_documents'			=> 'Входящие документы',
     'activity'			            => 'История',
 	'reports'						=> 'Отчеты',
+	'notes'						    => 'Служебные записки',
 ];
