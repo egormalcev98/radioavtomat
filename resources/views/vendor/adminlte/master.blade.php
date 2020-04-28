@@ -84,6 +84,7 @@
 	<script src="{{ asset('/js/plugins/controlmodal/control-modal.js?78') }}"></script>
 	<script src="{{ asset('/js/plugins/masked/jquery.maskedinput.min.js') }}"></script>
 	<script src="{{ asset('/js/main.js?58910') }}"></script>
+	<script src="{{ asset('/js/chat.js?5') }}"></script>
 	<script src="{{ asset('/js/date_range_picker.js') }}"></script>
 	
 	<script>
@@ -114,11 +115,13 @@
 		
 		var channel = Pusher.subscribe('private-user.{{ auth()->user()->id }}');
 
-		/*channel.bind('newMessage', function (data) {
-			if(data && !Chat.currentChannel) {
-				Chat.bindNewMessage(data, {{ auth()->user()->id }});
-			}
-		});*/
+		channel.bind('notifyNewMessage', function (data) {
+			Chat.notifyNewMessage(data);
+		});
+		
+		channel.bind('updateCountNewMessages', function (data) {
+			Chat.updateCountNewMessages(data);
+		});
 		
 	</script>
 @endif

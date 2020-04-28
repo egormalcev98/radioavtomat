@@ -4,9 +4,26 @@ namespace App\Models\Chat;
 
 use App\Models\BaseModel;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 class ChatMessage extends BaseModel
 {
+    /**
+     * "Загружающий" метод модели.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+		
+		$authUser = auth()->user();
+		
+        static::addGlobalScope('relevant', function (Builder $builder) use($authUser) {
+            $builder->where('chat_messages.created_at', '>=', Carbon::parse($authUser->created_at));
+        });
+    }
+
     /**
      * Атрибуты, для которых разрешено массовое назначение.
      *

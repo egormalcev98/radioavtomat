@@ -2,6 +2,7 @@
 
 namespace App\Services\Chat;
 
+use App\User;
 use App\Models\Chat\ChatMessage;
 use Illuminate\Support\Facades\DB;
 
@@ -11,7 +12,7 @@ class ChatService
 	
 	public $permissionKey = '';
 	
-	private $limitMsg = 70;
+	private $limitMsg = 10;
 	
 	/**
 	 * Обновление записи в БД
@@ -23,21 +24,12 @@ class ChatService
 		$newMessage = auth()->user()
 			  ->sentChatMessages()
 			  ->create($requestAll);
+			  
+		auth()->user()
+			->viewedMessages()
+			->attach($newMessage->id);
 		
 		try {
-			
-			if($newMessage->structural_unit_id) {
-				$channelName = 'chat-structural-unit.' . $newMessage->structural_unit_id;
-				
-				$channellMsgCount = [
-					'structural_units' => [
-						[
-							'c_id' => $newMessage->structural_unit_id,
-							'count' => 1
-						],
-					],
-				];
-			}
 			
 			if($newMessage->to_user_id) {
 				$arrChannelId = [$newMessage->to_user_id, auth()->user()->id];
@@ -53,14 +45,44 @@ class ChatService
 						],
 					],
 				];
-			}
-			
-			if(!$newMessage->to_user_id and !$newMessage->structural_unit_id) {
-				$channelName = 'chat-general';
 				
-				$channellMsgCount = [
-					'general' => 1,
-				];
+				broadcast(new \App\Events\Chat\NotifyNewMessage(
+					$channellMsgCount,
+					[ $newMessage->to_user_id ]
+				));
+				
+			} else {
+			
+				if($newMessage->structural_unit_id) {
+					$channelName = 'chat-structural-unit.' . $newMessage->structural_unit_id;
+					
+					$channellMsgCount = [
+						'structural_units' => [
+							[
+								'c_id' => $newMessage->structural_unit_id,
+								'count' => 1
+							],
+						],
+					];
+				}
+				
+				if(!$newMessage->to_user_id and !$newMessage->structural_unit_id) {
+					$channelName = 'chat-general';
+					
+					$channellMsgCount = [
+						'general' => 1,
+					];
+				}
+				
+				$idUsersArray = User::get()
+							->where('id', '!=', auth()->user()->id)
+							->pluck('id')
+							->toArray();
+				
+				broadcast(new \App\Events\Chat\NotifyNewMessage(
+					$channellMsgCount,
+					$idUsersArray
+				));
 			}
 			
 			broadcast(new \App\Events\Chat\NewMessage(
@@ -70,9 +92,6 @@ class ChatService
 					'sender_user_id' => $newMessage->sender_user_id,
 					'sender_user' => [
 						'full_name' => auth()->user()->fullName
-					],
-					'channel_msg_count' => [
-						$channellMsgCount
 					],
 				], 
 				$channelName
@@ -138,13 +157,37 @@ class ChatService
 		
 		$user->save();
 		
-		$messages = $messages->limit($this->limitMsg)
-							->orderBy('created_at', 'desc')
+		$page = (int) $request->next_page ?? 0;
+		
+		$cloneMessages = clone $messages;
+		
+		$messages = $messages->offset($page * $this->limitMsg)
+							->limit($this->limitMsg)
+							->orderBy('id', 'desc')
 							->get()
-							->sortBy('created_at')
+							->sortBy('id')
 							->values();
 		
-		$countNewMessages = $accessTypes;
+		$page++;
+		
+		if($request->read) {
+			$this->readMessages(($request->type) ? $accessTypes[$request->type] : null, $request->id);
+		}
+		
+		return [
+			'data' => $messages,
+			'count_new_messages' => $this->countNewMessages(),
+			'pagination' => ($cloneMessages->count() > $page * $this->limitMsg) ? $page : 0,
+		];
+	}
+	
+	/**
+	 * Получим массив с непрочитанными сообщениями
+	 */
+	private function countNewMessages()
+	{
+		$user = auth()->user();
+		$countNewMessages = [];
 		
 		$countNewMessages['users'] = ChatMessage::select([
 						DB::raw('sender_user_id AS c_id'),
@@ -175,17 +218,29 @@ class ChatService
 					->whereNull('to_user_id')
 					->whereNull('structural_unit_id')
 					->count();
+					
+		return $countNewMessages;
+	}
+	
+	/**
+	 * Отметим и сохраним прочитанными сообщения конкретного канала
+	 */
+	public function saveReadMessages($request)
+	{
+		$this->readMessages($request->type, $request->id);
 		
-		return [
-			'data' => $messages,
-			'count_new_messages' => $countNewMessages,
-		];
+		broadcast(new \App\Events\Chat\UpdateCountNewMessages(
+			$this->countNewMessages(),
+			auth()->user()->id
+		));
+		
+		return true;
 	}
 	
 	/**
 	 * Отметим прочитанными сообщения конкретного канала
 	 */
-	public function saveReadMessages($request)
+	private function readMessages($chatType, $chatId)
 	{
 		$user = auth()->user();
 		
@@ -193,22 +248,22 @@ class ChatService
 						return $query->where('user_id', $user->id);
 				    });
 		
-		if(!isset($request->type) or !$request->type) {
+		if(!isset($chatType) or !$chatType) {
 			$messages->whereNull('to_user_id')
 					->whereNull('structural_unit_id');
 		} else {
 			
-			if($request->type == 'to_user_id') {
-				$messages->where(function($q) use($request, $user) {
-					$q->where('to_user_id', $user->id)->where('sender_user_id', (int) $request->id);
+			if($chatType == 'to_user_id') {
+				$messages->where(function($q) use($chatId, $user) {
+					$q->where('to_user_id', $user->id)->where('sender_user_id', (int) $chatId);
 				});
 			} else {
-				$messages->where('structural_unit_id', (int) $request->id);
+				$messages->where('structural_unit_id', (int) $chatId);
 			}
 		}
 		
 		$messages = $messages->limit($this->limitMsg)
-							->orderBy('created_at', 'desc')
+							->orderBy('id', 'desc')
 							->get()
 							->pluck('id')
 							->toArray();
@@ -219,4 +274,5 @@ class ChatService
 		
 		return true;
 	}
+	
 }

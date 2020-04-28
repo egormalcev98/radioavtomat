@@ -27,9 +27,9 @@ Broadcast::channel('chat-user.{oneUserId}.{twoUserId}', function ($user, $oneUse
 
 Broadcast::channel('chat-structural-unit.{channelId}', function ($user, $channelId) {
     // return (int) $user->structural_unit_id === (int) $channelId or $user->hasRole('admin');
-	return true;
+	return isset($user->id);
 });
 
 Broadcast::channel('chat-general', function ($user) {
-	return true;
+	return isset($user->id);
 });
