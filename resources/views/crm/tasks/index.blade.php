@@ -119,7 +119,7 @@
                             </div>
                         </div>
                         <div class="row mb-2">
-                            <div class="col-6">
+                            <div class="col-7">
                                 <button type="button" class="btn btn-primary task_primary" data-grid="dayGridMonth">
                                     Месяц
                                 </button>
@@ -132,7 +132,7 @@
                                 <button type="button" class="btn btn-primary task_primary" data-grid="dayGridDay">День
                                 </button>
                             </div>
-                            <div class="col-6">
+                            <div class="col-5">
                                 <div class="float-right">
                                     <button type="button" class="btn btn-primary" id="calendar-custom-prev"><i
                                             class="fas fa-chevron-left"></i></button>
@@ -178,7 +178,7 @@
 @section('js')
     <script>
         var getTasksUrl = {!! json_encode($getTasksUrl) !!};
-        var getTaskWeeks = {!! json_encode(route('tasks.get-weeks')) !!};
+        var getTaskWeeks = {!! json_encode(route('tasks.get_weeks')) !!};
     </script>
     <script src="{{ asset('/js/task.js') }}"></script>
 @stop
