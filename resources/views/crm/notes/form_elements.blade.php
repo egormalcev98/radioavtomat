@@ -25,33 +25,28 @@
                         @include('crm.error_message', ['nameField' => 'title'])
                     </div>
 
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="form-group">
-                                <label>{{ __('notes.form.category_note_id') }}</label>
-                                <select
-                                    class="form-control select2 {{ $errors->has('category_note_id') ? 'is-invalid' : '' }}"
-                                    name="category_note_id" required="required">
-                                    @if($categoryNotes->isNotEmpty())
-                                        @foreach($categoryNotes as $categoryNote)
-                                            <option value="{{ $categoryNote->id }}"
-                                                    @if((@old('category_note_id') ?? $note->category_note_id ?? 0) == $categoryNote->id) selected @endif >{{ $categoryNote->name }}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                                @include('crm.error_message', ['nameField' => 'category_note_id'])
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="form-group">
-                                <label>{{ __('notes.form.pages') }}</label>
-                                <input type="number" required="true"
-                                       class="form-control {{ $errors->has('pages') ? 'is-invalid' : '' }}"
-                                       name="pages"
-                                       value="{{ old('pages') ?? $note->pages ?? '' }}">
-                                @include('crm.error_message', ['nameField' => 'pages'])
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label>{{ __('notes.form.category_note_id') }}</label>
+                        <select
+                            class="form-control select2 {{ $errors->has('category_note_id') ? 'is-invalid' : '' }}"
+                            name="category_note_id" required="required">
+                            @if($categoryNotes->isNotEmpty())
+                                @foreach($categoryNotes as $categoryNote)
+                                    <option value="{{ $categoryNote->id }}"
+                                            @if((@old('category_note_id') ?? $note->category_note_id ?? 0) == $categoryNote->id) selected @endif >{{ $categoryNote->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        @include('crm.error_message', ['nameField' => 'category_note_id'])
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ __('notes.form.pages') }}</label>
+                        <input type="number" required="true"
+                               class="form-control {{ $errors->has('pages') ? 'is-invalid' : '' }}"
+                               name="pages"
+                               value="{{ old('pages') ?? $note->pages ?? '' }}">
+                        @include('crm.error_message', ['nameField' => 'pages'])
                     </div>
 
                     <div class="form-group">
