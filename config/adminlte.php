@@ -167,7 +167,7 @@ return [
 
     'use_route_url' => false,
 
-    'dashboard_url' => 'home',
+    'dashboard_url' => 'incoming_documents',
 
     'logout_url' => 'logout',
 
@@ -220,8 +220,11 @@ return [
         [
            'text'       	=> 'outgoing_documents',
            'icon'           => 'fas fa-file-upload',
-           'active'		=> ['outgoing_documents', 'outgoing_documents/*'],
+           'active'			=> ['outgoing_documents', 'outgoing_documents/*'],
            'route' 		    => 'outgoing_documents.index',
+           'permission'	=> [
+                'view_outgoing_document'
+            ]
         ],
         [
             'text'      	=> 'activity',
@@ -240,6 +243,16 @@ return [
 //            'permission'	=> [
 //                'view_incoming_document'
 //            ]
+        ],
+        [
+
+            'text'      	=> 'reports',
+            'route' 		=> 'reports.index',
+            // 'active'		=> ['reports', 'reports/*'],
+            'icon'        	=> 'fas fa-chart-line',
+            'permission'	=> [
+                'view_reports'
+            ]
         ],
         [
             'text'      	=> 'settings',

@@ -60,6 +60,9 @@ Route::group(['middleware' => ['auth']], function () {
         'index'
     ]);
 
+	//Отчеты
+	Route::get('reports', 'Reports\ReportController@index')->name('reports.index');
+	
 	//Справочники
 	Route::resource('document_types', 'References\DocumentTypeController')->except([
 		'show', 'edit'
