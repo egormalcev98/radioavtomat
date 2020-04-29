@@ -13,19 +13,22 @@ class StatusNoteSeeder extends Seeder
     public function run()
     {
 		if(!StatusNote::withoutGlobalScopes()->first()){
-			
+
 			StatusNote::create([
 				'name' => 'Новая',
+                'without_destroy' => 1,
 			]);
-			
+
 			StatusNote::create([
 				'name' => 'На рассмотрении',
+                'without_destroy' => 1,
 			]);
-			
+
 			StatusNote::create([
 				'name' => 'Рассмотрена',
+                'without_destroy' => 1,
 			]);
-			
+
 		}
     }
 }
