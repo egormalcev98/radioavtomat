@@ -16,6 +16,7 @@ class TaskService
 {
     public $templatePath = 'crm.tasks.';
     public $translation = 'tasks.';
+    public $permissionKey = 'task';
 
     public $russianMonths = [
         '01' => 'Январь',
@@ -42,8 +43,6 @@ class TaskService
         // dd($this->getWeekPeriod('01.04.2020', '30.08.2020'));
         $with = [
             'translation' => 'tasks',
-            'routeCreateTask' => route('tasks.create', ['type' => 'task']),
-            // 'routeCreateOrder' => route('tasks.create', ['type' => 'order']),
             'users' => $this->getResponsibleUsers(),
             'years' => $this->getLastYears(6),
             'months' => $this->getLastMonths(6),
@@ -53,8 +52,13 @@ class TaskService
             'referenStatuses' => [],
         ];
 
-        if (\auth()->user()->can('orders_access')) {
-            $with['routeCreateOrder'] = route('tasks.create', ['type' => 'order']);
+        if (\auth()->user()->can('create_task')) {
+
+            $with['routeCreateTask'] = route('tasks.create', ['type' => 'task']);
+
+            if (\auth()->user()->can('orders_access')) {
+                $with['routeCreateOrder'] = route('tasks.create', ['type' => 'order']);
+            }
         }
 
         return $with;
@@ -232,10 +236,18 @@ class TaskService
             ],
             'user' => $user,
             'usersCount' => $usersCount,
-            'editUrl' => route('tasks.edit', $task->id),
-            'deleteUrl' => route('tasks.destroy', $task->id),
+            'editUrl' => null,
+            'deleteUrl' => null,
             'IAmCreator' => auth()->id() == $task->creator_id,
         ];
+
+        if(\auth()->user()->can('update_task')) {
+            $with['editUrl'] = route('tasks.edit', $task->id);
+        }
+
+        if(\auth()->user()->can('delete_task')) {
+            $with['deleteUrl'] = route('tasks.destroy', $task->id);
+        }
 
         return response()->json(view($this->templatePath . 'show_modal')->with($with)->render());
     }

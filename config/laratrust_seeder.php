@@ -16,6 +16,7 @@ return [
             'reports' => 'c,r,u,d,v',
             'note' => 'c,r,u,d,v',
             'note_card' => 'c,r,u,d,v',
+            'task' => 'c,r,u,d,v',
         ],
     ],
     'permissions_map' => [

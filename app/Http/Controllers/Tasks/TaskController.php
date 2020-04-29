@@ -15,10 +15,17 @@ class TaskController extends Controller
 
     public function __construct(Service $service)
     {
+        $this->service = $service;
+
+        $this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index']]);
+        $this->middleware('permission:create_' . $this->service->permissionKey, ['only' => ['create']]);
+        $this->middleware('permission:update_' . $this->service->permissionKey, ['only' => ['updateTask', 'updateOrder']]);
+        $this->middleware('permission:read_' . $this->service->permissionKey, ['only' => ['edit', 'taskInfo']]);
+        $this->middleware('permission:delete_' . $this->service->permissionKey, ['only' => ['destroy']]);
+
         $this->middleware('permission:orders_access', ['only' => ['storeOrder', 'updateOrder']]);
         $this->middleware('task_owner', ['only' => ['edit', 'updateTask', 'updateOrder', 'destroy']]);
 
-        $this->service = $service;
 
     }
 
