@@ -330,4 +330,28 @@ class UserService extends BaseService
 
         return $array;
     }
+
+    // получим пользователей с разбивкой на структурные подразделения и роли
+    public function getStructuredUsers(){
+        $roles = Role::withoutAdmin()->with('users.structuralUnit')->get();
+        foreach ($roles as $key => $role) {
+            if ($role->users->isEmpty()) {
+                unset($roles[$key]);
+            }
+        }
+        // тут будем считать что роли пользователям всегда назначаются верно и роль типа привязана к структурному подразделению
+        // поэтому ниже соберём структурные подразделения с ролями и пользователями
+        $structuralUnits = [];
+        foreach ($roles as $key => $role) {
+            if (!isset($structuralUnits[$role->users[0]->structuralUnit->id])) {
+                $structuralUnits[$role->users[0]->structuralUnit->id]['name'] = '[' . $role->users[0]->structuralUnit->name . ']';
+                $structuralUnits[$role->users[0]->structuralUnit->id]['roles'] = [$role];
+            } else {
+                $structuralUnits[$role->users[0]->structuralUnit->id]['roles'][] = $role;
+            }
+        }
+
+        return $structuralUnits;
+    }
+
 }

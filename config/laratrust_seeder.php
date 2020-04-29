@@ -14,6 +14,8 @@ return [
             'incoming_card_document' => 'c,r,u,d,v',
             'outgoing_card_document' => 'c,r,u,d,v',
             'reports' => 'c,r,u,d,v',
+            'note' => 'c,r,u,d,v',
+            'note_card' => 'c,r,u,d,v',
         ],
     ],
     'permissions_map' => [

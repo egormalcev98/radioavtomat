@@ -62,7 +62,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 	//Отчеты
 	Route::get('reports', 'Reports\ReportController@index')->name('reports.index');
-	
+
 	//Справочники
 	Route::resource('document_types', 'References\DocumentTypeController')->except([
 		'show', 'edit'
@@ -100,6 +100,9 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('roles', 'References\RoleController')->only([
 		'index', 'update'
 	]);
+
+    //Служебные записки
+    Route::resource('notes', 'Notes\NoteController');
 
 	// Задачи
     Route::resource('tasks', 'Tasks\TaskController')->names('tasks');

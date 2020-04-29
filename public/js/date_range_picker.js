@@ -39,8 +39,8 @@ let Daterangepicker = {
             "firstDay": 1
         };
 
-         let dateRangePickerLocaleTime =  Object.assign({}, dateRangePickerLocale);
-         dateRangePickerLocaleTime.format = dateRangePickerLocaleTime.format + ' H:mm';
+        let dateRangePickerLocaleTime =  Object.assign({}, dateRangePickerLocale);
+        dateRangePickerLocaleTime.format = dateRangePickerLocaleTime.format + ' H:mm';
 
 // Инициализация daterangepicker
         $(document).find('input.date-range-picker').on('apply.daterangepicker', function (ev, picker) {
@@ -84,6 +84,16 @@ let Daterangepicker = {
             });
 
         $(document).find('input.date-picker-time')
+            .daterangepicker({
+                singleDatePicker: true,
+                timePicker24Hour: true,
+                timePicker: true,
+                locale: dateRangePickerLocaleTime,
+            }, function (start, end, label) {
+                $(this.element).val(start.format('DD.MM.YYYY H:mm'));
+            });
+
+        $(document).find('input.date-picker-time-autocomplete')
             .daterangepicker({
                 singleDatePicker: true,
                 timePicker24Hour: true,

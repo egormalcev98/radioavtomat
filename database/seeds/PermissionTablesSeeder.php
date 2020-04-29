@@ -17,19 +17,19 @@ class PermissionTablesSeeder extends Seeder
             'name' => 'orders_access',
             'display_name' => 'Доступ к приказам',
         ]);
-        $roles = [
-            'secretary',
-            'general_manager'
-        ];
-        foreach ($roles as $role) {
-            $user = Role::where('name', $role)->first();
-            $user->syncPermissions([$orders]);
-        }
 
         $headOfDepartment = Permission::firstOrCreate([
             'name' => 'head_of_department',
             'display_name' => 'Начальник своего отдела',
         ]);
+
+        $deleteNote = Permission::firstOrCreate([
+            'name' => 'delete_any_note',
+            'display_name' => 'Удалять служебные записки',
+        ]);
+
+
+
         $roles = [
             'head_special_laboratory',
             'head_human_resources',
@@ -54,15 +54,32 @@ class PermissionTablesSeeder extends Seeder
             'head_tooling_development',
             'head_branch',
         ];
+        $this->do($roles, [$headOfDepartment]);
+
+        $roles = [
+            'secretary',
+        ];
+       $this->do($roles, [$orders]);
+
+        $roles = [
+            'general_manager'
+        ];
+        $this->do($roles, [$orders, $deleteNote]);
+
+        $roles = [
+            'admin'
+        ];
+        $this->do($roles, [$orders, $deleteNote, $deleteNote]);
+
+        // syncPermissions перетерает предыдущие пермишонсы, поэтому если одной роли надо несколько пермишонсов то надо делать syncPermissions со всеми
+
+    }
+
+    public function do($roles, $permissions)
+    {
         foreach ($roles as $role) {
             $user = Role::where('name', $role)->first();
-            $user->syncPermissions([$headOfDepartment]);
+            $user->syncPermissions($permissions);
         }
-
-        // syncPermissions перетерает предыдущие пермишонсы, поэтому если одной роли надо несколько пермишонсов
-        // то надо делать syncPermissions со всеми как в примерн с админом
-        $user = Role::where('name', 'admin')->first();
-        $user->syncPermissions([$orders, $headOfDepartment]);
-
     }
 }
