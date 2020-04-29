@@ -128,12 +128,15 @@ let Task = {
             var needlDate = gotoDate;
         }
 
-        console.log(needlDate);
+        var isoDate = moment(needlDate).format('YYYY-MM-DD HH:mm');
 
-        var isoDat = moment(needlDate).format('YYYY-MM-DD HH:mm');
+        // если выбрана несуществующая дата, типа 30 февраля то переключаем на 1 число
+        if(isoDate == 'Invalid date') {
+            needlDate = needlDate.slice(0,8) + '01';
+            isoDate = moment(needlDate).format('YYYY-MM-DD HH:mm');
+        }
 
-
-        calendar.gotoDate(isoDat);
+        calendar.gotoDate(isoDate);
 
     },
 
