@@ -31,7 +31,6 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         }
     ],
     eventClick: function (info) {
-        $("#task_show_modal_content").empty();
         $("#task_show_modal_content").html(errorMessage);
         jQuery.ajaxSetup({async: false});
         $.get(info.event.extendedProps.taskInfoUrl, function (data) {
@@ -167,7 +166,6 @@ let Task = {
     },
 
     createTask: function (createUrl) {
-        $("#task_show_modal_content").empty();
         $("#task_show_modal_content").html(errorMessage);
         jQuery.ajaxSetup({async: false});
         $.get(createUrl, function (data) {
@@ -183,14 +181,14 @@ let Task = {
     },
 
     editTask: function (editUrl) {
-        $("#task_show_modal_content").empty();
-        $("#task_show_modal_content").html(errorMessage);
+        $('#task_show_modal').modal('hide');
         jQuery.ajaxSetup({async: false});
         $.get(editUrl, function (data) {
             $("#task_show_modal_content").html(data);
         });
+        $('#task_show_modal').modal('show');
         Daterangepicker.activate();
-        Task.select2Activate();
+        setTimeout("Task.select2Activate();", 1000);
     },
 
     checkSelectAll: function () {
