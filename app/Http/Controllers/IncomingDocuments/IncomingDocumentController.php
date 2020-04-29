@@ -14,15 +14,15 @@ class IncomingDocumentController extends Controller
 {
     public function __construct(Service $service) {
 		$this->service = $service;
-		
+
 		$this->middleware('permission:view_' . $this->service->permissionKey, ['only' => ['index', 'printExcel']]);
         $this->middleware('permission:create_' . $this->service->permissionKey, ['only' => ['create', 'store', 'checkNumber']]);
         $this->middleware('permission:update_' . $this->service->permissionKey, ['only' => ['update']]);
         $this->middleware('permission:read_' . $this->service->permissionKey, ['only' => ['edit']]);
         $this->middleware('permission:delete_' . $this->service->permissionKey, ['only' => ['destroy']]);
-		
+
 		$this->middleware('permission:view_incoming_card_document', ['only' => ['show']]);
-		
+
 		view()->share('permissionKey', $this->service->permissionKey);
 	}
 
@@ -81,20 +81,20 @@ class IncomingDocumentController extends Controller
     {
         return $this->destroyElement($incomingDocument);
     }
-	
+
     /**
      * Проверка номера нового документа на существование в БД
      */
     public function checkNumber(CheckNumberRequest $request)
     {
         if ($request->ajax()) {
-			
+
 			return $this->ajaxSuccessResponse(__($this->service->translation . 'messages.check_number_success'));
 		}
-		
+
 		return abort(403);
     }
-	
+
     /**
      * Отдадим excel документ с даными из списка элементов
      */
@@ -102,4 +102,10 @@ class IncomingDocumentController extends Controller
     {
 		return $this->service->printExcel();
     }
+
+    public function getDocuments(Request $request) {
+
+        return response()->json($this->service->availableDocuments($request));
+    }
+
 }

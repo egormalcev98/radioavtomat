@@ -16,6 +16,15 @@ class Kernel extends ConsoleKernel
         //
     ];
 
+# Use the hash sign to prefix a comment
+# +---------------- minute (0 - 59)
+# |  +------------- hour (0 - 23)
+# |  |  +---------- day of month (1 - 31)
+# |  |  |  +------- month (1 - 12)
+# |  |  |  |  +---- day of week (0 - 7) (Sunday=0 or 7)
+# |  |  |  |  |
+# *  *  *  *  *  command to be executed
+#-----------------------------------------------------------
     /**
      * Define the application's command schedule.
      *
@@ -25,6 +34,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('task:change_status')->everyFiveMinutes();
     }
 
     /**

@@ -226,5 +226,15 @@ return [
 		'incoming_letter_number'=> 'Ответ на №',
 		'signed_at'				=> 'Подписать',
 		'reject_at'				=> 'Отклонить',
+        // задачи
+        'date_start'            => 'Дата и время начала',
+        'date_end'              => 'Дата и время завершения',
+        'event_type_id'         => 'Тип события',
+        'incoming_document_id'  => 'Входящий документ',
+        'text'                  => 'Описание',
+        "user_ids"              => "Ответственный",
+        "remember_time"         => 'Напомнить за',
+        'new_scan_file'         => 'Файл',
+        'select_all'            => 'Выбрать всех',
     ],
 ];
