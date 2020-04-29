@@ -253,7 +253,7 @@ class TaskService
         $with = $this->outputDataCreateOrUpdate($task->taskType->system_name);
         $with['task'] = $task;
         $with['taskStatuses'] = TaskStatus::select('id', 'name')->OrderedGet();
-        $with['action'] = route('tasks.update-' . $task->taskType->system_name, $task->id);
+        $with['action'] = route('tasks.update_' . $task->taskType->system_name, $task->id);
 
         return response()->json(view($this->templatePath . 'create_or_update_modal')->with($with)->render());
     }
@@ -263,7 +263,7 @@ class TaskService
         $with = [
             'users' => $this->getResponsibleUsers(),
             'type' => $type,
-            'action' => route('tasks.store-' . $type)
+            'action' => route('tasks.store_' . $type)
         ];
 
         if ($type == 'task') {

@@ -100,7 +100,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('roles', 'References\RoleController')->only([
 		'index', 'update'
 	]);
-	
+
 	//Чат
 	Route::post('chat/send_message', 'Chat\ChatController@sendMessage')->name('chat.send_message');
 	Route::post('chat/select_channel', 'Chat\ChatController@selectChannel')->name('chat.select_channel');
@@ -111,13 +111,13 @@ Route::group(['middleware' => ['auth']], function () {
 
 	// Задачи
     Route::resource('tasks', 'Tasks\TaskController')->names('tasks');
-    Route::post('/tasks-store-task', 'Tasks\TaskController@storeTask')->name('tasks.store-task');
-    Route::post('/tasks-store-order', 'Tasks\TaskController@storeOrder')->name('tasks.store-order');
-    Route::post('/tasks-update-task/{task}', 'Tasks\TaskController@updateTask')->name('tasks.update-task');
-    Route::post('/tasks-update-order/{task}', 'Tasks\TaskController@updateOrder')->name('tasks.update-order');
-    Route::get('/get-tasks', 'Tasks\TaskController@getTasks')->name('tasks.get');
-    Route::get('/task-info/{task}', 'Tasks\TaskController@taskInfo')->name('tasks.info');
-    Route::post('/task-get-weeks', 'Tasks\TaskController@getWeeks')->name('tasks.get-weeks');
-    Route::get('/task-do-completed/{task}', 'Tasks\TaskController@doCompleted')->name('tasks.do_completed'); // это чтобы отмечать что уведомление о задачи просмотрено
+    Route::post('/tasks_store_task', 'Tasks\TaskController@storeTask')->name('tasks.store_task');
+    Route::post('/tasks_store_order', 'Tasks\TaskController@storeOrder')->name('tasks.store_order');
+    Route::post('/tasks_update_task/{task}', 'Tasks\TaskController@updateTask')->name('tasks.update_task');
+    Route::post('/tasks_update_order/{task}', 'Tasks\TaskController@updateOrder')->name('tasks.update_order');
+    Route::get('/get_tasks', 'Tasks\TaskController@getTasks')->name('tasks.get');
+    Route::get('/task_info/{task}', 'Tasks\TaskController@taskInfo')->name('tasks.info');
+    Route::post('/task_get_weeks', 'Tasks\TaskController@getWeeks')->name('tasks.get_weeks');
+    Route::get('/task_do_completed/{task}', 'Tasks\TaskController@doCompleted')->name('tasks.do_completed'); // это чтобы отмечать что уведомление о задачи просмотрено
 
 });
