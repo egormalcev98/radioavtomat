@@ -1,0 +1,49 @@
+.task_primary{
+    width: 150px;
+}
+
+.task_users_select{
+    width: 500px;
+}
+
+.task_years{
+    padding: 3px;
+}
+
+.task_hidden{
+    display: none;
+}
+
+.task_hidden.active{
+    display: block;
+}
+
+.task_remember_time{
+    max-width: 100px;
+    display: inline-block;
+}
+
+.task_select_all{
+    width: 20px;
+    display: inline-block;
+}
+
+.task_select_all_box{
+    display: flex;
+    align-items: center;
+}
+
+.task_absolute{
+    display: none;
+    position: absolute;
+    z-index: 11;
+    overflow: auto;
+    height: 500px;
+}
+
+.task_absolute_day_button{
+    width: 48px;
+}
+
+
+

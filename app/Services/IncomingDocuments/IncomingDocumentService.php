@@ -10,6 +10,7 @@ use App\Models\References\EmployeeTask;
 use App\User;
 use DataTables;
 use App\Services\IncomingDocuments\IncomingUserService;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\IncomingDocumentExport;
 
@@ -426,5 +427,63 @@ class IncomingDocumentService extends BaseService
         $data = $this->collectDataExcel($arrayQueryDT['data'], $columns);
 
         return Excel::download(new IncomingDocumentExport($data, array_values($columns)), 'data.xlsx');
+    }
+
+    public function availableDocuments($request)
+    {
+
+//        if (!$request->search || strlen($request->search) < 1) {
+//            return ["results" => []];
+//        }
+
+        $keywords = $keywords = self::prepareKeyword($request->search);
+        $page = $request->page;
+        $resultCount = 30;
+        $offset = ($page - 1) * $resultCount;
+
+        $query = IncomingDocument::
+        when(count($keywords), function ($query) use ($keywords) {
+            foreach ($keywords as $keyword) {
+                $query->where(function ($query) use ($keyword) {
+                    $query
+                        ->where('number', 'like', '%' . $keyword . '%');
+                });
+            }
+        });
+
+        $incomingDocuments = (clone $query)
+            ->skip($offset)
+            ->take($resultCount)
+            ->get()
+            ->transform(function ($incomingDocument) {
+                return [
+                    "id" => $incomingDocument->id,
+                    "text" => $incomingDocument->number,
+                ];
+            });
+
+        $count = $query->count();
+
+        $endCount = $offset + $resultCount;
+        $morePages = $count > $endCount;
+
+        $result = [
+            "results" => $incomingDocuments,
+            'count' => $count,
+            "pagination" => ["more" => $morePages]
+        ];
+        return $result;
+    }
+
+    public static function prepareKeyword($keyword)
+    {
+        $keyword = trim($keyword);
+        $keyword = Str::lower($keyword);
+        $keyword = preg_replace('/\s+/', ' ', $keyword);
+        $keywords = array_unique(explode(' ', $keyword));
+        foreach ($keywords as $key => $keyword) {
+            $keywords[$key] = "%$keyword%";
+        }
+        return $keywords;
     }
 }
