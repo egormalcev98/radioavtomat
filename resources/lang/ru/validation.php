@@ -226,10 +226,11 @@ return [
 		'incoming_letter_number'=> 'Ответ на №',
 		'signed_at'				=> 'Подписать',
 		'reject_at'				=> 'Отклонить',
+		'text'					=> 'Текст',
+		'to_user_id'			=> 'Сотрудник',
         'created_at'            => 'Дата и время',
         'category_note_id'      => 'Категория записки',
         'user_id'               => 'Кому отправлена',
-        'text'                  => 'Текст записки',
         'status_note_id'        => 'Статус записки',
         'pages'                 => 'Страниц',
         // задачи

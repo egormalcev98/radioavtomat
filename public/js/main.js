@@ -309,11 +309,11 @@ let Main = {
             if(dataErrors) {
                 $.each(dataErrors, function(name, msgData){
                     let formElement = selectorBlock.find('[name="' + name + '"]');
-
-                    if(formElement.html()) {
+					
+                    if(formElement.length > 0) {
                         if(!formElement.hasClass('is-invalid')) {
                             formElement.addClass('is-invalid');
-                            formElement.after('\
+                            formElement.parent().append('\
 								<div class="invalid-feedback">\
 									' + msgData[0] + '\
 								</div>\

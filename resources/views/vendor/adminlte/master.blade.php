@@ -17,12 +17,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
 
     @include('adminlte::plugins', ['type' => 'css'])
-{{--
-	<!-- bootstrap datetimepicker -->
-	<link rel="stylesheet" href="{{ asset('/css/plugins/datetimepicker/bootstrap-datetimepicker.css') }}">
---}}
-        <link rel="stylesheet" href="{{ asset('vendor/daterangepicker/daterangepicker.css') }}">
-
+	
     @yield('adminlte_css_pre')
 
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
@@ -62,6 +57,8 @@
 
 @yield('body')
 
+@include('crm.chat.widget')
+
 @include('crm.modal')
 
 @if(! config('adminlte.enabled_laravel_mix'))
@@ -71,28 +68,62 @@
 
 @include('adminlte::plugins', ['type' => 'js'])
 
-{{--
-<!-- bootstrap datetimepicker -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
-<script src="{{ asset('/js/plugins/datetimepicker/bootstrap-datetimepicker.js') }}"></script>
---}}
-
-<!-- DateRangePicker -->
-<script src="{{ asset('vendor\moment\moment-with-locales.js') }}"></script>
-<script src="{{ asset('vendor\daterangepicker\daterangepicker.js') }}"></script>
-
 @if(auth()->check())
 	<script>
 		// global app configuration object
 		var config = {
-			token: '{!! csrf_token() !!}'
+			token: '{!! csrf_token() !!}',
+			route: {
+				chat_select_channel: '{{ route("chat.select_channel") }}',
+				chat_read_msg: '{{ route("chat.read_msg") }}'
+			}
 		};
 	</script>
 
+	<script src="https://js.pusher.com/5.0/pusher.min.js"></script>
 	<script src="{{ asset('/js/plugins/controlmodal/control-modal.js?78') }}"></script>
 	<script src="{{ asset('/js/plugins/masked/jquery.maskedinput.min.js') }}"></script>
 	<script src="{{ asset('/js/main.js?58910') }}"></script>
+	<script src="{{ asset('/js/chat.js?5') }}"></script>
 	<script src="{{ asset('/js/date_range_picker.js') }}"></script>
+	
+	<script>
+		window.Pusher = new Pusher('{{ config("broadcasting.connections.pusher.key") }}', {
+		   wsHost: window.location.hostname,
+		   wsPort: {{ config('websockets.dashboard.port') }},
+		   disableStats: true,
+		   authEndpoint: '/broadcasting/auth',
+		   auth: {
+			   headers: {
+				   'X-CSRF-Token': config['token']
+			   }
+		   }
+		});
+		
+		$(document).ready(function(){
+			$('#chat_users').change(function() {
+				Chat.changeUser($(this), Pusher, {{ auth()->user()->id }});
+			});
+			
+			$('#chat_structural_units').change(function() {
+				Chat.changeStructuralUnit($(this), Pusher, {{ auth()->user()->id }});
+			});
+			
+			Chat.selectedChannelAuthUser(Pusher, @if(auth()->user()->chat_channel) {!! auth()->user()->chat_channel !!} @else null @endif, {{ auth()->user()->id }});
+			
+		});
+		
+		var channel = Pusher.subscribe('private-user.{{ auth()->user()->id }}');
+
+		channel.bind('notifyNewMessage', function (data) {
+			Chat.notifyNewMessage(data);
+		});
+		
+		channel.bind('updateCountNewMessages', function (data) {
+			Chat.updateCountNewMessages(data);
+		});
+		
+	</script>
 @endif
 
 @yield('adminlte_js')

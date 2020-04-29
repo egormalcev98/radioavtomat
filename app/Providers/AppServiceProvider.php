@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
-use App\Models\Settings\Settings;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,8 +24,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if(\Schema::hasTable(app(Settings::class)->getTable())){
-			View::share('settings', Settings::first());
-		}
+		$mainService = app(\App\Services\Main\MainService::class);
+		
+		View::share('settings', $mainService->settings());
+		View::share('chatStructuralUnits', $mainService->structuralUnits());
+		View::share('chatUsers', $mainService->users());
     }
 }

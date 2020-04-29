@@ -62,6 +62,7 @@ class User extends Authenticatable
 
     protected $appends = [
         'surnameWithInitials',
+        'full_name',
     ];
 
     /**
@@ -173,5 +174,21 @@ class User extends Authenticatable
         return $query->whereHas('roles', function ($q) use($name) {
             return $q->where('name', $name);
         });
+    }
+	
+	/**
+     * Получить отправленные пользователем сообщения
+     */
+    public function sentChatMessages()
+    {
+		return $this->hasMany(Models\Chat\ChatMessage::class, 'sender_user_id');
+    }
+	
+	/**
+     * Получим отметки о прочитанных сообщениях чата
+     */
+    public function viewedMessages()
+    {
+        return $this->belongsToMany(Models\Chat\ChatMessage::class, 'chat_message_user')->withTimestamps();
     }
 }

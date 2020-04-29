@@ -27,7 +27,7 @@ class AddColumnsToIncomingDocStatusesTable extends Migration
     public function down()
     {
         Schema::table('incoming_doc_statuses', function (Blueprint $table) {
-             $table->dropColumn(['color', 'without_destroy']);
+            $table->dropColumn(['color', 'without_destroy']);
         });
     }
 }

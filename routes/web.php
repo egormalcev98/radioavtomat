@@ -100,6 +100,11 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('roles', 'References\RoleController')->only([
 		'index', 'update'
 	]);
+	
+	//Чат
+	Route::post('chat/send_message', 'Chat\ChatController@sendMessage')->name('chat.send_message');
+	Route::post('chat/select_channel', 'Chat\ChatController@selectChannel')->name('chat.select_channel');
+	Route::post('chat/read_msg', 'Chat\ChatController@readMessages')->name('chat.read_msg');
 
     //Служебные записки
     Route::resource('notes', 'Notes\NoteController');
@@ -114,4 +119,5 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/task-info/{task}', 'Tasks\TaskController@taskInfo')->name('tasks.info');
     Route::post('/task-get-weeks', 'Tasks\TaskController@getWeeks')->name('tasks.get-weeks');
     Route::get('/task-do-completed/{task}', 'Tasks\TaskController@doCompleted')->name('tasks.do_completed'); // это чтобы отмечать что уведомление о задачи просмотрено
+
 });
