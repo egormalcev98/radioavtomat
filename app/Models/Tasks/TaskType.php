@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Models\References;
+namespace App\Models\Tasks;
 
-use App\Models\BaseModel;
-use App\User;
+use Illuminate\Database\Eloquent\Model;
 
-class StructuralUnit extends BaseModel
+class TaskType extends Model
 {
     /**
      * Атрибуты, для которых разрешено массовое назначение.
@@ -14,11 +13,7 @@ class StructuralUnit extends BaseModel
      */
     protected $fillable = [
 		'name',
+        'color',
+        'text_color',
 	];
-
-    public function users()
-    {
-        return $this->hasMany(User::class);
-    }
-
 }

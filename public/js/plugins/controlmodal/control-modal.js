@@ -1,12 +1,12 @@
 var ModalApp = {};
-ModalApp.ModalProcess = function (parameters) {  
+ModalApp.ModalProcess = function (parameters) {
   this.id = parameters['id'] || 'modal';
   this.selector = parameters['selector'] || '';
   this.style = parameters['style'] || '';
   this.g_style = parameters['g_style'] || '';
   this.title = parameters['title'] || 'Заголовок модального окна';
   this.body = parameters['body'] || 'Содержимое модального окна';
-  this.footer = parameters['footer'] || '<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>';   
+  this.footer = parameters['footer'] || '<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>';
   this.content = '<div style="' + this.g_style + '" id="'+this.id+'" class="modal fade" tabindex="-1" role="dialog">'+
 					'<div class="modal-dialog" role="document" style="' + this.style + '" >'+
 						'<div class="modal-content">'+
@@ -42,7 +42,7 @@ ModalApp.ModalProcess.prototype.showModal = function() {
 };
 ModalApp.ModalProcess.prototype.hideModal = function() {
   $('#' + this.id).modal('hide');
-};  
+};
 ModalApp.ModalProcess.prototype.updateModal = function() {
   $('#' + this.id).modal('handleUpdate');
 };

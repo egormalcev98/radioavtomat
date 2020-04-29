@@ -236,6 +236,24 @@ return [
             ]
         ],
         [
+            'text'      	=> 'notes',
+            'route' 		=> 'notes.index',
+            'active'		=> ['notes', 'notes/*'],
+            'icon'        	=> 'fas fa-file-alt',
+            'permission'	=> [
+                'view_note'
+            ]
+        ],
+        [
+            'text'      	=> 'tasks',
+            'route' 		=> 'tasks.index',
+            'active'		=> ['tasks', 'tasks/*'],
+            'icon'        	=> 'fas fa-calendar-alt',
+//            'permission'	=> [
+//                'view_incoming_document'
+//            ]
+        ],
+        [
             'text'      	=> 'reports',
             'route' 		=> 'reports.index',
             // 'active'		=> ['reports', 'reports/*'],
@@ -445,5 +463,62 @@ return [
                 ],
             ],
         ],
+        [
+            'name' => 'FullCalendar',
+            'active' => true,
+            'files' => [
+                [
+                    'type'  => 'css',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar/main.css',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar/main.js',
+                ],
+                [
+                    'type'  => 'css',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/daygrid/main.css',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/daygrid/main.js',
+                ],
+                [
+                    'type'  => 'css',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/timegrid/main.css',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/timegrid/main.js',
+                ],
+                [
+                    'type'  => 'css',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/bootstrap/main.css',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/bootstrap/main.js',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar-plugins/interaction/main.js',
+                ],
+                [
+                    'type'  => 'js',
+                    'asset' => true,
+                    'location'  => 'vendor/fullcalendar/locales/ru.js',
+                ],
+            ],
+        ],
     ],
 ];
+

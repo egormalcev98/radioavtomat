@@ -165,6 +165,7 @@ let Main = {
                     title: 'Подтвердите действие:',
                     body: text,
                     style: 'width: 30%;',
+                    g_style: 'z-index: 1100',
                     footer: '<button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>\
 							<button type="button" onclick="' + action + '" class="btn btn-success">Хорошо</button>'
                 });

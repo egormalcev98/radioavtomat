@@ -1,39 +1,33 @@
 <?php
 
-namespace App\Services\OutgoingDocuments;
+namespace App\Services\Notes;
 
-use App\Exports\OutgoingDocumentExport;
-use App\Models\OutgoingDocuments\OutgoingDocument;
-use App\Models\OutgoingDocuments\OutgoingDocumentFile;
-use App\Models\References\DocumentType;
-use App\Models\References\LetterForm;
-use App\Models\References\OutgoingDocStatus;
-use App\Models\References\StructuralUnit;
-use Maatwebsite\Excel\Facades\Excel;
-use Yajra\DataTables\Html\Builder as BuilderDT;
-use App\Role;
+use App\Models\Notes\Note;
+use App\Models\Notes\NoteFile;
+use App\Models\References\CategoryNote;
+use App\Models\References\StatusNote;
+
 use App\Services\BaseService;
-use App\User;
 use Carbon\Carbon;
 use DataTables;
 
-class OutgoingDocumentService extends BaseService
+class NoteService extends BaseService
 {
-    public $templatePath = 'crm.outgoing_documents.';
+    public $templatePath = 'crm.notes.';
 
     public $templateForm = 'form';
 
-    public $routeName = 'outgoing_documents';
+    public $routeName = 'notes';
 
-    public $translation = 'outgoing_documents.';
+    public $translation = 'notes.';
 
-    public $permissionKey = 'outgoing_document'; // потом заменить на outgoing_document
+    public $permissionKey = 'note';
 
     public $model;
 
     public function __construct()
     {
-        parent::__construct(OutgoingDocument::query());
+        parent::__construct(Note::query());
     }
 
     /**
@@ -42,10 +36,10 @@ class OutgoingDocumentService extends BaseService
     public function outputData()
     {
         $routeName = $this->routeName;
-        $documentTypes = DocumentType::select('id', 'name')->get();
-        $outgoingDocStatuses = OutgoingDocStatus::select('id', 'name')->get();
+        $categoryNotes = CategoryNote::select('id', 'name')->get();
+        $statusNotes = StatusNote::select('id', 'name')->get();
 
-        return compact('routeName', 'documentTypes', 'outgoingDocStatuses');
+        return compact('routeName', 'categoryNotes', 'statusNotes');
     }
 
     /**
@@ -63,31 +57,37 @@ class OutgoingDocumentService extends BaseService
                 'data' => 'number',
             ],
             [
-                'title' => __($this->translation . 'list_columns.date'),
-                'data' => 'date',
+                'title' => __($this->translation . 'list_columns.created_at'),
+                'data' => 'created_at',
             ],
             [
-                'title' => __($this->translation . 'list_columns.counterparty'),
-                'data' => 'counterparty',
+                'title' => __($this->translation . 'list_columns.category_note'),
+                'data' => 'category_note',
+                'name' => 'category_note_id',
             ],
             [
-                'title' => __($this->translation . 'list_columns.document_type'),
-                'data' => 'document_type_name',
-                'name' => 'document_type_id',
+                'title' => __($this->translation . 'list_columns.creator'),
+                'data' => 'creator',
+                'name' => 'creator_id',
             ],
             [
-                'title' => __($this->translation . 'list_columns.from_user'),
-                'data' => 'from_user',
-                'name' => 'from_user_id',
+                'title' => __($this->translation . 'list_columns.user'),
+                'data' => 'user',
+                'name' => 'user_id',
             ],
             [
-                'title' => __($this->translation . 'list_columns.note'),
-                'data' => 'note',
+                'title' => __($this->translation . 'list_columns.title'),
+                'data' => 'title',
             ],
             [
-                'title' => __($this->translation . 'list_columns.outgoing_doc_status'),
-                'data' => 'outgoing_doc_status_name',
-                'name' => 'outgoing_doc_status_id',
+                'title' => __($this->translation . 'list_columns.text'),
+                'data' => 'text',
+                'width' => 300,
+            ],
+            [
+                'title' => __($this->translation . 'list_columns.status_note'),
+                'data' => 'status_note',
+                'name' => 'status_note_id',
             ],
 
             $this->actionButton()
@@ -104,9 +104,10 @@ class OutgoingDocumentService extends BaseService
         $query = $this->model
             ->select($select)
             ->with([
-                'documentType',
-                'fromUser',
-                'outgoingDocStatus'
+                'user',
+                'creator',
+                'categoryNote',
+                'statusNote',
             ]);
 
         if ($limit) {
@@ -115,21 +116,21 @@ class OutgoingDocumentService extends BaseService
 
         // Фильтры
 
-        if (request()->has('document_type') and request()->document_type) {
-            $query->where('document_type_id', request()->document_type);
+        if (request()->has('category_note_id') and request()->category_note_id) {
+            $query->where('category_note_id', request()->category_note_id);
+        }
+
+        if (request()->has('status_note_id') and request()->status_note_id) {
+            $query->where('status_note_id', request()->status_note_id);
         }
 
         if (request()->has('period') and request()->period) {
             $dates = explode(' - ', request()->period);
             if (isset($dates[1])) {
-                $periodStart = Carbon::parse($dates[0])->toDateString();
-                $periodEnd = Carbon::parse($dates[1])->toDateString();
+                $periodStart = Carbon::parse($dates[0])->toDateTimeString();
+                $periodEnd = Carbon::parse($dates[1])->endOfDay()->toDateTimeString();
             }
-            $query->whereBetween('date', [$periodStart, $periodEnd]);
-        }
-
-        if (request()->has('outgoing_doc_status') and request()->outgoing_doc_status) {
-            $query->where('outgoing_doc_status_id', request()->outgoing_doc_status);
+            $query->whereBetween('created_at', [$periodStart, $periodEnd]);
         }
 
         //////////////////
@@ -144,31 +145,61 @@ class OutgoingDocumentService extends BaseService
             ->addColumn('showUrl', function ($element) {
                 return route($this->routeName . '.show', $element->id);
             })
-            ->addColumn('document_type_name', function ($element) {
-                if ($element->documentType) {
-                    return $element->documentType->name;
+            ->addColumn('category_note', function ($element) {
+                if ($element->categoryNote) {
+                    return $element->categoryNote->name;
                 }
                 return '';
             })
-            ->addColumn('from_user', function ($element) {
-                if ($element->fromUser) {
-                    return $element->fromUser->surnameWithInitials;
+            ->addColumn('creator', function ($element) {
+                if ($element->creator) {
+                    return $element->creator->fullName;
                 }
                 return '';
             })
-            ->addColumn('outgoing_doc_status_name', function ($element) {
-                if ($element->outgoingDocStatus) {
-                    return $element->outgoingDocStatus->name;
+            ->addColumn('user', function ($element) {
+                if ($element->user) {
+                    return $element->user->fullName;
                 }
                 return '';
             })
-            ->filterColumn('document_type_id', function ($query, $keyword) {
-                return $query->whereHas('documentType', function ($query) use ($keyword) {
+            ->addColumn('status_note', function ($element) {
+                if ($element->statusNote) {
+                    return $element->statusNote->name;
+                }
+                return '';
+            })
+            ->addColumn('action', function ($element) {
+                $routeName = $this->routeName;
+                $result = '';
+                if(auth()->user()->can('update_' . $this->permissionKey) and $this->checkOwner($element)) {
+                    $result .= view($this->templatePath . 'edit_button', compact('element', 'routeName'));
+                }
+                if(auth()->user()->can('delete_any_' . $this->permissionKey)) {
+                    $result .= view($this->templatePath . 'delete_button', compact('element', 'routeName'));
+                }
+                return $result;
+            })
+            ->addColumn('text', function ($element) {
+                return mb_strimwidth($element->text, 0, 90, " ...");
+            })
+            ->filterColumn('category_note', function ($query, $keyword) {
+                return $query->whereHas('categoryNote', function ($query) use ($keyword) {
                     return $query->where('name', 'like', '%' . $keyword . '%');
                 });
             })
-            ->filterColumn('from_user_id', function ($query, $keyword) {
-                return $query->whereHas('fromUser', function ($query) use ($keyword) {
+            ->filterColumn('status_note', function ($query, $keyword) {
+                return $query->whereHas('statusNote', function ($query) use ($keyword) {
+                    return $query->where('name', 'like', '%' . $keyword . '%');
+                });
+            })
+            ->filterColumn('user', function ($query, $keyword) {
+                return $query->whereHas('user', function ($query) use ($keyword) {
+                    return $query->where('surname', 'like', '%' . $keyword . '%');
+                });
+            })
+            ->filterColumn('creator', function ($query, $keyword) {
+                return $query->whereHas('creator', function ($query) use ($keyword) {
                     return $query->where('surname', 'like', '%' . $keyword . '%');
                 });
             });
@@ -195,15 +226,6 @@ class OutgoingDocumentService extends BaseService
         $dt = $dt->scrollX(true);
 
         return $dt;
-
-//        return app(BuilderDT::class)
-//            ->language(config('datatables.lang'))
-//            ->orders([0, 'desc'])
-//            ->pageLength(25)
-//            ->dom('<"row"<"col-2"l><"col-8"B><"col-2"f>>rt<"row"<"col-10"i><"col-2"p>>')
-//            ->buttons('csv', 'excel')
-//            ->ajaxWithForm('', $selectorForm)
-//            ->columns($this->tableColumns());
     }
 
     /**
@@ -212,7 +234,20 @@ class OutgoingDocumentService extends BaseService
     public function store($request)
     {
         $requestAll = $request->all();
-        $requestAll['date'] = $requestAll['date_letter_at'];
+
+        $currentYear = Carbon::now()->endOfYear()->toDateTimeString();
+
+       $lastNote = Note::where('created_at', '<', $currentYear)->latest()->first();
+
+       if($lastNote) {
+           $number = $lastNote->number + 1;
+       } else {
+           $number = 1;
+       }
+
+        $requestAll['number'] = $number;
+        $requestAll['creator_id'] = auth()->id();
+
         $this->model = $this->model->create($requestAll);
 
         $this->furtherPreparation($requestAll);
@@ -227,7 +262,8 @@ class OutgoingDocumentService extends BaseService
     {
         $requestAll = $request->all();
 
-        $requestAll['date'] = $requestAll['date_letter_at'];
+        unset($requestAll['number']);
+        unset($requestAll['created_at']);
 
         $this->model->update($requestAll);
 
@@ -243,7 +279,7 @@ class OutgoingDocumentService extends BaseService
 
         if (isset($requestAll['new_scan_files']) and !empty($requestAll['new_scan_files'])) {
             foreach ($requestAll['new_scan_files'] as $newFile) {
-                $fileSave = $newFile->store('outgoing_documents', 'public');
+                $fileSave = $newFile->store('notes', 'public');
 
                 $notDestroyFiles[] = $this->model->files()->create([
                     'name' => $newFile->getClientOriginalName(),
@@ -263,7 +299,7 @@ class OutgoingDocumentService extends BaseService
 
                 if (isset($requestAll['scan_files']) and isset($requestAll['scan_files'][$file->id])) {
                     $replaceFile = $requestAll['scan_files'][$file->id];
-                    $replaceFileSave = $replaceFile->store('outgoing_documents', 'public');
+                    $replaceFileSave = $replaceFile->store('notes', 'public');
 
                     $file->update([
                         'name' => $replaceFile->getClientOriginalName(),
@@ -301,35 +337,29 @@ class OutgoingDocumentService extends BaseService
      */
     public function elementData()
     {
-        if ($this->model instanceof OutgoingDocument) {
-            $outgoingDocument = $this->model;
-            $outgoingDocumentFiles = $outgoingDocument->files()->orderedGet();
+        if ($this->model instanceof Note) {
+            $note = $this->model;
+            $noteFiles = $note->files()->orderedGet();
         } else {
-            $outgoingDocument = new OutgoingDocument;
+            $note = new Note();
         }
 
-        $letterForms = LetterForm::orderedGet();
-        $outgoingDocStatuses = OutgoingDocStatus::orderedGet();
-        $documentTypes = DocumentType::orderedGet();
+        $categoryNotes = CategoryNote::select('id', 'name')->get();
+        $statusNotes = StatusNote::select('id', 'name')->get();
 
         $userService = resolve('App\Services\Settings\UserService');
         $structuralUnits = $userService->getStructuredUsers();
+        $IAmCreator = $this->checkOwner($note);
 
-        return compact('outgoingDocument', 'letterForms', 'outgoingDocStatuses', 'documentTypes', 'structuralUnits', 'outgoingDocumentFiles');
+        return compact('note', 'categoryNotes', 'statusNotes', 'structuralUnits', 'noteFiles', 'IAmCreator');
     }
 
     /**
-     * Сформируем excel документ с даными из списка элементов
+     * Данные для работы с элементом
      */
-    public function printExcel()
+    public function checkOwner($element)
     {
-        $columns = $this->columnUsedKeys($this->tableColumns());
-
-        $arrayQueryDT = $this->constructQueryDT(200)->skipPaging()->toArray();
-
-        $data = $this->collectDataExcel($arrayQueryDT['data'], $columns);
-
-        return Excel::download(new OutgoingDocumentExport($data, array_values($columns)), 'data.xlsx');
+       return $element->creator_id == auth()->id();
     }
 
 }

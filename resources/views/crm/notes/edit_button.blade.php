@@ -1,0 +1,1 @@
+<a href="{{ route( $routeName . '.edit', $element->id) }}" class="btn btn-xs btn-primary" title="{{ __('references.main.edit_button') }}" ><i class="fas fa-edit" style="font-size: 17px;"></i>  </a>
