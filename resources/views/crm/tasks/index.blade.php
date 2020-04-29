@@ -179,6 +179,7 @@
     <script>
         var getTasksUrl = {!! json_encode($getTasksUrl) !!};
         var getTaskWeeks = {!! json_encode(route('tasks.get_weeks')) !!};
+        var errorMessage  = `@include('crm.tasks.error_modal')`;
     </script>
     <script src="{{ asset('/js/task.js') }}"></script>
 @stop

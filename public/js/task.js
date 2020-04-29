@@ -31,6 +31,8 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         }
     ],
     eventClick: function (info) {
+        $("#task_show_modal_content").empty();
+        $("#task_show_modal_content").html(errorMessage);
         jQuery.ajaxSetup({async: false});
         $.get(info.event.extendedProps.taskInfoUrl, function (data) {
             $("#task_show_modal_content").html(data);
@@ -42,10 +44,10 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         switch (view.type) {
             case 'timeGridDay':
                 date = view.start.format('DD dddd YYYY')
-                break
+                break;
             case 'timeGridWeek':
                 date = view.start.format('MMMM')
-                break
+                break;
             case 'dayGridMonth':
                 date = view.start.format('MMMM')
                 break
@@ -57,10 +59,10 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         switch (view.type) {
             case 'timeGridDay':
                 date = view.start.format('DD dddd YYYY')
-                break
+                break;
             case 'timeGridWeek':
                 date = view.start.format('MMMM')
-                break
+                break;
             case 'dayGridMonth':
                 date = view.start.format('MMMM')
                 break
@@ -106,6 +108,7 @@ $('.task_data_goto').click(function () {
 });
 
 let Task = {
+
     setDate: function (element) {
         var gotoDate = $(element).data('goto');
         var tglCurrent = calendar.getDate();
@@ -124,8 +127,14 @@ let Task = {
         if (String(gotoDate).length == 10) {
             var needlDate = gotoDate;
         }
+
+        console.log(needlDate);
+
         var isoDat = moment(needlDate).format('YYYY-MM-DD HH:mm');
+
+
         calendar.gotoDate(isoDat);
+
     },
 
     deleteTask: function (deleteUrl) {
@@ -155,6 +164,8 @@ let Task = {
     },
 
     createTask: function (createUrl) {
+        $("#task_show_modal_content").empty();
+        $("#task_show_modal_content").html(errorMessage);
         jQuery.ajaxSetup({async: false});
         $.get(createUrl, function (data) {
             $("#task_show_modal_content").html(data);
@@ -169,6 +180,8 @@ let Task = {
     },
 
     editTask: function (editUrl) {
+        $("#task_show_modal_content").empty();
+        $("#task_show_modal_content").html(errorMessage);
         jQuery.ajaxSetup({async: false});
         $.get(editUrl, function (data) {
             $("#task_show_modal_content").html(data);
