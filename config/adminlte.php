@@ -249,9 +249,9 @@ return [
             'route' 		=> 'tasks.index',
             'active'		=> ['tasks', 'tasks/*'],
             'icon'        	=> 'fas fa-calendar-alt',
-//            'permission'	=> [
-//                'view_incoming_document'
-//            ]
+            'permission'	=> [
+                'view_task'
+            ]
         ],
         [
             'text'      	=> 'reports',
