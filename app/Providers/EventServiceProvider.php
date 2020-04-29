@@ -27,6 +27,12 @@ class EventServiceProvider extends ServiceProvider
 		\App\Events\Chat\UpdateCountNewMessages::class => [
 			
 		],
+		\App\Events\Notifications\UpdateBellNotifications::class => [
+			
+		],
+		\App\Events\IncDocUsers\IncDocUserNotifications::class => [
+			\App\Events\IncDocUsers\Listeners\Notify::class,
+		],
     ];
 
     /**

@@ -229,10 +229,12 @@ class ChatService
 	{
 		$this->readMessages($request->type, $request->id);
 		
-		broadcast(new \App\Events\Chat\UpdateCountNewMessages(
-			$this->countNewMessages(),
-			auth()->user()->id
-		));
+		try {
+			broadcast(new \App\Events\Chat\UpdateCountNewMessages(
+				$this->countNewMessages(),
+				auth()->user()->id
+			));
+		} catch (\Exception $e) {}
 		
 		return true;
 	}

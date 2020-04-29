@@ -123,6 +123,10 @@
 			Chat.updateCountNewMessages(data);
 		});
 		
+		channel.bind('updateBell', function (data) {
+			$('#notifications_bell').html(data['html']);
+		});
+		
 	</script>
 @endif
 
