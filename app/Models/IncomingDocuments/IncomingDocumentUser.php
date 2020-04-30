@@ -21,7 +21,6 @@ class IncomingDocumentUser extends BaseModel
      */
     protected $dispatchesEvents = [
         'created' => IncDocUserNotifications::class,
-        // 'updated' => IncDocUserNotifications::class,
         'deleted' => IncDocUserNotifications::class,
     ];
 	

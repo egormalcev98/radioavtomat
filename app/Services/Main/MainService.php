@@ -130,14 +130,33 @@ class MainService
 	public function userNotify($arrayData) 
 	{
 		if(isset($arrayData['user_id'])) {
-			try {
-				broadcast(new \App\Events\Notifications\UpdateBellNotifications(
-					[
-						'html' => view('crm.notifications.bell')->with([ 'dataNotifications' => $this->dataNotifications($arrayData['user_id']) ])->render()
-					],
-					$arrayData['user_id']
-				));
-			} catch (\Exception $e) { }
+			
+			if(!is_array($arrayData['user_id'])) {
+				$arrayData['user_id'] = [ $arrayData['user_id'] ];
+			}
+			
+			foreach($arrayData['user_id'] as $userId) {
+			
+				try {
+					broadcast(new \App\Events\Notifications\UpdateBellNotifications(
+						[
+							'html' => view('crm.notifications.bell')->with([ 'dataNotifications' => $this->dataNotifications($userId) ])->render()
+						],
+						$userId
+					));
+				} catch (\Exception $e) { }
+				
+				if(isset($arrayData['send_email'])) {
+					$user = User::find($userId);
+					
+					$details = [
+						'text' => $arrayData['send_email']['text'],
+						'url' => $arrayData['send_email']['url'],
+					];
+
+					\Mail::to($user->email)->queue(new \App\Mail\NotificationMail($details));
+				}
+			}
 		}
 		
 		return true;

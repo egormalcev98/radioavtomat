@@ -6,9 +6,20 @@ use App\Models\References\CategoryNote;
 use App\Models\References\StatusNote;
 use App\User;
 use Carbon\Carbon;
+use App\Events\Notes\NoteNotifications;
 
 class Note extends BaseModel
 {
+	/**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => NoteNotifications::class,
+        'deleted' => NoteNotifications::class,
+    ];
+	
     protected $fillable = [
         'number',
         'title',

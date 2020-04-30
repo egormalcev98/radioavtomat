@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Events\IncDocUsers\Listeners;
+namespace App\Events\Notes\Listeners;
 
-use App\Events\IncDocUsers\IncDocUserNotifications;
+use App\Events\Notes\NoteNotifications;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -21,12 +21,12 @@ class Notify
     /**
      * Handle the event.
      *
-     * @param  IncDocUserNotifications  $event
+     * @param  NoteNotifications  $event
      * @return void
      */
-    public function handle(IncDocUserNotifications $event)
+    public function handle(NoteNotifications $event)
     {
-		$item = $event->incomingDocumentUser;
+        $item = $event->note;
 		$mainService = app(\App\Services\Main\MainService::class);
 		
 		$params = [
@@ -35,8 +35,8 @@ class Notify
 		
 		if($item->wasRecentlyCreated) {
 			$params['send_email'] = [
-				'text' => 'Ожидает рассмотрения входящий документ: '  . $item->incomingDocument->title,
-				'url' => route('incoming_documents.show', $item->incoming_document_id)
+				'text' => 'Новая служебная записка: '  . $item->title,
+				'url' => route('notes.edit', $item->id)
 			];
 		}
 		

@@ -33,6 +33,12 @@ class EventServiceProvider extends ServiceProvider
 		\App\Events\IncDocUsers\IncDocUserNotifications::class => [
 			\App\Events\IncDocUsers\Listeners\Notify::class,
 		],
+		\App\Events\Tasks\TaskNotifications::class => [
+			\App\Events\Tasks\Listeners\Notify::class,
+		],
+		\App\Events\Notes\NoteNotifications::class => [
+			\App\Events\Notes\Listeners\Notify::class,
+		],
     ];
 
     /**

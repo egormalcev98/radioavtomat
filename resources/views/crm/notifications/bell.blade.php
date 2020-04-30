@@ -11,7 +11,7 @@
 			<div class="dropdown-divider"></div>
 			<a href="{{ $not['url'] }}" class="dropdown-item">
 				{{ Str::limit($not['title_notification'], 30) }}
-				<span class="float-right text-muted text-sm">{{ $not['date'] }}</span>
+				<span class="float-right text-muted text-sm">{{ $not['date']->format('d.m.Y H:i') }}</span>
 			</a>
 		@endforeach
 		<div class="dropdown-divider"></div>
