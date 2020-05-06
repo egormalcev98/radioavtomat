@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
 
     @include('adminlte::plugins', ['type' => 'css'])
-	
+
     @yield('adminlte_css_pre')
 
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
@@ -86,7 +86,8 @@
 	<script src="{{ asset('/js/main.js?58910') }}"></script>
 	<script src="{{ asset('/js/chat.js?5') }}"></script>
 	<script src="{{ asset('/js/date_range_picker.js') }}"></script>
-	
+	<script src="{{ asset('/js/task_global.js') }}"></script>
+
 	<script>
 		window.Pusher = new Pusher('{{ config("broadcasting.connections.pusher.key") }}', {
 		   wsHost: window.location.hostname,
@@ -99,34 +100,34 @@
 			   }
 		   }
 		});
-		
+
 		$(document).ready(function(){
 			$('#chat_users').change(function() {
 				Chat.changeUser($(this), Pusher, {{ auth()->user()->id }});
 			});
-			
+
 			$('#chat_structural_units').change(function() {
 				Chat.changeStructuralUnit($(this), Pusher, {{ auth()->user()->id }});
 			});
-			
+
 			Chat.selectedChannelAuthUser(Pusher, @if(auth()->user()->chat_channel) {!! auth()->user()->chat_channel !!} @else null @endif, {{ auth()->user()->id }});
-			
+
 		});
-		
+
 		var channel = Pusher.subscribe('private-user.{{ auth()->user()->id }}');
 
 		channel.bind('notifyNewMessage', function (data) {
 			Chat.notifyNewMessage(data);
 		});
-		
+
 		channel.bind('updateCountNewMessages', function (data) {
 			Chat.updateCountNewMessages(data);
 		});
-		
+
 		channel.bind('updateBell', function (data) {
 			$('#notifications_bell').html(data['html']);
 		});
-		
+
 	</script>
 @endif
 

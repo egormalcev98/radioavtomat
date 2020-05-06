@@ -33,6 +33,21 @@ class TaskService
         '12' => 'Декабрь',
     ];
 
+    public $russianMonthsTranslete = [
+        'January' => 'Января',
+        'February' => 'Февраля',
+        'March' => 'Мара',
+        'April' => 'Апреля',
+        'May' => 'Мая',
+        'June' => 'Июня',
+        'July' => 'Июля',
+        'August' => 'Августа',
+        'September' => 'Сентября',
+        'October' => 'Октября',
+        'November' => 'Ноября',
+        'December' => 'Декабря',
+    ];
+
     public function model()
     {
         return new Task();
@@ -241,11 +256,11 @@ class TaskService
             'IAmCreator' => auth()->id() == $task->creator_id,
         ];
 
-        if(\auth()->user()->can('update_task')) {
+        if (\auth()->user()->can('update_task')) {
             $with['editUrl'] = route('tasks.edit', $task->id);
         }
 
-        if(\auth()->user()->can('delete_task')) {
+        if (\auth()->user()->can('delete_task')) {
             $with['deleteUrl'] = route('tasks.destroy', $task->id);
         }
 
@@ -351,28 +366,28 @@ class TaskService
             $task->save();
             $task->users()->sync($users);
         }
-		
-		
-		//Уведомления, перетащил сюда не зря
-		$mainService = app(\App\Services\Main\MainService::class);
-		
-		$idUsers = $task->users->pluck('id')->toArray();
-		
-		if(!empty($idUsers)) {
-					
-			$params = [
-				'user_id' => $idUsers
-			];
-			
-			if($task->wasRecentlyCreated) {
-				$params['send_email'] = [
-					'text' => 'Новая задача ' . implode([ $task->start, $task->end ], ' - ') . ': '  . $task->text,
-					'url' => route('tasks.index')
-				];
-			}
-			
-			$mainService->userNotify($params);
-		}
+
+
+        //Уведомления, перетащил сюда не зря
+        $mainService = app(\App\Services\Main\MainService::class);
+
+        $idUsers = $task->users->pluck('id')->toArray();
+
+        if (!empty($idUsers)) {
+
+            $params = [
+                'user_id' => $idUsers
+            ];
+
+            if ($task->wasRecentlyCreated) {
+                $params['send_email'] = [
+                    'text' => 'Новая задача ' . implode([$task->start, $task->end], ' - ') . ': ' . $task->text,
+                    'url' => route('tasks.index')
+                ];
+            }
+
+            $mainService->userNotify($params);
+        }
 
         return true;
     }
@@ -381,7 +396,7 @@ class TaskService
     {
         $taskUsers = $task->users();
         if ($task->delete()) {
-			$taskUsers->sync([]);
+            $taskUsers->sync([]);
             return true;
         } else {
             return false;
@@ -394,7 +409,7 @@ class TaskService
     }
 
 
-    function getWeeks($request)
+    public function getWeeks($request)
     {
         $dateStart = Carbon::parse($request->date)->subMonths(4)->format('d.m.Y');
         $dateEnd = Carbon::parse($request->date)->addMonths(4)->format('d.m.Y');
@@ -409,7 +424,7 @@ class TaskService
      *
      * @return array
      */
-    function getWeekPeriod($from, $to)
+    public function getWeekPeriod($from, $to)
     {
         $weeks = [];
         $from = strtotime($from);
@@ -441,37 +456,58 @@ class TaskService
         return $weeks;
     }
 
-    function changeTaskStatusesOnCron()
+    public function changeTaskStatusesOnCron()
     {
         $now = Carbon::now()->toDateTimeString();
         $tasks = Task::where('task_status_id', 1)->where('end', '<', $now)->get();
-        foreach ($tasks as $task){
+        foreach ($tasks as $task) {
             $task->task_status_id = 3;
             $task->save();
         }
+
+        return true;
     }
 
-    function toRemind()
+    public function toRemind()
     {
-        $tasks = Task::whereIn('task_status_id', [1,3])
+        $tasks = Task::whereIn('task_status_id', [1, 3])
             ->with('users')
             ->whereRaw('start <= ADDDATE(NOW(), INTERVAL remember_time MINUTE)')
-            ->whereHas('users', function ($user){
+            ->whereHas('users', function ($user) {
                 return $user->whereNull('completed');
             })
             ->get();
 
-       foreach ($tasks as $task){
-           $users = $task->users()->whereNull('completed')->get();
-           foreach ($users as $user){
-               dd(1); // тут отправляем уведомление на фронт
-           }
-       }
+        foreach ($tasks as $task) {
+            $eventType = $task->eventType->name ?? 'Неопределен';
+            $date = Carbon::parse($task->start)->format('j F Y, H:i');
+            $month =  Carbon::parse($task->start)->format('F');
+            $date = str_replace($month, $this->russianMonthsTranslete[$month], $date);
+            $onClick =  "TaskGlobal.getInfo('" . route('tasks.info', $task->id) . "');";
+            $text = $task->text;
+            $text =  view($this->templatePath . 'task_info_href') ->with(['onClick' => $onClick, 'text' => $text,])->render();
+            $users = $task->users()->whereNull('completed')->get();
+            foreach ($users as $user) {
+                $newMessage = $user->sentChatMessages()
+                    ->create([
+                        'text' => 'Напоминание: ' . $eventType . '. ' . $text . '. ' . $date,
+                        'to_user_id' => $user->id, //ID получателя
+                    ]);
+
+                $chatService = app(\App\Services\Chat\ChatService::class);
+
+                $chatService->eventNewMessage($newMessage, $user);
+
+                $this->doCompleted($task, $user->id);
+            }
+        }
+
+        return true;
     }
 
-    function doCompleted($task)
+    private function doCompleted($task, $userId)
     {
-        $task->users()->syncWithoutDetaching([\auth()->id() => ['completed' => true]]);
+        $task->users()->syncWithoutDetaching([$userId => ['completed' => true]]);
 
         return true;
     }
