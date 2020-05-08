@@ -367,7 +367,6 @@ class TaskService
             $task->users()->sync($users);
         }
 
-
         //Уведомления, перетащил сюда не зря
         $mainService = app(\App\Services\Main\MainService::class);
 
@@ -388,6 +387,28 @@ class TaskService
 
             $mainService->userNotify($params);
         }
+
+// 		//Уведомления, перетащил сюда не зря
+// 		$mainService = app(\App\Services\Main\MainService::class);
+
+// 		$idUsers = $task->users->pluck('id')->toArray();
+
+// 		if(!empty($idUsers)) {
+
+// 			$params = [
+// 				'user_id' => $idUsers
+// 			];
+
+// 			if($task->wasRecentlyCreated) {
+// 				$params['send_email'] = [
+// 					'text' => 'Новая задача ' . implode([ $task->start, $task->end ], ' - ') . ': '  . $task->text,
+// 					'url' => route('tasks.index')
+// 				];
+// 			}
+
+// 			$mainService->userNotify($params);
+// 		}
+
 
         return true;
     }

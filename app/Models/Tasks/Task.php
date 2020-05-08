@@ -21,7 +21,7 @@ class Task extends BaseModel
         // 'updated' => TaskNotifications::class,
         'deleted' => TaskNotifications::class,
     ];
-	
+
     protected $fillable = [
         'text',
         'start',

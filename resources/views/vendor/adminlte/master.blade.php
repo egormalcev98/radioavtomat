@@ -128,6 +128,12 @@
 			$('#notifications_bell').html(data['html']);
 		});
 
+        channel.bind('todayJobs', function (data) {
+            Main.popUp('<a href="' + data['rout'] + '">Перейти к задачам сегодня</a>', 'Ознакомтесь с задачами на сегодня');
+          //  window.open(data['rout'], '_blank');
+
+        });
+
 	</script>
 @endif
 
