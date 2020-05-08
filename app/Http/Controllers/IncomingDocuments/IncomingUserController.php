@@ -43,7 +43,9 @@ class IncomingUserController extends Controller
     public function destroyDistributed(IncomingDocumentDistributed $incomingDocumentDistributed)
     {
 		if (request()->ajax() and $this->service->checkEditDistributed($incomingDocumentDistributed->incoming_document_id)) {
-			return $this->destroyElement($incomingDocumentDistributed);
+			
+			$this->service->destroyDistributed($incomingDocumentDistributed);
+			return $this->serverResponseDestroy();
 		}
 		
 		return abort(403);

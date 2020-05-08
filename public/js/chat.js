@@ -78,7 +78,7 @@ let Chat = {
 		let errorHandle = function(jqXHR, textStatus, errorThrown ){
 			let data = jqXHR.responseJSON;
 
-			Main.popUp('Произошла ошибка при подгрузке сообщений чата');
+			// Main.popUp('Произошла ошибка при подгрузке сообщений чата');
 
 			selectorCard.find('.overlay').remove();
 		};

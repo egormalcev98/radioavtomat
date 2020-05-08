@@ -107,7 +107,7 @@
 					<div class="col-12 row">
 						<div class="col-6">
 							<div class="mb-5">
-								<h4 class="float-left">Кому распределено</h4>
+								<h4 class="float-left">Распределяющие</h4>
 								@if($editDistributed)
 									<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#modal_distributed" >Добавить</button>
 								@endif

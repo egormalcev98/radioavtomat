@@ -220,7 +220,7 @@ class IncomingUserService extends BaseService
 	
 	public function checkEditDistributed($incomingDocumentId)
 	{
-		return auth()->user()->hasRole(['secretary', 'admin']);
+		return auth()->user()->can('read_incoming_doc_' . $incomingDocumentId) or auth()->user()->hasRole(['secretary', 'admin']);
 	}
 	
 	public function checkEditResponsibles($incomingDocumentId)
@@ -241,6 +241,27 @@ class IncomingUserService extends BaseService
 							$requestAll['signed'] . '_at' => $requestAll[$requestAll['signed'] . '_at_date'] . ' ' . $requestAll[$requestAll['signed'] . '_at_time'],
 							($requestAll['signed'] == 'reject') ? 'signed_at' : 'reject_at' => null,
 						]);
+		
+		return true;
+	}
+	
+	/**
+	 * Удалим распределяющего
+	 */
+	public function destroyDistributed($incomingDocumentDistributed)
+	{	
+		$user = \App\User::find($incomingDocumentDistributed->user_id);
+		
+		if($user) {
+			$permission = \App\Permission::where('name', 'read_incoming_doc_' . $incomingDocumentDistributed->incoming_document_id)->first();
+			
+			if($permission) {
+				$user->permissions()->detach($permission->id);
+				$user->flushCache();
+			}
+		}
+	
+		$incomingDocumentDistributed->delete();
 		
 		return true;
 	}

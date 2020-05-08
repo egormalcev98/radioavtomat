@@ -5,7 +5,7 @@
 			<form role="form" method="POST" onsubmit="Main.sendFormDataReferences(event, $(this), window.LaravelDataTables['dtListDistributed']);" action="{{ route('incoming_document_users.save_distributed', $incomingDocument->id) }}" >
 				@csrf
 				<div class="modal-header">
-					<h4 class="modal-title">Кому распределено</h4>
+					<h4 class="modal-title">Распределяющие</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
