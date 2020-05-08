@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton('App\Http\Composers\ViewComposer');
     }
 
     /**
@@ -29,5 +29,9 @@ class AppServiceProvider extends ServiceProvider
 		View::share('settings', $mainService->settings());
 		View::share('chatStructuralUnits', $mainService->structuralUnits());
 		View::share('chatUsers', $mainService->users());
+		
+		view()->composer('adminlte::page', function ($view) use($mainService) {
+			$view->with('dataNotifications', $mainService->dataNotifications() );    
+		});  
     }
 }

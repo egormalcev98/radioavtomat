@@ -24,15 +24,20 @@ class ChatService
 		$newMessage = auth()->user()
 			  ->sentChatMessages()
 			  ->create($requestAll);
-			  
-		auth()->user()
-			->viewedMessages()
-			->attach($newMessage->id);
+			
+		$this->eventNewMessage($newMessage, auth()->user());
+		
+		return true;
+	}
+	
+	public function eventNewMessage($newMessage, $user)
+	{
+		$user->viewedMessages()->attach($newMessage->id);
 		
 		try {
 			
 			if($newMessage->to_user_id) {
-				$arrChannelId = [$newMessage->to_user_id, auth()->user()->id];
+				$arrChannelId = [$newMessage->to_user_id, $user->id];
 				sort($arrChannelId);
 				$channelId = implode('.', $arrChannelId);
 				$channelName = 'chat-user.' . $channelId;
@@ -40,7 +45,7 @@ class ChatService
 				$channellMsgCount = [
 					'users' => [
 						[
-							'c_id' => auth()->user()->id,
+							'c_id' => $user->id,
 							'count' => 1
 						],
 					],
@@ -75,7 +80,7 @@ class ChatService
 				}
 				
 				$idUsersArray = User::get()
-							->where('id', '!=', auth()->user()->id)
+							->where('id', '!=', $user->id)
 							->pluck('id')
 							->toArray();
 				
@@ -91,7 +96,7 @@ class ChatService
 					'created_at' => $newMessage->created_at,
 					'sender_user_id' => $newMessage->sender_user_id,
 					'sender_user' => [
-						'full_name' => auth()->user()->fullName
+						'full_name' => $user->fullName
 					],
 				], 
 				$channelName
@@ -229,10 +234,12 @@ class ChatService
 	{
 		$this->readMessages($request->type, $request->id);
 		
-		broadcast(new \App\Events\Chat\UpdateCountNewMessages(
-			$this->countNewMessages(),
-			auth()->user()->id
-		));
+		try {
+			broadcast(new \App\Events\Chat\UpdateCountNewMessages(
+				$this->countNewMessages(),
+				auth()->user()->id
+			));
+		} catch (\Exception $e) {}
 		
 		return true;
 	}

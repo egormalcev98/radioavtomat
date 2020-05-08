@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events\Chat;
+namespace App\Events\TodayJobs;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -10,22 +10,22 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UpdateCountNewMessages implements ShouldBroadcastNow
+class TodayJobsNotifications implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $data; //Данные, которые отправим на фронт
-	
+	public $data; //Данные, которые отправим на фронт
+
 	private $userId;
-	
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($data, $userId)
+    public function __construct($userId)
     {
-        $this->data = $data;
+        $this->data = ['rout' => route('today_jobs.index')];
         $this->userId = $userId;
     }
 
@@ -38,7 +38,7 @@ class UpdateCountNewMessages implements ShouldBroadcastNow
     {
         return new PrivateChannel('user.' . $this->userId);
     }
-	
+
 	/**
 	 * Get the data to broadcast.
 	 *
@@ -48,7 +48,7 @@ class UpdateCountNewMessages implements ShouldBroadcastNow
 	{
 		return $this->data;
 	}
-	
+
 	/**
 	 * The event's broadcast name.
 	 *
@@ -56,6 +56,6 @@ class UpdateCountNewMessages implements ShouldBroadcastNow
 	 */
 	public function broadcastAs()
 	{
-		return 'updateCountNewMessages';
+		return 'todayJobs';
 	}
 }

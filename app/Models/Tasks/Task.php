@@ -7,10 +7,22 @@ use App\Models\IncomingDocuments\IncomingDocument;
 use App\Models\References\EventType;
 use App\Models\References\TaskStatus;
 use App\User;
+use App\Events\Tasks\TaskNotifications;
 
 class Task extends BaseModel
 {
-        protected $fillable = [
+	/**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        // 'created' => TaskNotifications::class,
+        // 'updated' => TaskNotifications::class,
+        'deleted' => TaskNotifications::class,
+    ];
+
+    protected $fillable = [
         'text',
         'start',
 		'end',

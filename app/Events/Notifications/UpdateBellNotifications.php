@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events\Chat;
+namespace App\Events\Notifications;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -10,11 +10,11 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UpdateCountNewMessages implements ShouldBroadcastNow
+class UpdateBellNotifications implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    public $data; //Данные, которые отправим на фронт
+	
+	public $data; //Данные, которые отправим на фронт
 	
 	private $userId;
 	
@@ -56,6 +56,6 @@ class UpdateCountNewMessages implements ShouldBroadcastNow
 	 */
 	public function broadcastAs()
 	{
-		return 'updateCountNewMessages';
+		return 'updateBell';
 	}
 }

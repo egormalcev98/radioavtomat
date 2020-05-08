@@ -101,6 +101,11 @@
                 </ul>
             @endif
                 <ul class="navbar-nav ml-auto @if(config('adminlte.layout_topnav') || View::getSection('layout_topnav'))order-1 order-md-3 navbar-no-expand @endif">
+				
+					<li class="nav-item dropdown" id="notifications_bell">
+						@include('crm.notifications.bell')
+					</li>
+					
                     @yield('content_top_nav_right')
                     @each('adminlte::partials.menu-item-top-nav-right', $adminlte->menu(), 'item')
                     @if(Auth::user())

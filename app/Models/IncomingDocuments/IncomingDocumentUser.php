@@ -3,6 +3,7 @@
 namespace App\Models\IncomingDocuments;
 
 use App\Models\BaseModel;
+use App\Events\IncDocUsers\IncDocUserNotifications;
 
 class IncomingDocumentUser extends BaseModel
 {
@@ -12,6 +13,16 @@ class IncomingDocumentUser extends BaseModel
      * @var string
      */
     protected $table = 'incoming_document_users';
+	
+	/**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => IncDocUserNotifications::class,
+        'deleted' => IncDocUserNotifications::class,
+    ];
 	
 	/**
      * Атрибуты, которые должны быть преобразованы в даты.
@@ -132,4 +143,15 @@ class IncomingDocumentUser extends BaseModel
     {
         return $query->where('user_id', auth()->user()->id);
     }
+	
+	/**
+     * Получим документ
+     */
+    public function incomingDocument()
+    {
+        return $this->belongsTo(IncomingDocument::class)->withDefault([
+			'title' => '',
+		]);
+    }
+	
 }

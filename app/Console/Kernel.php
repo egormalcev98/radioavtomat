@@ -35,6 +35,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('task:change_status')->everyFiveMinutes();
+        $schedule->command('today_jobs:notify')->dailyAt('09:00');
     }
 
     /**
