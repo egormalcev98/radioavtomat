@@ -86,6 +86,7 @@
 	<script src="{{ asset('/js/main.js?58910') }}"></script>
 	<script src="{{ asset('/js/chat.js?5') }}"></script>
 	<script src="{{ asset('/js/date_range_picker.js') }}"></script>
+	<script src="{{ asset('/js/task_global.js') }}"></script>
 
 	<script>
 		window.Pusher = new Pusher('{{ config("broadcasting.connections.pusher.key") }}', {

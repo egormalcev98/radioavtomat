@@ -121,7 +121,7 @@
                     disabled
                     @endif
                     @endisset
-                    onchange="Task.checkSelectUnit()"
+                    onchange="TaskGlobal.checkSelectUnit()"
                     class="form-control select2"
                     name="structural_unit_id" id="structural_unit_id">
                     <option value="">Ничего не выбрано</option>
@@ -147,7 +147,7 @@
                     @endif
                     @endisset
                     type="checkbox" class="form-control task_select_all" name="select_all" id="task_select_all"
-                    onclick="Task.checkSelectAll()">
+                    onclick="TaskGlobal.checkSelectAll()">
                 <label class="mb-0 ml-1">Выбрать всех</label>
             </div>
         @endif
@@ -182,7 +182,7 @@
     <!-- Футер модального окна -->
     <div class="modal-footer">
         <button class="btn btn-default" data-dismiss="modal">Отмена</button>
-        <button type="button" class="btn btn-success" onclick="Task.storeOrUpdate('{{$action}}')">Сохранить</button>
+        <button type="button" class="btn btn-success" onclick="TaskGlobal.storeOrUpdate('{{$action}}')">Сохранить</button>
     </div>
 </form>
 

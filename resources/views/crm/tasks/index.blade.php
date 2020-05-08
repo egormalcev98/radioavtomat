@@ -22,14 +22,14 @@
                                 <div class="form-group">
                                     @if(isset($routeCreateTask))
                                         <button id="btn-task-create" class="btn btn-success"
-                                                onclick="Task.createTask('{{$routeCreateTask}}')">
+                                                onclick="TaskGlobal.createTask('{{$routeCreateTask}}')">
                                             <i class="fas fa-plus"></i> Добавить задачу
                                         </button>
                                     @endif
                                     @if(isset($routeCreateOrder))
                                         &nbsp;&nbsp;
                                         <button id="btn-task-create" class="btn btn-success"
-                                                onclick="Task.createTask('{{$routeCreateOrder}}')">
+                                                onclick="TaskGlobal.createTask('{{$routeCreateOrder}}')">
                                             <i class="fas fa-plus"></i> Добавить приказ
                                         </button>
                                     @endif
@@ -164,14 +164,6 @@
                 </div>
             </div>
 
-            <!--модалька НЕ УДАЛЯТЬ-->
-            <div id="task_show_modal" class="modal fade">
-                <div class="modal-dialog">
-                    <div id="task_show_modal_content" class="modal-content">
-                    </div>
-                </div>
-            </div>
-
         </div>
     </section>
 @stop
@@ -179,7 +171,6 @@
     <script>
         var getTasksUrl = {!! json_encode($getTasksUrl) !!};
         var getTaskWeeks = {!! json_encode(route('tasks.get_weeks')) !!};
-        var errorMessage  = `@include('crm.tasks.error_modal')`;
     </script>
     <script src="{{ asset('/js/task.js') }}"></script>
 @stop

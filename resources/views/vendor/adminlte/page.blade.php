@@ -101,11 +101,11 @@
                 </ul>
             @endif
                 <ul class="navbar-nav ml-auto @if(config('adminlte.layout_topnav') || View::getSection('layout_topnav'))order-1 order-md-3 navbar-no-expand @endif">
-				
+
 					<li class="nav-item dropdown" id="notifications_bell">
 						@include('crm.notifications.bell')
 					</li>
-					
+
                     @yield('content_top_nav_right')
                     @each('adminlte::partials.menu-item-top-nav-right', $adminlte->menu(), 'item')
                     @if(Auth::user())
@@ -225,7 +225,7 @@
             <div class="content">
                 <div class="{{config('adminlte.classes_content', 'container-fluid')}}">
 					@include('flash::message')
-					
+
                     @yield('content')
                 </div>
             </div>
@@ -246,6 +246,17 @@
                 @yield('right-sidebar')
             </aside>
         @endif
+
+        <!--модалька задач-->
+            <script>
+                var errorMessage  = `@include('crm.tasks.error_modal')`;
+            </script>
+            <div id="task_show_modal" class="modal fade">
+                <div class="modal-dialog">
+                    <div id="task_show_modal_content" class="modal-content">
+                    </div>
+                </div>
+            </div>
 
     </div>
 @stop

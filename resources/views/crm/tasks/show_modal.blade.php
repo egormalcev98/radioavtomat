@@ -61,10 +61,10 @@
 @if($IAmCreator)
     <div class="modal-footer">
         @if($editUrl)
-            <button type="button" onclick="Task.editTask('{{$editUrl}}')" class="btn btn-primary">Редактировать</button>
+            <button type="button" onclick="TaskGlobal.editTask('{{$editUrl}}')" class="btn btn-primary">Редактировать</button>
         @endif
         @if($deleteUrl)
-            <button type="button" onclick="Task.deleteTask('{{$deleteUrl}}')" class="btn btn-danger">Удалить</button>
+            <button type="button" onclick="TaskGlobal.deleteTask('{{$deleteUrl}}')" class="btn btn-danger">Удалить</button>
         @endif
     </div>
 @endif
