@@ -67,6 +67,8 @@ class TodayJobsService
             if ($red) {
                 $allowedRoutes = [];
                 $allowedRoutes[] = parse_url(route('tasks.info', $task->id), PHP_URL_PATH);
+                $allowedRoutes[] = parse_url(route('tasks.edit', $task->id), PHP_URL_PATH);
+                $allowedRoutes[] = parse_url(route('tasks.destroy', $task->id), PHP_URL_PATH);
                 $todayJob->allowed_routes = serialize($allowedRoutes);
             }
 
