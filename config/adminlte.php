@@ -254,6 +254,12 @@ return [
             ]
         ],
         [
+            'text'      	=> 'today_jobs',
+            'route' 		=> 'today_jobs.index',
+            'active'		=> ['today_jobs'],
+            'icon'        	=> 'fas fa-calendar-check',
+        ],
+        [
             'text'      	=> 'reports',
             'route' 		=> 'reports.index',
             // 'active'		=> ['reports', 'reports/*'],
