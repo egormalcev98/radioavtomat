@@ -348,8 +348,8 @@ class IncomingDocumentService extends BaseService
 
         if(isset($requestAll['new_scan_files']) and !empty($requestAll['new_scan_files'])) {
             foreach($requestAll['new_scan_files'] as $newFile) {
-                $fileSave = $newFile->store('incoming_documents', 'public');
-
+                $originalName = $newFile->getClientOriginalName();
+                $fileSave = $newFile->storeAs('incoming_documents', $originalName, 'public');
                 $notDestroyFiles[] = $this->model->files()->create([
                     'name' => $newFile->getClientOriginalName(),
                     'file_path' => $fileSave,

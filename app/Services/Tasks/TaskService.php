@@ -327,8 +327,9 @@ class TaskService
 
         if ($request->has('new_scan_file')) {
             $newFile = $request->new_scan_file;
-            $fileSave = $newFile->store('task_files', 'public');
-            $task->file_name = $newFile->getClientOriginalName();
+            $originalName = $newFile->getClientOriginalName();
+            $fileSave = $newFile->storeAs('task_files', $originalName, 'public');
+            $task->file_name = $originalName;
             $task->file_path = $fileSave;
         }
 

@@ -243,10 +243,11 @@ class OutgoingDocumentService extends BaseService
 
         if (isset($requestAll['new_scan_files']) and !empty($requestAll['new_scan_files'])) {
             foreach ($requestAll['new_scan_files'] as $newFile) {
-                $fileSave = $newFile->store('outgoing_documents', 'public');
+                $originalName = $newFile->getClientOriginalName();
+                $fileSave = $newFile->storeAs('outgoing_documents', $originalName, 'public');
 
                 $notDestroyFiles[] = $this->model->files()->create([
-                    'name' => $newFile->getClientOriginalName(),
+                    'name' => $originalName,
                     'file_path' => $fileSave,
                 ])->id;
             }
