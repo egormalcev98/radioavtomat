@@ -1,6 +1,6 @@
 
 @if(auth()->check())
-	<div class="col-md-3" style="position:fixed; bottom:0; right:0;" id="chat_widget">
+	<div class="col-md-3" style="position:fixed; bottom:0; right:0; z-index: 9000" id="chat_widget">
 		<div class="card card-prirary cardutline direct-chat direct-chat-info collapsed-card">
 			<div class="card-header">
 				<h3 class="card-title">Чат</h3>
@@ -19,7 +19,7 @@
 			<div class="card-body" style="display: none;">
 				<!-- Conversations are loaded here -->
 				<div class="direct-chat-messages">
-					
+
 				</div>
 				<!--/.direct-chat-messages-->
 
@@ -55,7 +55,7 @@
 			<div class="card-footer" style="display: none;">
 				<form action="{{ route('chat.send_message') }}" method="post" _lpchecked="1" id="chat_form" onsubmit="Chat.sendMessage(event);">
 					@csrf
-						
+
 					<div class="input-group">
 						<input type="text" name="text" placeholder="Введите сообщение ..." required="required" class="form-control">
 						<span class="input-group-append">

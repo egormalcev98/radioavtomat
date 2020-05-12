@@ -38,7 +38,7 @@
                                 @endforeach
                                 </table>
                             @else
-                                Ничего нету
+                                Задач на сегодня нет.
                             @endif
 
                         </div>
