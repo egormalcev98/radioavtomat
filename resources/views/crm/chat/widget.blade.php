@@ -1,6 +1,6 @@
 
 @if(auth()->check())
-	<div class="col-md-3" style="position:fixed; bottom:0; right:0; z-index: 9000" id="chat_widget">
+	<div class="col-md-3" style="position:fixed; bottom:0; right:0; z-index: 1" id="chat_widget">
 		<div class="card card-prirary cardutline direct-chat direct-chat-info collapsed-card">
 			<div class="card-header">
 				<h3 class="card-title">Чат</h3>
