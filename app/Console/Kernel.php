@@ -36,11 +36,11 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('task:change_status')->everyFiveMinutes();
         $schedule->command('today_jobs:notify')->dailyAt('09:00');
-        $schedule->command('websocket:serve --port=6002')
-            ->everyTenMinutes()
-            ->withoutOverlapping();
-        $schedule->command('queue:work')
-            ->withoutOverlapping();
+//        $schedule->command('websocket:serve --port=6002')
+//            ->everyTenMinutes()
+//            ->withoutOverlapping();
+//        $schedule->command('queue:work')
+//            ->withoutOverlapping();
     }
 
     /**
