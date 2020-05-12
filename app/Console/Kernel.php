@@ -39,6 +39,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('websocket:serve --port=6002')
             ->everyTenMinutes()
             ->withoutOverlapping();
+        $schedule->command('queue:work')
+            ->withoutOverlapping();
     }
 
     /**
