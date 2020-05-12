@@ -279,10 +279,10 @@ class NoteService extends BaseService
 
         if (isset($requestAll['new_scan_files']) and !empty($requestAll['new_scan_files'])) {
             foreach ($requestAll['new_scan_files'] as $newFile) {
-                $fileSave = $newFile->store('notes', 'public');
-
+                $originalName = $newFile->getClientOriginalName();
+                $fileSave = $newFile->storeAs('notes', $originalName, 'public');
                 $notDestroyFiles[] = $this->model->files()->create([
-                    'name' => $newFile->getClientOriginalName(),
+                    'name' => $originalName,
                     'file_path' => $fileSave,
                 ])->id;
             }
