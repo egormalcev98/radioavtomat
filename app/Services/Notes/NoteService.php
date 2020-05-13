@@ -237,7 +237,7 @@ class NoteService extends BaseService
 
         $currentYear = Carbon::now()->endOfYear()->toDateTimeString();
 
-       $lastNote = Note::where('created_at', '<', $currentYear)->latest()->first();
+       $lastNote = Note::where('created_at', '<', $currentYear)->orderBy('id', 'desc')->first();
 
        if($lastNote) {
            $number = $lastNote->number + 1;
